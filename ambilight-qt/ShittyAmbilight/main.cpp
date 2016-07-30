@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 {
     Magick::InitializeMagick(*argv);
 
-    ScreenShot screen(0,0,1024,1280);
+    ScreenShot screen;
     Magick::Image img;
     screen(img);
     img.write("test.png");

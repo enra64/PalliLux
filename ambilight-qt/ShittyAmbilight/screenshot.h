@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <vector>
 #include <iostream>
 
@@ -13,43 +14,37 @@
 #include <ImageMagick-6/magick/xwindow.h>
 
 
-struct ScreenShot
-{
-    ScreenShot(int x, int y, int width, int height):
-        x(x),
-        y(y),
-        width(width),
-        height(height)
-    {
+struct ScreenShot {
+    ScreenShot() {
         display = XOpenDisplay(nullptr);
         root = DefaultRootWindow(display);
-        screen = DefaultScreen(display);
-
-        depth = DefaultDepth(display, screen);
 
         m_imageIsDestroyed = true;
     }
 
-    void operator() (Magick::Image& result)
-    {
+    void operator() (Magick::Image& result) {
+
         // free memory
         if(!m_imageIsDestroyed)
             XDestroyImage(img);
 
+        // benchmarking start
+        clock_t start = clock();
+
         // get screenshot
-        img = XGetImage(display, root, x, y, width, height, AllPlanes, ZPixmap);
+        img = XGetImage(display, root, 0, 0, WIDTH, HEIGHT, AllPlanes, ZPixmap);
 
         // save state
         m_imageIsDestroyed = false;
-        std::cout << img->depth << std::endl;
+
+        // convert to magick image
         result.read(img->width, img->height, "BGRA", Magick::CharPixel, img->data);
 
-        //result = *MagickExport::XImportImage(img, nullptr);
-        //cvImg = Mat(height, width, CV_8UC4, img->data);
+        // benchmarking end
+        printf ("screenshot took (%f seconds).\n", ((float)(clock() - start))/CLOCKS_PER_SEC);
     }
 
-    ~ScreenShot()
-    {
+    ~ScreenShot() {
         // free memory if necessary
         if(!m_imageIsDestroyed)
             XDestroyImage(img);
@@ -59,9 +54,12 @@ struct ScreenShot
     }
 
 private:
+    const int WIDTH = 1024 + 1920 + 1080;
+    const int HEIGHT = 1920;
+
     Display* display;
     Window root;
-    int x,y,width,height, depth, screen;
+
     XImage* img;
 
     bool m_imageIsDestroyed;
