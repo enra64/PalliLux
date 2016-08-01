@@ -9,7 +9,10 @@
 
 #include "dimensions.h"
 
-
+/**
+ * @brief The Screenshot class provides access to screen capturing functionality, mostly by its screenCapture method.
+ * It could be overridden or modified to use something else than the X display server.
+ */
 class Screenshot
 {
 public:
@@ -25,7 +28,14 @@ public:
     float takeScreenshot(Magick::Image& result, const Dimensions& d);
 
 private:
+    /**
+     * @brief mDisplay x display retrieved in constructor
+     */
     Display* mDisplay;
+
+    /**
+     * @brief mRootWindow i have no idea. needed for x screen capture.
+     */
     Window mRootWindow;
 };
 

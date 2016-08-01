@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "dimensions.h"
-#include "bordershot.h"
+#include "borderprovider.h"
 
 class RgbConstructor
 {
@@ -19,7 +19,7 @@ public:
      * @param screenShotter
      * @param resultSpace
      */
-    void takeAndParseScreenShot(uint8_t *resultSpace);
+    float takeAndParseScreenShot(uint8_t *resultSpace);
 
 private:
     /**
@@ -30,7 +30,7 @@ private:
      * @param bottomBorder image data for bottom border
      * @param resultSpace resulting buffer; if this is not big enough to hold all led data (see LED_DATA_BYTE_COUNT), you will have problems
      */
-    void parseScreenshot(Magick::Image &rightBorder, Magick::Image &topBorder, Magick::Image &leftBorder, Magick::Image &bottomBorder, uint8_t* resultSpace);
+    float parseScreenshot(uint8_t* resultSpace);
     /**
      * @brief alignBorderImages take the borders, and bring them into the correct order, fusing them at the edges
      * @param rightBorder image data for right border
@@ -39,7 +39,7 @@ private:
      * @param bottomBorder image data for bottom border
      * @return pointer to the new, aligned image.
      */
-    std::unique_ptr<Magick::Image> alignBorderImages(Magick::Image& rightBorder, Magick::Image& topBorder, Magick::Image& leftBorder, Magick::Image& bottomBorder);
+    std::unique_ptr<Magick::Image> alignBorders();
 
     /**
      * @brief scaleImages Scale down the image data to a flat line as wide as we have leds to save on processing time
@@ -48,14 +48,14 @@ private:
      * @param leftBorder image data for left border
      * @param bottomBorder image data for bottom border
      */
-    void scaleImages(Magick::Image& rightBorder, Magick::Image &topBorder, Magick::Image &leftBorder, Magick::Image &bottomBorder);
+    void flattenBorders();
 
     /**
      * @brief convertToPixels parse the border line to a set of rgb data
      * @param lineBorder an image, as wide as we have leds, and a single pixel high
      * @param result buffer space for the resulting data, must be at least LED_DATA_BYTE_COUNT
      */
-    void convertToPixels(std::unique_ptr<Magick::Image> lineBorder, uint8_t *result);
+    void imageToRgb(std::unique_ptr<Magick::Image> lineBorder, uint8_t *result);
 
     /**
      * @brief mHorizontalLedCount amount of leds on each horizontal border
@@ -90,7 +90,14 @@ private:
     /**
      * @brief mScreenShotter class instance used to create the images of each border
      */
-    BorderShot mScreenShotter;
+    BorderProvider mBorderProvider;
+
+    /**  @name images
+     *   Magick++-images used to store the borders while processing them
+     */
+    ///@{
+    Magick::Image mRightImage, mTopImage, mLeftImage, mBottomImage;
+    ///@}
 };
 
 #endif // RGBCONSTRUCTOR_H

@@ -4,38 +4,40 @@ using namespace Magick;
 using namespace std;
 
 #include <vector>
+#include <ctime>
 
-void RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
+float RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
 {
-    Image right, top, left, bottom;
-    mScreenShotter.takeBorderShot(right, top, left, bottom);
-    parseScreenshot(right, top, left, bottom, resultSpace);
-}
+    clock_t start = clock();
 
-void RgbConstructor::parseScreenshot(Magick::Image &rightBorder, Magick::Image &topBorder, Magick::Image &leftBorder, Magick::Image &bottomBorder, uint8_t* resultSpace) {
-    // first, scale the images down to minimize processing time
-    scaleImages(rightBorder, topBorder, leftBorder, bottomBorder);
+    // take the border screenshot
+    mBorderProvider.retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
+
+    // scale the images down first to minimize processing time
+    flattenBorders();
 
     // second, align the borders so they form a line
-    unique_ptr<Image> border = alignBorderImages(rightBorder, topBorder, leftBorder, bottomBorder);
+    unique_ptr<Image> pixelLine = alignBorders();
 
-    // at last, convert the line to rgb data
-    convertToPixels(move(border), resultSpace);
+    // last, convert the line to rgb data
+    imageToRgb(move(pixelLine), resultSpace);
+
+    return float(clock() - start) / CLOCKS_PER_SEC;
 }
 
-std::unique_ptr<Image> RgbConstructor::alignBorderImages(Image &rightBorder, Image &topBorder, Image &leftBorder, Image &bottomBorder) {
+std::unique_ptr<Image> RgbConstructor::alignBorders() {
     // rotate so the border ends align
-    rightBorder.rotate(270);
-    topBorder.rotate(180);
-    leftBorder.rotate(270);
+    mRightImage.rotate(270);
+    mTopImage.rotate(180);
+    mLeftImage.rotate(270);
     // no rotation necessary for bottomBorder
 
     // append the borders to a single image
     vector<Image> borderList = vector<Image>();
-    borderList.push_back(rightBorder);
-    borderList.push_back(topBorder);
-    borderList.push_back(leftBorder);
-    borderList.push_back(bottomBorder);
+    borderList.push_back(mRightImage);
+    borderList.push_back(mTopImage);
+    borderList.push_back(mLeftImage);
+    borderList.push_back(mBottomImage);
 
     // create new image on heap
     Image* result = new Image();
@@ -46,16 +48,18 @@ std::unique_ptr<Image> RgbConstructor::alignBorderImages(Image &rightBorder, Ima
     return std::unique_ptr<Image>(result);
 }
 
-void RgbConstructor::scaleImages(Image &rightBorder, Image &topBorder, Image &leftBorder, Image &bottomBorder) {
+void RgbConstructor::flattenBorders() {
     // reduce size of the border images
-    rightBorder.sample(mVerticalLedGeometry);
-    leftBorder.sample(mVerticalLedGeometry);
-    topBorder.sample(mHorizontalLedGeometry);
-    bottomBorder.sample(mHorizontalLedGeometry);
+    mRightImage.sample(mVerticalLedGeometry);
+    mLeftImage.sample(mVerticalLedGeometry);
+    mTopImage.sample(mHorizontalLedGeometry);
+    mBottomImage.sample(mHorizontalLedGeometry);
 }
 
-void RgbConstructor::convertToPixels(std::unique_ptr<Image> lineBorder, uint8_t* result) {
+void RgbConstructor::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result) {
+    // for each led
     for(unsigned int i = 0; i < LED_COUNT; i+=3) {
+        // retrieve rgb data from the line
         ColorRGB data = lineBorder->pixelColor(i, 0);
         // convert from 0-1 to 0-255
         result[i + 0] = (255 * data.red());

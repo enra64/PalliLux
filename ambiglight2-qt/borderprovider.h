@@ -5,17 +5,20 @@
 #include "screenshot.h"
 
 /**
- * @brief The BorderShot class is designed to keep the other code somewhat clean by containing all information about the screen configuration.
+ * @brief The BorderProvider class is designed to keep the other code somewhat clean by containing all information about the screen configuration.
  */
-class BorderShot {
+class BorderProvider {
 public:
     /**
      * @brief takeBorderShot This function creates a shot of each border; the rgb constructor can then use it to create the LED data
      */
-    void takeBorderShot(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom);
+    void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom);
 
 private://member variables
-    Screenshot mScreenshotAccess;
+    /**
+     * @brief mScreenshotAccess this class provides access to screenshot functionality
+     */
+    Screenshot mScreenshot;
 
 private: // screen config info
     // left screen size and position

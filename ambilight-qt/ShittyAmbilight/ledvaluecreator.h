@@ -22,6 +22,13 @@ public:
         mBottom = new Image();
         mResult = new Image();
     }
+    
+    /*
+     * timeShot += l.createScreenShots();
+        uint8_t* data;
+        timePars += l.parseScreenshot();
+        timePxl += l.getData(&data);
+     */
 
     float createScreenShots(){
         clock_t start = clock();

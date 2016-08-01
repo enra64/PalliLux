@@ -15,10 +15,10 @@ SOURCES += \
     rgbconstructor.cpp \
     main.cpp \
     screenshot.cpp \
-    bordershot.cpp
+    borderprovider.cpp
 
 HEADERS += \
     rgbconstructor.h \
     screenshot.h \
     dimensions.h \
-    bordershot.h
+    borderprovider.h
