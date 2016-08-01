@@ -23,6 +23,7 @@ SOURCES += main.cpp\
         mainwindow.cpp
 
 HEADERS  += mainwindow.h \
-    screenshot.h
+    screenshot.h \
+    ledvaluecreator.h
 
 FORMS    += mainwindow.ui
