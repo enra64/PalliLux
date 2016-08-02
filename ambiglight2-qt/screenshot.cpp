@@ -12,7 +12,7 @@
 
 using namespace Magick;
 
-Screenshot::Screenshot() {
+Screenshot::Screenshot(int w, int h) {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
@@ -25,20 +25,28 @@ Screenshot::Screenshot() {
     mRootWindow = RootWindow(mDisplay, DefaultScreen(mDisplay));
 
     // retrieve background
-    mBackground = getRootPixmap(mDisplay, &mRootWindow);
+    //XImage* xBackground = XGetImage(mDisplay, getRootPixmap(mDisplay, &mRootWindow), 0, 0, w, h, AllPlanes, ZPixmap);
+    //XImage* xBackground = nullptr;
+
+    // check output
+    //if(!xBackground)
+    //    throw "Could not create background XImage";
+
+    // read background into magick++ image
+    //mBackground.read(xBackground->width, xBackground->height, "BGRA", Magick::CharPixel, xBackground->data);
+
+    // free memory
+    //XFree(xBackground);
 }
 
 Screenshot::~Screenshot() {
     XCloseDisplay(mDisplay);
-    XFreePixmap(mDisplay, mBackground);
 }
 
 float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
     // benchmarking start
     clock_t start = clock();
 
-    // get background
-    XImage* xBackgroundImage = XGetImage(mDisplay, mBackground, d.x, d.y, d.w, d.h, AllPlanes, ZPixmap);
     // get windows
     XImage* xImage = XGetImage(mDisplay, mRootWindow, d.x, d.y, d.w, d.h, AllPlanes, ZPixmap);
 
@@ -49,10 +57,7 @@ float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
     // create a magick++ image from the screenshot
     result.read(xImage->width, xImage->height, "BGRA", Magick::CharPixel, xImage->data);
 
-    Image bg;
-    bg.read(xBackgroundImage->width, xBackgroundImage->height, "BGRA", Magick::CharPixel, xBackgroundImage->data);
-
-    bg.composite(result, 0, 0);
+    //result.composite(mBackground, 0, 0, CompositeOperator::OutCompositeOp);
 
     // free memory
     XDestroyImage(xImage);

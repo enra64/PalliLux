@@ -14,12 +14,6 @@ public:
      */
     void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom);
 
-private://member variables
-    /**
-     * @brief mScreenshotAccess this class provides access to screenshot functionality
-     */
-    Screenshot mScreenshot;
-
 private: // screen config info
     // left screen size and position
     const int LEFT_X_POSITION = 0;
@@ -41,6 +35,7 @@ private: // screen config info
 
     // composite width
     const int ALL_WIDTH = LEFT_SCREEN_WIDTH + CENTER_SCREEN_WIDTH + RIGHT_SCREEN_WIDTH;
+    const int ALL_HEIGHT = 1920;
 
     /**
      * @brief BORDER_SIZE how wide the border images should be
@@ -55,6 +50,12 @@ private: // screen config info
     const Dimensions mBottomLeftBorderDimensions =    {LEFT_X_POSITION,           LEFT_SCREEN_HEIGHT - BORDER_SIZE,   LEFT_SCREEN_WIDTH,      BORDER_SIZE};
     const Dimensions mBottomCenterBorderDimensions =  {CENTER_X_POSITION,         CENTER_SCREEN_HEIGHT - BORDER_SIZE, CENTER_SCREEN_WIDTH,    BORDER_SIZE};
     const Dimensions mBottomRightBorderDimensions =   {RIGHT_X_POSITION,          RIGHT_SCREEN_HEIGHT - BORDER_SIZE,  RIGHT_SCREEN_WIDTH,     BORDER_SIZE};
+
+private://member variables
+    /**
+     * @brief mScreenshotAccess this class provides access to screenshot functionality
+     */
+    Screenshot mScreenshot = Screenshot(ALL_WIDTH, ALL_HEIGHT);
 };
 
 #endif // BORDERSHOT_H

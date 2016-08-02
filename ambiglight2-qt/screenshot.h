@@ -18,7 +18,11 @@
 class Screenshot
 {
 public:
-    Screenshot();
+    /**
+     * @param w the width of the screen
+     * @param h the height of the screen
+     */
+    Screenshot(int w, int h);
     ~Screenshot();
 
     /**
@@ -48,7 +52,7 @@ private:
     /**
      * @brief mBackground the wallpaper set by the user
      */
-    Pixmap mBackground;
+    Magick::Image mBackground;
 };
 
 #endif // SCREENSHOT_H
