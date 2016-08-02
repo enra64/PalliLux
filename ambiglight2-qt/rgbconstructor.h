@@ -13,7 +13,6 @@
 class RgbConstructor
 {
 public:
-    RgbConstructor(){}
     /**
      * @brief takeAndParseScreenShot
      * @param screenShotter
