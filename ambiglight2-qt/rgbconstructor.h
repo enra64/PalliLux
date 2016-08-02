@@ -57,6 +57,8 @@ private:
      */
     void imageToRgb(std::unique_ptr<Magick::Image> lineBorder, uint8_t *result);
 
+    void saveBorders();
+
     /**
      * @brief mHorizontalLedCount amount of leds on each horizontal border
      */

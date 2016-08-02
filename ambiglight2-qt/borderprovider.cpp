@@ -13,6 +13,10 @@ using namespace std;
 
 void BorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom)
 {
+    Image test;
+    mScreenshot.takeScreenshot(test, Dimensions(0, 0, 1920+1080+1024, 1920));
+    test.write("test/test.jpg");
+
     // take shots of all but the bottom border
     mScreenshot.takeScreenshot(left, mLeftBorderDimensions);
     mScreenshot.takeScreenshot(top, mTopBorderDimensions);

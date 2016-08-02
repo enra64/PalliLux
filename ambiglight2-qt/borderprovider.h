@@ -45,7 +45,7 @@ private: // screen config info
     /**
      * @brief BORDER_SIZE how wide the border images should be
      */
-    const int BORDER_SIZE = 200;
+    const int BORDER_SIZE = 100;
 
     const Dimensions mTopBorderDimensions =          {LEFT_X_POSITION,           LEFT_Y_POSITION,                    ALL_WIDTH,             BORDER_SIZE};
     // right and left bars are inbetween the top and bottom bars, so their height has to be reduced.

@@ -2,6 +2,7 @@
 #define SCREENSHOT_H
 
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
 #include <ImageMagick-6/Magick++.h>
@@ -10,7 +11,8 @@
 #include "dimensions.h"
 
 /**
- * @brief The Screenshot class provides access to screen capturing functionality, mostly by its screenCapture method.
+ * @brief The Screenshot class provides access to screen capturing functionality,
+ * mostly by its screenCapture method.
  * It could be overridden or modified to use something else than the X display server.
  */
 class Screenshot
@@ -29,14 +31,24 @@ public:
 
 private:
     /**
+     * @brief getRootPixmap Retrieves the current background
+     */
+    Pixmap getRootPixmap(Display* display, Window* root);
+
+    /**
      * @brief mDisplay x display retrieved in constructor
      */
     Display* mDisplay;
 
     /**
-     * @brief mRootWindow i have no idea. needed for x screen capture.
+     * @brief mRootWindow x window thingy
      */
     Window mRootWindow;
+
+    /**
+     * @brief mBackground the wallpaper set by the user
+     */
+    Pixmap mBackground;
 };
 
 #endif // SCREENSHOT_H

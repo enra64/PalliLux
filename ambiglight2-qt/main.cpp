@@ -11,7 +11,7 @@ int main()
     RgbConstructor rgb;
     uint8_t rgbArray[480];
 
-    unsigned int runs = 100;
+    unsigned int runs = 1;
 
     float dur = 0;
 

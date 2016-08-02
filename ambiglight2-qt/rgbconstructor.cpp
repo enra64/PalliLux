@@ -13,11 +13,17 @@ float RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
     // take the border screenshot
     mBorderProvider.retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
 
+    // debug save
+    saveBorders();
+
     // scale the images down first to minimize processing time
     flattenBorders();
 
     // second, align the borders so they form a line
     unique_ptr<Image> pixelLine = alignBorders();
+
+    // debug print
+    pixelLine->write("test/result.png");
 
     // last, convert the line to rgb data
     imageToRgb(move(pixelLine), resultSpace);
@@ -66,4 +72,12 @@ void RgbConstructor::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* resu
         result[i + 1] = (255 * data.green());
         result[i + 2] = (255 * data.blue());
     }
+}
+
+void RgbConstructor::saveBorders()
+{
+    mRightImage.write("test/r.jpg");
+    mLeftImage.write("test/l.jpg");
+    mTopImage.write("test/t.jpg");
+    mBottomImage.write("test/b.jpg");
 }
