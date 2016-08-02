@@ -23,7 +23,7 @@ float RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
     unique_ptr<Image> pixelLine = alignBorders();
 
     // debug print
-    pixelLine->write("test/result.png");
+    pixelLine->write("test/flataligned.jpg");
 
     // last, convert the line to rgb data
     imageToRgb(move(pixelLine), resultSpace);

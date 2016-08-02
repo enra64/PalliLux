@@ -10,6 +10,8 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+using namespace Magick;
+
 Screenshot::Screenshot() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
@@ -35,15 +37,10 @@ float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
     // benchmarking start
     clock_t start = clock();
 
-    // get screenshot  x, y, width, height,
-    XWindowAttributes attrs;
-    XGetWindowAttributes(mDisplay, mRootWindow, &attrs);
-
-    Pixmap bg;
-    bg = getRootPixmap(mDisplay, &mRootWindow);
-
-    XImage* xImage = XGetImage(mDisplay, mBackground, d.x, d.y, d.w, d.h, ~0L, ZPixmap);
-    //XImage* xImage = XGetImage(mDisplay, bg, 0, 0, attrs.width, attrs.height, ~0, ZPixmap);
+    // get background
+    XImage* xBackgroundImage = XGetImage(mDisplay, mBackground, d.x, d.y, d.w, d.h, AllPlanes, ZPixmap);
+    // get windows
+    XImage* xImage = XGetImage(mDisplay, mRootWindow, d.x, d.y, d.w, d.h, AllPlanes, ZPixmap);
 
     // check output
     if(!xImage)
@@ -51,6 +48,11 @@ float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
 
     // create a magick++ image from the screenshot
     result.read(xImage->width, xImage->height, "BGRA", Magick::CharPixel, xImage->data);
+
+    Image bg;
+    bg.read(xBackgroundImage->width, xBackgroundImage->height, "BGRA", Magick::CharPixel, xBackgroundImage->data);
+
+    bg.composite(result, 0, 0);
 
     // free memory
     XDestroyImage(xImage);
