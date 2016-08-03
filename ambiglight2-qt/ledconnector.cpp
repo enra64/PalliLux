@@ -44,8 +44,8 @@ bool LedConnector::connect(const string& port) {
     // https://chrisheydrick.com/2012/06/17/how-to-read-serial-data-from-an-arduino-in-linux-with-c-part-3/
 
     // 9600 baud in and out
-    cfsetispeed(&options, B9600);
-    cfsetospeed(&options, B9600);
+    cfsetispeed(&options, B115200);
+    cfsetospeed(&options, B115200);
 
     // 8 bits, no parity, no stop bits
     options.c_cflag &= ~PARENB;
