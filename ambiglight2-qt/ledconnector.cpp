@@ -22,7 +22,15 @@ void LedConnector::update() {
 }
 
 void LedConnector::draw() {
-    write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
+
+    // write data buffer
+    // 160 led/default
+    //write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
+
+    // 18 leds with an offset of 36 leds
+    write(mSerialFd, mRgbBuffer, (18*3));
+
+    usleep(1000 * 10);
 }
 
 bool LedConnector::connect(const string& port) {
@@ -43,7 +51,7 @@ bool LedConnector::connect(const string& port) {
     // set our options:
     // https://chrisheydrick.com/2012/06/17/how-to-read-serial-data-from-an-arduino-in-linux-with-c-part-3/
 
-    // 9600 baud in and out
+    // 115200 baud in and out
     cfsetispeed(&options, B115200);
     cfsetospeed(&options, B115200);
 
@@ -74,7 +82,7 @@ bool LedConnector::connect(const string& port) {
     tcsetattr(mSerialFd, TCSANOW, &options);
 
     // wait for arduino reset
-    usleep(1000*1000);
+    usleep(1000*2000);
 
     // flush serial buffer
     tcflush(mSerialFd, TCIFLUSH);
@@ -83,7 +91,10 @@ bool LedConnector::connect(const string& port) {
     write(mSerialFd, "hello", 5);
 
     // read arduino response
-    size_t rec = read(mSerialFd, &mCommBuffer, 128);
+    size_t rec = 0;
+
+    while(rec < 3)
+        rec += read(mSerialFd, &mCommBuffer, 128);
 
     // null-terminate string
     mCommBuffer[rec] = 0;

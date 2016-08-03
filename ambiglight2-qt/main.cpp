@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <string>
 
+#include <assert.h>
+
 using namespace std;
 
 #include "ledconnector.h"
@@ -15,11 +17,15 @@ int main()
     std::shared_ptr<BorderProvider> provider = std::static_pointer_cast<BorderProvider>(std::make_shared<XlibBorderProvider>());
     LedConnector connector(provider, 60, 20);
 
-    connector.connect("/dev/ttyUSB0");
+    bool connection = connector.connect("/dev/ttyUSB0");
 
-    for(int i = 0; i < 100; i++){
+    assert(connection);
+
+    cout << "conn ok" << endl;
+
+    for(int i = 0; i < 100;){
         connector.update();
-        //connector.draw();
+        connector.draw();
     }
 
     cout << "avg fps:" << (1.f / connector.getAverageUpdateDuration()) << endl;

@@ -5,6 +5,7 @@ using namespace std;
 
 #include <vector>
 #include <ctime>
+#include <iostream>
 #include <assert.h>
 
 RgbConverter::RgbConverter(std::shared_ptr<BorderProvider> provider, unsigned int horizontalLedCount, unsigned int verticalLedCount) : HORIZONTAL_LED_COUNT(horizontalLedCount), VERTICAL_LED_COUNT(verticalLedCount), mBorderProvider(provider) {
@@ -80,6 +81,7 @@ void RgbConverter::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result
         result[i + 0] = (255 * data.red());
         result[i + 1] = (255 * data.green());
         result[i + 2] = (255 * data.blue());
+        //cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
     }
 }
 
