@@ -4,30 +4,24 @@
 
 using namespace std;
 
+#include "ledconnector.h"
 #include "rgbconstructor.h"
 
 using namespace std;
 
 int main()
 {
-    RgbConstructor rgb;
-    uint8_t rgbArray[480];
+    std::shared_ptr<BorderProvider> provider = std::make_shared<BorderProvider>();
+    LedConnector connector(provider, 60, 20);
 
-    unsigned int runs = 100;
+    connector.connect("/dev/ttyUSB0");
 
-    float dur = 0;
-
-    for(unsigned int i = 0; i < runs; i++)
-        dur += rgb.takeAndParseScreenShot(rgbArray);
-
-    dur /= (float) runs;
-
-    cout << "avg dur:" << dur << " -> fps:" << (1.f / dur) << endl;
-
-    for(int i = 0; i < 480; i+=3){
-        cout << "R:" << to_string(rgbArray[i]) << " G:" << to_string(rgbArray[i+1]) << " B:" << to_string(rgbArray[i+2]) << endl;
-
+    for(int i = 0; i < 100; i++){
+        connector.update();
+        //connector.draw();
     }
+
+    cout << "avg fps:" << (1.f / connector.getAverageUpdateDuration()) << endl;
 
     return 0;
 }

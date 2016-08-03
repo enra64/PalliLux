@@ -10,42 +10,45 @@
 #include "dimensions.h"
 #include "borderprovider.h"
 
-class RgbConstructor
+class RgbConverter
 {
 public:
     /**
+     * @brief RgbConstructor create a new rgb constructor object
+     * @param provider the BorderProvider that will be used to capture the screen borders
+     * @param verticalLedCount how many leds are on each vertical border
+     * @param horizontalLedCount how many leds are on each horizontal border
+     */
+    RgbConverter(std::shared_ptr<BorderProvider> provider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
+
+    /**
      * @brief takeAndParseScreenShot
      * @param screenShotter
-     * @param resultSpace
+     * @param resultSpace rgb data result buffer; must be as large as
      */
     float takeAndParseScreenShot(uint8_t *resultSpace);
+
+    /**
+     * @brief getRequiredBufferLength
+     * @return the number of bytes required to buffer the resulting led data
+     */
+    size_t getRequiredBufferLength() const;
 
 private:
     /**
      * @brief parseScreenshot parse a screenshot, beginning
-     * @param rightBorder image data for right border
-     * @param topBorder image data for top border
-     * @param leftBorder image data for left border
-     * @param bottomBorder image data for bottom border
      * @param resultSpace resulting buffer; if this is not big enough to hold all led data (see LED_DATA_BYTE_COUNT), you will have problems
      */
     float parseScreenshot(uint8_t* resultSpace);
+
     /**
      * @brief alignBorderImages take the borders, and bring them into the correct order, fusing them at the edges
-     * @param rightBorder image data for right border
-     * @param topBorder image data for top border
-     * @param leftBorder image data for left border
-     * @param bottomBorder image data for bottom border
      * @return pointer to the new, aligned image.
      */
     std::unique_ptr<Magick::Image> alignBorders();
 
     /**
      * @brief scaleImages Scale down the image data to a flat line as wide as we have leds to save on processing time
-     * @param rightBorder image data for right border
-     * @param topBorder image data for top border
-     * @param leftBorder image data for left border
-     * @param bottomBorder image data for bottom border
      */
     void flattenBorders();
 
@@ -56,27 +59,30 @@ private:
      */
     void imageToRgb(std::unique_ptr<Magick::Image> lineBorder, uint8_t *result);
 
+    /**
+     * @brief debugSaveBorders save the current border images to disk
+     */
     void debugSaveBorders();
 
     /**
      * @brief mHorizontalLedCount amount of leds on each horizontal border
      */
-    const static unsigned int HORIZONTAL_LED_COUNT = 30;
+    const unsigned int HORIZONTAL_LED_COUNT;
 
     /**
      * @brief mVerticalLedCount amount of leds on each vertical border
      */
-    const static unsigned int VERTICAL_LED_COUNT = 20;
+    const unsigned int VERTICAL_LED_COUNT;
 
     /**
      * @brief mLedCount overall led count in use
      */
-    const static unsigned int LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2;
+    const unsigned int LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2;
 
     /**
      * @brief LED_DATA_BYTE_COUNT amount of bytes needed for the led data
      */
-    const static unsigned int LED_DATA_BYTE_COUNT = 3 * LED_COUNT;
+    const unsigned int LED_DATA_BYTE_COUNT = 3 * LED_COUNT;
 
     /**
      * @brief mVerticalLedGeometry imagemagick expects geometry objects for scaling; this is the horizontal geometry
@@ -91,7 +97,7 @@ private:
     /**
      * @brief mScreenShotter class instance used to create the images of each border
      */
-    BorderProvider mBorderProvider;
+    std::shared_ptr<BorderProvider> mBorderProvider;
 
     /**  @name images
      *   Magick++-images used to store the borders while processing them

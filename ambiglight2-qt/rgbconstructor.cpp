@@ -5,13 +5,18 @@ using namespace std;
 
 #include <vector>
 #include <ctime>
+#include <assert.h>
 
-float RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
-{
+RgbConverter::RgbConverter(std::shared_ptr<BorderProvider> provider, unsigned int horizontalLedCount, unsigned int verticalLedCount) : HORIZONTAL_LED_COUNT(horizontalLedCount), VERTICAL_LED_COUNT(verticalLedCount), mBorderProvider(provider) {
+    // we need a borderProvider, so check for nullptr
+    assert(provider);
+}
+
+float RgbConverter::takeAndParseScreenShot(uint8_t *resultBuffer) {
     clock_t start = clock();
 
     // take the border screenshot
-    mBorderProvider.retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
+    mBorderProvider->retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
 
     // debug save
     //debugSaveBorders();
@@ -26,12 +31,16 @@ float RgbConstructor::takeAndParseScreenShot(uint8_t* resultSpace)
     //pixelLine->write("test/flataligned.jpg");
 
     // last, convert the line to rgb data
-    imageToRgb(move(pixelLine), resultSpace);
+    imageToRgb(move(pixelLine), resultBuffer);
 
     return float(clock() - start) / CLOCKS_PER_SEC;
 }
 
-std::unique_ptr<Image> RgbConstructor::alignBorders() {
+size_t RgbConverter::getRequiredBufferLength() const {
+    return LED_DATA_BYTE_COUNT;
+}
+
+std::unique_ptr<Image> RgbConverter::alignBorders() {
     // rotate so the border ends align
     mRightImage.rotate(270);
     mTopImage.rotate(180);
@@ -54,7 +63,7 @@ std::unique_ptr<Image> RgbConstructor::alignBorders() {
     return std::unique_ptr<Image>(result);
 }
 
-void RgbConstructor::flattenBorders() {
+void RgbConverter::flattenBorders() {
     // reduce size of the border images
     mRightImage.sample(mVerticalLedGeometry);
     mLeftImage.sample(mVerticalLedGeometry);
@@ -62,7 +71,7 @@ void RgbConstructor::flattenBorders() {
     mBottomImage.sample(mHorizontalLedGeometry);
 }
 
-void RgbConstructor::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result) {
+void RgbConverter::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result) {
     // for each led
     for(unsigned int i = 0; i < LED_COUNT; i+=3) {
         // retrieve rgb data from the line
@@ -74,8 +83,7 @@ void RgbConstructor::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* resu
     }
 }
 
-void RgbConstructor::debugSaveBorders()
-{
+void RgbConverter::debugSaveBorders() {
     mRightImage.write("test/r.jpg");
     mLeftImage.write("test/l.jpg");
     mTopImage.write("test/t.jpg");

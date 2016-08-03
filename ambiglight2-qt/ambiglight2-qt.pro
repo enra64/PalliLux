@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console c++14
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -15,10 +15,12 @@ SOURCES += \
     rgbconstructor.cpp \
     main.cpp \
     screenshot.cpp \
-    borderprovider.cpp
+    borderprovider.cpp \
+    ledconnector.cpp
 
 HEADERS += \
     rgbconstructor.h \
     screenshot.h \
     dimensions.h \
-    borderprovider.h
+    borderprovider.h \
+    ledconnector.h

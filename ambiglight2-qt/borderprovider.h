@@ -5,14 +5,17 @@
 #include "screenshot.h"
 
 /**
- * @brief The BorderProvider class is designed to keep the other code somewhat clean by containing all information about the screen configuration.
+ * @brief The BorderProvider class is designed to keep the other code somewhat clean by containing all information about the screen configuration. It is responsible for delivering
+ * images of the borders to the converter
  */
 class BorderProvider {
 public:
+    BorderProvider();
+    ~BorderProvider();
     /**
      * @brief takeBorderShot This function creates a shot of each border; the rgb constructor can then use it to create the LED data
      */
-    void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom);
+    void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) const;
 
 private: // screen config info
     // left screen size and position
@@ -55,7 +58,7 @@ private://member variables
     /**
      * @brief mScreenshotAccess this class provides access to screenshot functionality
      */
-    Screenshot mScreenshot = Screenshot(ALL_WIDTH, ALL_HEIGHT);
+    Screenshot* mScreenshot;
 };
 
 #endif // BORDERSHOT_H
