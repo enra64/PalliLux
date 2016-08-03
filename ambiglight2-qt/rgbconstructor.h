@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "dimensions.h"
-#include "borderprovider.h"
+#include "xlibborderprovider.h"
 
 class RgbConverter
 {

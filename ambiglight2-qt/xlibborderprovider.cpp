@@ -1,4 +1,4 @@
-#include "borderprovider.h"
+#include "xlibborderprovider.h"
 
 #include <ImageMagick-6/Magick++.h>
 #include <ImageMagick-6/magick/image.h>
@@ -11,19 +11,19 @@
 using namespace Magick;
 using namespace std;
 
-BorderProvider::BorderProvider()
+XlibBorderProvider::XlibBorderProvider()
 {
     mScreenshot = new Screenshot(ALL_WIDTH, ALL_HEIGHT);
 }
 
-BorderProvider::~BorderProvider()
+XlibBorderProvider::~XlibBorderProvider()
 {
     delete mScreenshot;
 }
 
 
 
-void BorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const
+void XlibBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const
 {
     // take shots of all but the bottom border
     mScreenshot->takeScreenshot(left, mLeftBorderDimensions);

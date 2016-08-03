@@ -6,12 +6,13 @@ using namespace std;
 
 #include "ledconnector.h"
 #include "rgbconstructor.h"
+#include "vlcdiskstreamborderprovider.h"
 
 using namespace std;
 
 int main()
 {
-    std::shared_ptr<BorderProvider> provider = std::make_shared<BorderProvider>();
+    std::shared_ptr<BorderProvider> provider = std::static_pointer_cast<BorderProvider>(std::make_shared<XlibBorderProvider>());
     LedConnector connector(provider, 60, 20);
 
     connector.connect("/dev/ttyUSB0");
