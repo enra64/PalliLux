@@ -18,9 +18,6 @@ Screenshot::Screenshot(int w, int h) {
     // confirm display ok
     if(!mDisplay) throw "Cannot connect to X server";
 
-    // retrieve default screen... for testing, return value is unused
-    DefaultScreen(mDisplay);
-
     // get the root window
     mRootWindow = RootWindow(mDisplay, DefaultScreen(mDisplay));
 }

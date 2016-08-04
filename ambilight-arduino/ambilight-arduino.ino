@@ -64,7 +64,9 @@ void setup() {
 void loop() {
   if(Serial.available()){
     Serial.readBytes((char*)leds.leds, NUM_LEDS * 3);
+    Serial.write('k');
     FastLED.show();
+    
   }
   
 }

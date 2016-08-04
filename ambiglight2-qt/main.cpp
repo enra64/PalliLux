@@ -19,9 +19,9 @@ int main()
 
     bool connection = connector.connect("/dev/ttyUSB0");
 
-    assert(connection);
+    // abort if connection is impossible
+    if(!connection) exit(1);
 
-    cout << "conn ok" << endl;
 
     for(int i = 0; i < 100;){
         connector.update();

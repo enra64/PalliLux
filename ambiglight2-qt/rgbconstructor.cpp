@@ -43,7 +43,7 @@ size_t RgbConverter::getRequiredBufferLength() const {
 
 std::unique_ptr<Image> RgbConverter::alignBorders() {
     // rotate so the border ends align
-    mRightImage.rotate(270);
+    mRightImage.rotate(90);
     mTopImage.rotate(180);
     mLeftImage.rotate(270);
     // no rotation necessary for bottomBorder
@@ -74,13 +74,13 @@ void RgbConverter::flattenBorders() {
 
 void RgbConverter::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result) {
     // for each led
-    for(unsigned int i = 0; i < LED_COUNT; i+=3) {
+    for(unsigned int i = 0; i < LED_COUNT; i++) {
         // retrieve rgb data from the line
         ColorRGB data = lineBorder->pixelColor(i, 0);
         // convert from 0-1 to 0-255
-        result[i + 0] = (255 * data.red());
-        result[i + 1] = (255 * data.green());
-        result[i + 2] = (255 * data.blue());
+        result[i*3 + 0] = (255 * data.red());
+        result[i*3 + 1] = (255 * data.green());
+        result[i*3 + 2] = (255 * data.blue());
         //cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
     }
 }
