@@ -48,11 +48,6 @@ private:
      * @brief mRootWindow x window thingy
      */
     Window mRootWindow;
-
-    /**
-     * @brief mBackground the wallpaper set by the user
-     */
-    Magick::Image mBackground;
 };
 
 #endif // SCREENSHOT_H
