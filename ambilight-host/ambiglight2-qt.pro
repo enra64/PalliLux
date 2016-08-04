@@ -15,15 +15,16 @@ SOURCES += \
     rgbconstructor.cpp \
     main.cpp \
     screenshot.cpp \
-    ledconnector.cpp \
     xlibborderprovider.cpp \
-    vlcdiskstreamborderprovider.cpp
+    vlcdiskstreamborderprovider.cpp \
+    ambiconnector.cpp
 
 HEADERS += \
     rgbconstructor.h \
     screenshot.h \
     dimensions.h \
-    ledconnector.h \
     borderprovider.h \
     xlibborderprovider.h \
-    vlcdiskstreamborderprovider.h
+    vlcdiskstreamborderprovider.h \
+    ledexceptions.h \
+    ambiconnector.h

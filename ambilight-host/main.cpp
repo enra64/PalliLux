@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#include "ledconnector.h"
+#include "ambiconnector.h"
 #include "rgbconstructor.h"
 #include "vlcdiskstreamborderprovider.h"
 
@@ -17,15 +17,15 @@ int main() {
     std::shared_ptr<BorderProvider> provider = std::static_pointer_cast<BorderProvider>(std::make_shared<XlibBorderProvider>());
 
     // supply our ledconnector with the desired borderProvider and the count of horizontal/vertical leds on each border
-    LedConnector connector(provider, 60, 20);
+    AmbiConnector connector(provider, 60, 20);
 
     // connect to the arduino; abort if connection failed
     if(!connector.connect("/dev/ttyUSB0"))
         exit(1);
 
     // loop: update the screen images and push the data to the arduino
-    for(int i = 0; i < 100; i++) {
-    //while(1) {
+    //for(int i = 0; i < 100; i++) {
+    while(1) {
         connector.update();
         connector.draw();
     }

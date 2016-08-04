@@ -1,5 +1,5 @@
 #include "xlibborderprovider.h"
-#include "ledconnector.h"
+#include "ambiconnector.h"
 
 #include "assert.h"
 #include <memory>
@@ -10,15 +10,17 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <sys/poll.h>
+#include <string.h>
 
 using namespace std;
 
-LedConnector::LedConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount) {
+AmbiConnector::AmbiConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount) {
     mRgbConverter = make_unique<RgbConverter>(borderProvider, horizontalLedCount, verticalLedCount);
     mRgbBuffer = new uint8_t[mRgbConverter->getRequiredBufferLength()];
 }
 
-void LedConnector::writeRgbBufferToText(string path) {
+void AmbiConnector::writeRgbBufferToText(string path) {
     // open the file
     FILE* debugFile = fopen(path.c_str(), "w+");
 
@@ -38,7 +40,18 @@ void LedConnector::writeRgbBufferToText(string path) {
     fclose(debugFile);
 }
 
-void LedConnector::update() {
+void AmbiConnector::waitForSerialInput() {
+    // create poll struct, watching our serial file descriptor for input events
+    struct pollfd pollStruct[1];
+    pollStruct[0].fd = mSerialFd;
+    pollStruct[0].events = POLLIN ;
+
+    // poll, checking for failure
+    if (poll(pollStruct, 1, 1000) < 0)
+        throw new AmbiConnectorCommunicationException(strerror(errno));
+}
+
+void AmbiConnector::update() {
     // update count for fps
     mUpdateCount++;
 
@@ -46,24 +59,25 @@ void LedConnector::update() {
     mUpdateDuration += mRgbConverter->takeAndParseScreenShot(mRgbBuffer);
 }
 
-void LedConnector::draw() {
+void AmbiConnector::draw() {
     // write data buffer
     write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
 
     // wait for arduino acknowledgement
-    size_t receiveCount = 0;
-    while(receiveCount <= 0)
-        receiveCount += read(mSerialFd, mCommBuffer, 128);
+    waitForSerialInput();
+
+    // read input
+    read(mSerialFd, mCommBuffer, 128);
 
     // check the acknowledgement char
     if(mCommBuffer[0] != 'k')
-        throw new LedConnectorException("incorrect acknowledgement character received");
+        throw new AmbiConnectorProtocolException("incorrect acknowledgement character received");
 
     // still working
     cout << "ACK" << ++mDrawCount << endl;
 }
 
-bool LedConnector::connect(const string& port) {
+bool AmbiConnector::connect(const string& port) {
     // close previous serial connection
     close(mSerialFd);
 
@@ -72,7 +86,7 @@ bool LedConnector::connect(const string& port) {
 
     // -1 is returned on error
     if(mSerialFd == -1) {
-        throw new LedConnectorException("could not open " + port);
+        throw new AmbiConnectorCommunicationException("could not open " + port);
     }
 
     // get current control struct
@@ -101,9 +115,7 @@ bool LedConnector::connect(const string& port) {
     // disable input/output flow control, disable restart chars
     options.c_iflag &= ~(IXON | IXOFF | IXANY);
 
-    /* disable canonical input, disable echo,
-    disable visually erase chars,
-    disable terminal-generated signals */
+    // disable: canonical input, echo, visually erase chars, terminal-generated signals
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
     // disable output processing
@@ -124,8 +136,10 @@ bool LedConnector::connect(const string& port) {
     // read arduino response
     size_t rec = 0;
 
-    while(rec < 3)
+    while(rec < 3){
+        waitForSerialInput();
         rec += read(mSerialFd, &mCommBuffer, 128);
+    }
 
     // null-terminate string
     mCommBuffer[rec] = 0;
@@ -135,11 +149,11 @@ bool LedConnector::connect(const string& port) {
         cout << "opening sequence ok" << endl;
         return true;
     }
-    throw new LedConnectorException("faulty opening sequence");
+    throw new AmbiConnectorProtocolException("faulty opening sequence");
     return false;
 }
 
-LedConnector::~LedConnector() {
+AmbiConnector::~AmbiConnector() {
     delete[] mRgbBuffer;
     close(mSerialFd);
 }

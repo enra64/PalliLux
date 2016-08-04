@@ -2,31 +2,12 @@
 #define LEDCONNECTOR_H
 
 #include "rgbconstructor.h"
-
-/**
- * @brief The LedConnectorException class provides exceptions occurring in LedConnector
- */
-class LedConnectorException : public std::runtime_error {
-public:
-    /**
-     * @brief LedConnectorException const char* constructor
-     * @param message the error
-     */
-    explicit LedConnectorException(const char* message) : runtime_error(message) {
-    }
-
-    /**
-     * @brief LedConnectorException std::string constructor
-     * @param message the error
-     */
-    explicit LedConnectorException(const std::string& message) : runtime_error(message) {
-    }
-};
+#include "ledexceptions.h"
 
 /**
  * @brief The LedConnector class is the master class. It interfaces with the RGB leds and obtains the image data.
  */
-class LedConnector {
+class AmbiConnector {
 public:
     /**
      * @brief update update screen data
@@ -48,7 +29,7 @@ public:
      * @brief getAverageUpdateDuration speed statistics
      * @return average duration of the update function in seconds
      */
-    float getAverageUpdateDuration() {
+    inline float getAverageUpdateDuration() {
         return mUpdateDuration / mUpdateCount;
     }
 
@@ -56,7 +37,7 @@ public:
      * @brief getAverageUpdateDuration speed statistics
      * @return average duration of the draw function in seconds
      */
-    float getAverageDrawDuration() {
+    inline float getAverageDrawDuration() {
         return mDrawDuration / mDrawCount;
     }
 
@@ -66,9 +47,9 @@ public:
      * @param horizontalLedCount how many leds are on each horizontal border
      * @param verticalLedCount how many leds are on each vertical border
      */
-    LedConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
+    AmbiConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
 
-    ~LedConnector();
+    ~AmbiConnector();
 private:
 
     /**
@@ -98,6 +79,8 @@ private:
      * @param path where to write to
      */
     void writeRgbBufferToText(std::string path);
+
+    void waitForSerialInput();
 
     float mDrawDuration = 0, mUpdateDuration = 0;
 

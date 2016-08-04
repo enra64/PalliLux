@@ -1,8 +1,8 @@
 #ifndef BORDERPROVIDER_H
 #define BORDERPROVIDER_H
 
-#include <ImageMagick-6/Magick++.h>
-#include <ImageMagick-6/magick/image.h>
+#include "ImageMagick-6/Magick++.h"
+#include "ImageMagick-6/magick/image.h"
 
 /**
  * @brief The BorderProvider class should contain all information about the screen configuration,
