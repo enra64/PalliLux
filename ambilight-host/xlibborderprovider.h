@@ -49,7 +49,7 @@ private: // screen config info
     /**
      * @brief BORDER_SIZE how wide the border images should be
      */
-    const int BORDER_SIZE = 50;
+    const int BORDER_SIZE = 100;
 
     //@{
     /** resulting dimensions using the constants defined for the screen sizes  */

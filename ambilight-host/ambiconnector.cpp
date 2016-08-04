@@ -3,6 +3,7 @@
 
 #include "assert.h"
 #include <memory>
+#include <ctime>
 #include <sys/ioctl.h>
 #include <cstdio>
 #include <iostream>
@@ -18,6 +19,9 @@ using namespace std;
 AmbiConnector::AmbiConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount) {
     mRgbConverter = make_unique<RgbConverter>(borderProvider, horizontalLedCount, verticalLedCount);
     mRgbBuffer = new uint8_t[mRgbConverter->getRequiredBufferLength()];
+
+    // initialise timekeeping
+    mLastDraw = clock();
 }
 
 void AmbiConnector::writeRgbBufferToText(string path) {
@@ -51,12 +55,14 @@ void AmbiConnector::waitForSerialInput() {
         throw new AmbiConnectorCommunicationException(strerror(errno));
 }
 
-void AmbiConnector::update() {
-    // update count for fps
-    mUpdateCount++;
+void AmbiConnector::updateFps() {
+    mCurrentFps = 1.f / (static_cast<float>(clock() - mLastDraw) / CLOCKS_PER_SEC);
+    mLastDraw = clock();
+}
 
+void AmbiConnector::update() {
     // refresh screen data, update duration
-    mUpdateDuration += mRgbConverter->takeAndParseScreenShot(mRgbBuffer);
+    mRgbConverter->takeAndParseScreenShot(mRgbBuffer);
 }
 
 void AmbiConnector::draw() {
@@ -73,8 +79,8 @@ void AmbiConnector::draw() {
     if(mCommBuffer[0] != 'k')
         throw new AmbiConnectorProtocolException("incorrect acknowledgement character received");
 
-    // still working
-    cout << "ACK" << ++mDrawCount << endl;
+    // keep check of how long draw-to-draw takes
+    updateFps();
 }
 
 bool AmbiConnector::connect(const string& port) {
@@ -136,7 +142,7 @@ bool AmbiConnector::connect(const string& port) {
     // read arduino response
     size_t rec = 0;
 
-    while(rec < 3){
+    while(rec < 3) {
         waitForSerialInput();
         rec += read(mSerialFd, &mCommBuffer, 128);
     }

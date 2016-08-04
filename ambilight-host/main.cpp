@@ -28,10 +28,9 @@ int main() {
     while(1) {
         connector.update();
         connector.draw();
-    }
 
-    cout << "avg update fps:" << (1.f / connector.getAverageUpdateDuration()) << endl;
-    cout << "avg draw fps:" << (1.f / connector.getAverageUpdateDuration()) << endl;
+        cout << "avg draw fps:" << connector.getCurrentFps() << endl;
+    }
 
     return 0;
 }

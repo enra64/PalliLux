@@ -26,19 +26,11 @@ public:
     bool connect(const std::__cxx11::string &port);
 
     /**
-     * @brief getAverageUpdateDuration speed statistics
-     * @return average duration of the update function in seconds
+     * @brief getCurrentFps calculate and return the current fps, measured by completed draw calls
+     * @return current fps
      */
-    inline float getAverageUpdateDuration() {
-        return mUpdateDuration / mUpdateCount;
-    }
-
-    /**
-     * @brief getAverageUpdateDuration speed statistics
-     * @return average duration of the draw function in seconds
-     */
-    inline float getAverageDrawDuration() {
-        return mDrawDuration / mDrawCount;
+    inline float getCurrentFps() {
+        return mCurrentFps;
     }
 
     /**
@@ -80,11 +72,25 @@ private:
      */
     void writeRgbBufferToText(std::string path);
 
+    /**
+     * @brief waitForSerialInput this function implements non-busy waiting for a response on the serial file descriptor
+     */
     void waitForSerialInput();
 
-    float mDrawDuration = 0, mUpdateDuration = 0;
+    /**
+     * @brief mLastDraw a timestamp of when the last draw was executed
+     */
+    clock_t mLastDraw;
 
-    unsigned int mDrawCount = 0, mUpdateCount = 0;
+    /**
+     * @brief mCurrentFps current fps, saved so the timekeeping code can always be called at the same moment
+     */
+    float mCurrentFps;
+
+    /**
+     * @brief updateFps update "::"<mCurrentFps> and "::"<mLastDraw>
+     */
+    void updateFps();
 };
 
 #endif // LEDCONNECTOR_H

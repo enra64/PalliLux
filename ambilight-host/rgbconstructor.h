@@ -31,7 +31,17 @@ public:
      * @brief getRequiredBufferLength
      * @return the number of bytes required to buffer the resulting led data
      */
-    size_t getRequiredBufferLength() const;
+    size_t getRequiredBufferLength() const {
+        return 3 * LED_COUNT;
+    }
+
+    /**
+     * @brief setBrightnessFactor set a factor for all channel brightnesses
+     * @param val new factor; values greater than 1 will be interesting...
+     */
+    void setBrightnessFactor(float val){
+        mBrightnessFactor = val;
+    }
 
 private:
     /**
@@ -79,11 +89,6 @@ private:
     const unsigned int LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2;
 
     /**
-     * @brief LED_DATA_BYTE_COUNT amount of bytes needed for the led data
-     */
-    const unsigned int LED_DATA_BYTE_COUNT = 3 * LED_COUNT;
-
-    /**
      * @brief mVerticalLedGeometry imagemagick expects geometry objects for scaling; this is the horizontal geometry
      */
     const Magick::Geometry mHorizontalLedGeometry = Magick::Geometry(HORIZONTAL_LED_COUNT, 1);
@@ -104,6 +109,12 @@ private:
     ///@{
     Magick::Image mRightImage, mTopImage, mLeftImage, mBottomImage;
     ///@}
+    ///
+
+    /**
+     * @brief mBrightnessFactor factor for rgb data brightness regulation
+     */
+    float mBrightnessFactor = 1.f;
 };
 
 #endif // RGBCONSTRUCTOR_H
