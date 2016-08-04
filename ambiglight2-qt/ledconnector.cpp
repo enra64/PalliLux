@@ -27,10 +27,10 @@ void LedConnector::draw() {
 
     // write data buffer
     // 160 led/default
-    //write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
+    write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
 
     // 18 leds
-    write(mSerialFd, mRgbBuffer, (18*3));
+    //write(mSerialFd, mRgbBuffer, (18*3));
 
     // wait for arduino acknowledgement
     size_t receiveCount = 0;
@@ -40,6 +40,7 @@ void LedConnector::draw() {
 
     assert(mCommBuffer[0] == 'k');
 
+    /*
     FILE* f = fopen("test/rgbBuffer.txt", "w+");
 
     for(int i = 0; i < 18*3; i+=3){
@@ -47,7 +48,7 @@ void LedConnector::draw() {
         fputs(line.c_str(), f);
     }
 
-    fclose(f);
+    fclose(f);*/
 
     cout << "ACK" << ++mDrawCount << endl;
 }

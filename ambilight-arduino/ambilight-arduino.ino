@@ -1,9 +1,9 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 18//160
+#define NUM_LEDS_CURRENT 160//160
 #define DATA_PIN 3
 
-CRGBArray<NUM_LEDS> leds;
+CRGBArray<NUM_LEDS_CURRENT> leds;
 
 uint8_t comBuffer[64];
 
@@ -39,7 +39,7 @@ void show_msg(msg e){
 
 void setup() {
     // add leds
-    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS_CURRENT);
     
     // begin serial communication
     Serial.begin(115200);
@@ -63,7 +63,10 @@ void setup() {
 
 void loop() {
   if(Serial.available()){
-    Serial.readBytes((char*)leds.leds, NUM_LEDS * 3);
+    // read data for connected leds
+    Serial.readBytes((char*)leds.leds, NUM_LEDS_CURRENT * 3);
+
+    // acknowledge read
     Serial.write('k');
     FastLED.show();
     
