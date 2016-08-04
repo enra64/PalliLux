@@ -18,38 +18,48 @@ LedConnector::LedConnector(std::shared_ptr<BorderProvider> borderProvider, unsig
     mRgbBuffer = new uint8_t[mRgbConverter->getRequiredBufferLength()];
 }
 
+void LedConnector::writeRgbBufferToText(string path) {
+    // open the file
+    FILE* debugFile = fopen(path.c_str(), "w+");
+
+    // check the file handle
+    if(debugFile == NULL)
+        throw invalid_argument("No file could be opened at " + path);
+
+    // print a rgb triple per line
+    for(size_t i = 0; i < mRgbConverter->getRequiredBufferLength(); i+=3) {
+        // data string
+        string line = "R" + to_string(mRgbBuffer[i]) + "G" + to_string(mRgbBuffer[i+1]) + "B" + to_string(mRgbBuffer[i+2]) + "\n";
+        // write to file
+        fputs(line.c_str(), debugFile);
+    }
+
+    // close file
+    fclose(debugFile);
+}
+
 void LedConnector::update() {
+    // update count for fps
     mUpdateCount++;
+
+    // refresh screen data, update duration
     mUpdateDuration += mRgbConverter->takeAndParseScreenShot(mRgbBuffer);
 }
 
 void LedConnector::draw() {
-
     // write data buffer
-    // 160 led/default
     write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
-
-    // 18 leds
-    //write(mSerialFd, mRgbBuffer, (18*3));
 
     // wait for arduino acknowledgement
     size_t receiveCount = 0;
-
     while(receiveCount <= 0)
         receiveCount += read(mSerialFd, mCommBuffer, 128);
 
-    assert(mCommBuffer[0] == 'k');
+    // check the acknowledgement char
+    if(mCommBuffer[0] != 'k')
+        throw new LedConnectorException("incorrect acknowledgement character received");
 
-    /*
-    FILE* f = fopen("test/rgbBuffer.txt", "w+");
-
-    for(int i = 0; i < 18*3; i+=3){
-        string line = "R" + to_string(mRgbBuffer[i]) + "G" + to_string(mRgbBuffer[i+1]) + "B" + to_string(mRgbBuffer[i+2]) + "\n";
-        fputs(line.c_str(), f);
-    }
-
-    fclose(f);*/
-
+    // still working
     cout << "ACK" << ++mDrawCount << endl;
 }
 
@@ -61,9 +71,8 @@ bool LedConnector::connect(const string& port) {
     mSerialFd = open(port.c_str(), O_RDWR | O_NOCTTY);
 
     // -1 is returned on error
-    if(mSerialFd == -1){
-        cout << "could not open tty - fd is -1" << endl;
-        return false;
+    if(mSerialFd == -1) {
+        throw new LedConnectorException("could not open " + port);
     }
 
     // get current control struct
@@ -122,11 +131,11 @@ bool LedConnector::connect(const string& port) {
     mCommBuffer[rec] = 0;
 
     // check whether the arduino responded correctly
-    if(string(mCommBuffer, rec) == "SAM"){
+    if(string(mCommBuffer, rec) == "SAM") {
         cout << "opening sequence ok" << endl;
         return true;
     }
-    cout << "opening sequence faulty" << endl;
+    throw new LedConnectorException("faulty opening sequence");
     return false;
 }
 

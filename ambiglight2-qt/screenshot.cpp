@@ -12,7 +12,7 @@
 
 using namespace Magick;
 
-Screenshot::Screenshot(int w, int h) {
+Screenshot::Screenshot() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
@@ -26,7 +26,7 @@ Screenshot::~Screenshot() {
     XCloseDisplay(mDisplay);
 }
 
-float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
+float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) const {
     // benchmarking start
     clock_t start = clock();
 
@@ -45,31 +45,4 @@ float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) {
 
     // return benchmarking value
     return float(clock() - start) / CLOCKS_PER_SEC;
-}
-
-Pixmap Screenshot::getRootPixmap(Display *display, Window *root) {
-    Pixmap currentRootPixmap;
-    Atom act_type;
-    int act_format;
-    unsigned long nitems, bytes_after;
-    unsigned char *data = nullptr;
-    Atom _XROOTPMAP_ID;
-
-    _XROOTPMAP_ID = XInternAtom(display, "_XROOTPMAP_ID", False);
-
-    if (XGetWindowProperty(display, *root, _XROOTPMAP_ID, 0, 1, False,
-                           XA_PIXMAP, &act_type, &act_format, &nitems, &bytes_after,
-                           &data) == Success) {
-
-        if (data) {
-            currentRootPixmap = *((Pixmap *) data);
-            XFree(data);
-        }
-        else
-            throw "background data is nullptr";
-    }
-    else
-        throw "XGetWindowProperty for background failed";
-
-    return currentRootPixmap;
 }

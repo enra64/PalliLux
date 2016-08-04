@@ -46,7 +46,6 @@ std::unique_ptr<Image> RgbConverter::alignBorders() {
     mRightImage.rotate(90);
     mTopImage.rotate(180);
     mLeftImage.rotate(270);
-    // no rotation necessary for bottomBorder
 
     // append the borders to a single image
     vector<Image> borderList = vector<Image>();

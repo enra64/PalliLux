@@ -3,10 +3,7 @@
 
 #include "borderprovider.h"
 
-
-
-class VlcDiskstreamBorderProvider : public BorderProvider
-{
+class VlcDiskstreamBorderProvider : public BorderProvider {
 public:
     /**
      * @brief takeBorderShot This function creates a shot of each border; the rgb constructor can then use it to create the LED data

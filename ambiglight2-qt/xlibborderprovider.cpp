@@ -11,24 +11,11 @@
 using namespace Magick;
 using namespace std;
 
-XlibBorderProvider::XlibBorderProvider()
-{
-    mScreenshot = new Screenshot(ALL_WIDTH, ALL_HEIGHT);
-}
-
-XlibBorderProvider::~XlibBorderProvider()
-{
-    delete mScreenshot;
-}
-
-
-
-void XlibBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const
-{
+void XlibBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const {
     // take shots of all but the bottom border
-    mScreenshot->takeScreenshot(left, mLeftBorderDimensions);
-    mScreenshot->takeScreenshot(top, mTopBorderDimensions);
-    mScreenshot->takeScreenshot(right, mRightBorderDimensions);
+    mScreenshot.takeScreenshot(left, mLeftBorderDimensions);
+    mScreenshot.takeScreenshot(top, mTopBorderDimensions);
+    mScreenshot.takeScreenshot(right, mRightBorderDimensions);
 
     // the bottom bar is located over several positions, so a different approach is required:
     // we take single shots of each screen bottom, and then append those.
@@ -36,9 +23,9 @@ void XlibBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, 
     // list of images
     vector<Image> bottomBorderVector = vector<Image>(3);
 
-    mScreenshot->takeScreenshot(bottomBorderVector[0], mBottomLeftBorderDimensions);
-    mScreenshot->takeScreenshot(bottomBorderVector[1], mBottomCenterBorderDimensions);
-    mScreenshot->takeScreenshot(bottomBorderVector[2], mBottomRightBorderDimensions);
+    mScreenshot.takeScreenshot(bottomBorderVector[0], mBottomLeftBorderDimensions);
+    mScreenshot.takeScreenshot(bottomBorderVector[1], mBottomCenterBorderDimensions);
+    mScreenshot.takeScreenshot(bottomBorderVector[2], mBottomRightBorderDimensions);
 
     appendImages(&bottom, bottomBorderVector.begin(), bottomBorderVector.end());
 }

@@ -3,15 +3,33 @@
 
 #include "rgbconstructor.h"
 
+/**
+ * @brief The LedConnectorException class provides exceptions occurring in LedConnector
+ */
+class LedConnectorException : public std::runtime_error {
+public:
+    /**
+     * @brief LedConnectorException const char* constructor
+     * @param message the error
+     */
+    explicit LedConnectorException(const char* message) : runtime_error(message) {
+    }
+
+    /**
+     * @brief LedConnectorException std::string constructor
+     * @param message the error
+     */
+    explicit LedConnectorException(const std::string& message) : runtime_error(message) {
+    }
+};
 
 /**
  * @brief The LedConnector class is the master class. It interfaces with the RGB leds and obtains the image data.
  */
-class LedConnector
-{
+class LedConnector {
 public:
     /**
-     * @brief update refresh image data
+     * @brief update update screen data
      */
     void update();
 
@@ -34,7 +52,13 @@ public:
         return mUpdateDuration / mUpdateCount;
     }
 
-    ~LedConnector();
+    /**
+     * @brief getAverageUpdateDuration speed statistics
+     * @return average duration of the draw function in seconds
+     */
+    float getAverageDrawDuration() {
+        return mDrawDuration / mDrawCount;
+    }
 
     /**
      * @brief LedConnector construct a LedConnector, responsible for obtaining and updating the led data
@@ -43,6 +67,8 @@ public:
      * @param verticalLedCount how many leds are on each vertical border
      */
     LedConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
+
+    ~LedConnector();
 private:
 
     /**
@@ -65,7 +91,16 @@ private:
      */
     int mSerialFd = -1;
 
+    /**
+     * @brief writeRgbBufferToText Another debug function; can be used to print out the led buffer to a text file
+     * @param buffer the buffer to write; uint8_t RGB-triplets are expected
+     * @param length the buffer length in bytes (number of uint8_t)
+     * @param path where to write to
+     */
+    void writeRgbBufferToText(std::string path);
+
     float mDrawDuration = 0, mUpdateDuration = 0;
+
     unsigned int mDrawCount = 0, mUpdateCount = 0;
 };
 

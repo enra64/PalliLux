@@ -10,8 +10,7 @@
 #include "dimensions.h"
 #include "xlibborderprovider.h"
 
-class RgbConverter
-{
+class RgbConverter {
 public:
     /**
      * @brief RgbConstructor create a new rgb constructor object

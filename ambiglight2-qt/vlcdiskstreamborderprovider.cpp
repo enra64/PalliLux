@@ -5,8 +5,7 @@ using namespace std;
 
 #include <vector>
 
-void VlcDiskstreamBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const
-{
+void VlcDiskstreamBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) const {
     Image source;
     // 120x58 | 60x29
     source.read("/home/arne/stream");
