@@ -14,17 +14,17 @@ LIBS += $(shell Magick++-config --ldflags --libs)
 SOURCES += \
     rgbconstructor.cpp \
     main.cpp \
-    screenshot.cpp \
-    xlibborderprovider.cpp \
-    vlcdiskstreamborderprovider.cpp \
-    ambiconnector.cpp
+    ambiconnector.cpp \
+    xlibscreenshot.cpp \
+    triplescreenborderprovider.cpp \
+    vlcscreenshot.cpp
 
 HEADERS += \
     rgbconstructor.h \
-    screenshot.h \
-    dimensions.h \
     borderprovider.h \
-    xlibborderprovider.h \
-    vlcdiskstreamborderprovider.h \
     ledexceptions.h \
-    ambiconnector.h
+    ambiconnector.h \
+    screenshot.h \
+    xlibscreenshot.h \
+    triplescreenborderprovider.h \
+    vlcscreenshot.h

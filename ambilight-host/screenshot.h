@@ -1,46 +1,26 @@
 #ifndef SCREENSHOT_H
 #define SCREENSHOT_H
 
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-
 #include <ImageMagick-6/Magick++.h>
-#include <ImageMagick-6/magick/xwindow.h>
-
-#include "dimensions.h"
 
 /**
- * @brief The Screenshot class provides access to screen capturing functionality.
- * It could be overridden or modified to use something else than the X display server.
+ * @brief Interface for capturing screen areas
  */
 class Screenshot {
 public:
     /**
-     * @param w the width of the screen
-     * @param h the height of the screen
-     */
-    Screenshot();
-    ~Screenshot();
-
-    /**
-     * @brief takeScreenshot Take a screenshot, converting it to a Magick++ image
-     * @param result the resulting image
-     * @param d the dimensions the image will be; these are the dimensions requested from X
+     * @brief Provide a crop of the requested geometry
+     * @param[out] result the resulting image
+     * @param d the geometry saved in the result, relative to the complete screen
      * @return the time in seconds required
      */
-    float takeScreenshot(Magick::Image& result, const Dimensions& d) const;
-
-private:
-    /**
-     * @brief mDisplay x display retrieved in constructor
-     */
-    Display* mDisplay;
+    virtual float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) = 0;
 
     /**
-     * @brief mRootWindow x window thingy
+     * @brief Take a screenshot; this is for implementations where it is faster to only capture the screen once.
      */
-    Window mRootWindow;
+    virtual void takeScreenshot() {
+    }
 };
 
 #endif // SCREENSHOT_H

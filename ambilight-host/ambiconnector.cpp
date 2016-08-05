@@ -1,18 +1,25 @@
-#include "xlibborderprovider.h"
+#include "triplescreenborderprovider.h"
 #include "ambiconnector.h"
 
-#include "assert.h"
-#include <memory>
-#include <ctime>
-#include <sys/ioctl.h>
-#include <cstdio>
+// cout
 #include <iostream>
-#include <cstdlib>
-#include <unistd.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <sys/poll.h>
+
+// strerror
 #include <string.h>
+
+// smart pointer
+#include <memory>
+
+// benchmarking
+#include <ctime>
+
+// file access
+#include <fcntl.h>
+
+// serial
+#include <termios.h>
+#include <unistd.h>
+#include <sys/poll.h>
 
 using namespace std;
 

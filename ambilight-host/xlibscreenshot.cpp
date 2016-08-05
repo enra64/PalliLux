@@ -1,4 +1,4 @@
-#include "screenshot.h"
+#include "xlibscreenshot.h"
 
 #include <cstdint>
 #include <cstring>
@@ -6,13 +6,11 @@
 #include <vector>
 #include <iostream>
 
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
+#include <ImageMagick-6/magick/xwindow.h>
 
 using namespace Magick;
 
-Screenshot::Screenshot() {
+XlibScreenshot::XlibScreenshot() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
@@ -22,16 +20,16 @@ Screenshot::Screenshot() {
     mRootWindow = RootWindow(mDisplay, DefaultScreen(mDisplay));
 }
 
-Screenshot::~Screenshot() {
+XlibScreenshot::~XlibScreenshot() {
     XCloseDisplay(mDisplay);
 }
 
-float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) const {
+float XlibScreenshot::getScreenCrop(Image &result, const Geometry& d) {
     // benchmarking start
     clock_t start = clock();
 
     // get windows
-    XImage* xImage = XGetImage(mDisplay, mRootWindow, d.x, d.y, d.w, d.h, AllPlanes, ZPixmap);
+    XImage* xImage = XGetImage(mDisplay, mRootWindow, d.xOff(), d.yOff(), d.width(), d.height(), AllPlanes, ZPixmap);
 
     // check output
     if(!xImage)
@@ -44,5 +42,5 @@ float Screenshot::takeScreenshot(Magick::Image &result, const Dimensions &d) con
     XDestroyImage(xImage);
 
     // return benchmarking value
-    return float(clock() - start) / CLOCKS_PER_SEC;
+    return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }
