@@ -27,4 +27,5 @@ HEADERS += \
     screenshot.h \
     xlibscreenshot.h \
     triplescreenborderprovider.h \
-    vlcscreenshot.h
+    vlcscreenshot.h \
+    datafilter.h

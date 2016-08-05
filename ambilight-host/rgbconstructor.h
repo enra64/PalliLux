@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 
 #include "triplescreenborderprovider.h"
 
@@ -47,12 +48,6 @@ public:
 private:
 // functions
     /**
-     * @brief parse a screenshot, beginning
-     * @param resultSpace resulting buffer; if this is not big enough to hold all led data (see LED_DATA_BYTE_COUNT), you will have problems
-     */
-    float parseScreenshot(uint8_t* resultSpace);
-
-    /**
      * @brief take the borders, and bring them into the correct order, fusing them at the edges
      * @return pointer to the new, aligned image.
      */
@@ -75,6 +70,11 @@ private:
      */
     void debugSaveBorders();
 
+    /**
+     * @brief Apply all filters set for this RgbConverter.
+     */
+    void applyFilters();
+
 //members
     /**  @name images
      *   Magick++-images used to store the borders while processing them
@@ -96,6 +96,8 @@ private:
     std::shared_ptr<BorderProvider> mBorderProvider; ///!< class instance used to create the images of each border
 
     float mBrightnessFactor = 1.f;///!< factor for rgb data brightness regulation
+
+    std::unordered_map<std::string, std::unique_ptr<DataFilter>> mDataFilters;///!< List of DataFilter objects that will be applied to the rgb data
 };
 
 #endif // RGBCONSTRUCTOR_H
