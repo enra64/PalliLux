@@ -1,0 +1,105 @@
+\hypertarget{classRgbConverter}{}\section{Rgb\+Converter Class Reference}
+\label{classRgbConverter}\index{Rgb\+Converter@{Rgb\+Converter}}
+
+
+The \hyperlink{classRgbConverter}{Rgb\+Converter} class is the link between the \hyperlink{classBorderProvider}{Border\+Provider} images and raw R\+GB data for the arduino.  
+
+
+
+
+{\ttfamily \#include $<$rgbconstructor.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classRgbConverter_a1a88728db70b694de8702716d3f4f0e8}{Rgb\+Converter} (std\+::shared\+\_\+ptr$<$ \hyperlink{classBorderProvider}{Border\+Provider} $>$ provider, unsigned int horizontal\+Led\+Count, unsigned int vertical\+Led\+Count)
+\begin{DoxyCompactList}\small\item\em create a new rgb constructor object \end{DoxyCompactList}\item 
+float \hyperlink{classRgbConverter_a37985f601284a5a90e4fee7485085da8}{take\+And\+Parse\+Screen\+Shot} (uint8\+\_\+t $\ast$result\+Space)
+\begin{DoxyCompactList}\small\item\em Retrieves border images and provides rgb output data. \end{DoxyCompactList}\item 
+size\+\_\+t \hyperlink{classRgbConverter_aa6ad1b8cc5f4a9fa3e7304e1884f9a8c}{get\+Required\+Buffer\+Length} () const 
+\begin{DoxyCompactList}\small\item\em Access the required result buffer length. \end{DoxyCompactList}\item 
+void \hyperlink{classRgbConverter_a070b03c9ecd6bf1f801403cc4ed99d50}{set\+Brightness\+Factor} (float val)
+\begin{DoxyCompactList}\small\item\em Set a factor for all channel brightnesses. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classRgbConverter}{Rgb\+Converter} class is the link between the \hyperlink{classBorderProvider}{Border\+Provider} images and raw R\+GB data for the arduino. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Rgb\+Converter@{Rgb\+Converter}!Rgb\+Converter@{Rgb\+Converter}}
+\index{Rgb\+Converter@{Rgb\+Converter}!Rgb\+Converter@{Rgb\+Converter}}
+\subsubsection[{\texorpdfstring{Rgb\+Converter(std\+::shared\+\_\+ptr$<$ Border\+Provider $>$ provider, unsigned int horizontal\+Led\+Count, unsigned int vertical\+Led\+Count)}{RgbConverter(std::shared_ptr< BorderProvider > provider, unsigned int horizontalLedCount, unsigned int verticalLedCount)}}]{\setlength{\rightskip}{0pt plus 5cm}Rgb\+Converter\+::\+Rgb\+Converter (
+\begin{DoxyParamCaption}
+\item[{std\+::shared\+\_\+ptr$<$ {\bf Border\+Provider} $>$}]{provider, }
+\item[{unsigned int}]{horizontal\+Led\+Count, }
+\item[{unsigned int}]{vertical\+Led\+Count}
+\end{DoxyParamCaption}
+)}\hypertarget{classRgbConverter_a1a88728db70b694de8702716d3f4f0e8}{}\label{classRgbConverter_a1a88728db70b694de8702716d3f4f0e8}
+
+
+create a new rgb constructor object 
+
+
+\begin{DoxyParams}{Parameters}
+{\em provider} & the \hyperlink{classBorderProvider}{Border\+Provider} that will be used to capture the screen borders \\
+\hline
+{\em vertical\+Led\+Count} & how many leds are on each vertical border \\
+\hline
+{\em horizontal\+Led\+Count} & how many leds are on each horizontal border \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Rgb\+Converter@{Rgb\+Converter}!get\+Required\+Buffer\+Length@{get\+Required\+Buffer\+Length}}
+\index{get\+Required\+Buffer\+Length@{get\+Required\+Buffer\+Length}!Rgb\+Converter@{Rgb\+Converter}}
+\subsubsection[{\texorpdfstring{get\+Required\+Buffer\+Length() const }{getRequiredBufferLength() const }}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t Rgb\+Converter\+::get\+Required\+Buffer\+Length (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classRgbConverter_aa6ad1b8cc5f4a9fa3e7304e1884f9a8c}{}\label{classRgbConverter_aa6ad1b8cc5f4a9fa3e7304e1884f9a8c}
+
+
+Access the required result buffer length. 
+
+\begin{DoxyReturn}{Returns}
+the number of bytes required to buffer the resulting led data 
+\end{DoxyReturn}
+\index{Rgb\+Converter@{Rgb\+Converter}!set\+Brightness\+Factor@{set\+Brightness\+Factor}}
+\index{set\+Brightness\+Factor@{set\+Brightness\+Factor}!Rgb\+Converter@{Rgb\+Converter}}
+\subsubsection[{\texorpdfstring{set\+Brightness\+Factor(float val)}{setBrightnessFactor(float val)}}]{\setlength{\rightskip}{0pt plus 5cm}void Rgb\+Converter\+::set\+Brightness\+Factor (
+\begin{DoxyParamCaption}
+\item[{float}]{val}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classRgbConverter_a070b03c9ecd6bf1f801403cc4ed99d50}{}\label{classRgbConverter_a070b03c9ecd6bf1f801403cc4ed99d50}
+
+
+Set a factor for all channel brightnesses. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & new factor; values greater than 1 will be interesting... \\
+\hline
+\end{DoxyParams}
+\index{Rgb\+Converter@{Rgb\+Converter}!take\+And\+Parse\+Screen\+Shot@{take\+And\+Parse\+Screen\+Shot}}
+\index{take\+And\+Parse\+Screen\+Shot@{take\+And\+Parse\+Screen\+Shot}!Rgb\+Converter@{Rgb\+Converter}}
+\subsubsection[{\texorpdfstring{take\+And\+Parse\+Screen\+Shot(uint8\+\_\+t $\ast$result\+Space)}{takeAndParseScreenShot(uint8_t *resultSpace)}}]{\setlength{\rightskip}{0pt plus 5cm}float Rgb\+Converter\+::take\+And\+Parse\+Screen\+Shot (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t $\ast$}]{result\+Space}
+\end{DoxyParamCaption}
+)}\hypertarget{classRgbConverter_a37985f601284a5a90e4fee7485085da8}{}\label{classRgbConverter_a37985f601284a5a90e4fee7485085da8}
+
+
+Retrieves border images and provides rgb output data. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em result\+Space} & Storage provided for the rgb output data; length must be at least the value of \char`\"{}\+::\char`\"{}$<$get\+Required\+Buffer\+Length$>$ \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+rgbconstructor.\+h\item 
+rgbconstructor.\+cpp\end{DoxyCompactItemize}

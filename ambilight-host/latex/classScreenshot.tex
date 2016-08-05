@@ -1,0 +1,62 @@
+\hypertarget{classScreenshot}{}\section{Screenshot Class Reference}
+\label{classScreenshot}\index{Screenshot@{Screenshot}}
+
+
+Interface for capturing screen areas.  
+
+
+
+
+{\ttfamily \#include $<$screenshot.\+h$>$}
+
+Inheritance diagram for Screenshot\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classScreenshot}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual float \hyperlink{classScreenshot_a6f32c6952513af976d97f11871e679d3}{get\+Screen\+Crop} (Magick\+::\+Image \&result, const Magick\+::\+Geometry \&d)=0
+\begin{DoxyCompactList}\small\item\em Provide a crop of the requested geometry. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classScreenshot_a2af036d2e54e9e96ac22a50d90ec17ec}{take\+Screenshot} ()\hypertarget{classScreenshot_a2af036d2e54e9e96ac22a50d90ec17ec}{}\label{classScreenshot_a2af036d2e54e9e96ac22a50d90ec17ec}
+
+\begin{DoxyCompactList}\small\item\em Take a screenshot; this is for implementations where it is faster to only capture the screen once. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Interface for capturing screen areas. 
+
+\subsection{Member Function Documentation}
+\index{Screenshot@{Screenshot}!get\+Screen\+Crop@{get\+Screen\+Crop}}
+\index{get\+Screen\+Crop@{get\+Screen\+Crop}!Screenshot@{Screenshot}}
+\subsubsection[{\texorpdfstring{get\+Screen\+Crop(\+Magick\+::\+Image \&result, const Magick\+::\+Geometry \&d)=0}{getScreenCrop(Magick::Image &result, const Magick::Geometry &d)=0}}]{\setlength{\rightskip}{0pt plus 5cm}virtual float Screenshot\+::get\+Screen\+Crop (
+\begin{DoxyParamCaption}
+\item[{Magick\+::\+Image \&}]{result, }
+\item[{const Magick\+::\+Geometry \&}]{d}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\hypertarget{classScreenshot_a6f32c6952513af976d97f11871e679d3}{}\label{classScreenshot_a6f32c6952513af976d97f11871e679d3}
+
+
+Provide a crop of the requested geometry. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em result} & the resulting image \\
+\hline
+ & {\em d} & the geometry saved in the result, relative to the complete screen \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the time in seconds required 
+\end{DoxyReturn}
+
+
+Implemented in \hyperlink{classXlibScreenshot_a6fc6b8262ef4d174804972fa5bb046be}{Xlib\+Screenshot}, and \hyperlink{classVlcScreenshot_a2edc869b862ef8569de2c680c7621d0b}{Vlc\+Screenshot}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+screenshot.\+h\end{DoxyCompactItemize}

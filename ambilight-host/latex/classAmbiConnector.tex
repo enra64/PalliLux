@@ -1,0 +1,91 @@
+\hypertarget{classAmbiConnector}{}\section{Ambi\+Connector Class Reference}
+\label{classAmbiConnector}\index{Ambi\+Connector@{Ambi\+Connector}}
+
+
+The \hyperlink{classAmbiConnector}{Ambi\+Connector} retrieves the image data from a \hyperlink{classBorderProvider}{Border\+Provider} and sends it to an Arduino.  
+
+
+
+
+{\ttfamily \#include $<$ambiconnector.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classAmbiConnector_af12c0b2034feb3016279672449009ae2}{update} ()\hypertarget{classAmbiConnector_af12c0b2034feb3016279672449009ae2}{}\label{classAmbiConnector_af12c0b2034feb3016279672449009ae2}
+
+\begin{DoxyCompactList}\small\item\em update screen data \end{DoxyCompactList}\item 
+void \hyperlink{classAmbiConnector_a9298de50c73e9dfd204baccc4fc1afab}{draw} ()\hypertarget{classAmbiConnector_a9298de50c73e9dfd204baccc4fc1afab}{}\label{classAmbiConnector_a9298de50c73e9dfd204baccc4fc1afab}
+
+\begin{DoxyCompactList}\small\item\em push current data to leds \end{DoxyCompactList}\item 
+bool \hyperlink{classAmbiConnector_ab093d68899b581349a0e2479c25da2ca}{connect} (const std\+::\+\_\+\+\_\+cxx11\+::string \&port)
+\begin{DoxyCompactList}\small\item\em connect to the arduino; because it waits for established comms, it is blocking \end{DoxyCompactList}\item 
+float \hyperlink{classAmbiConnector_acfd5219af9b1c1d7d7dfdfac420c970a}{get\+Current\+Fps} ()
+\begin{DoxyCompactList}\small\item\em calculate and return the current fps, measured by completed draw calls \end{DoxyCompactList}\item 
+\hyperlink{classAmbiConnector_a72b592fc07d3b3ea297d00cb9b87b1bc}{Ambi\+Connector} (std\+::shared\+\_\+ptr$<$ \hyperlink{classBorderProvider}{Border\+Provider} $>$ border\+Provider, unsigned int horizontal\+Led\+Count, unsigned int vertical\+Led\+Count)
+\begin{DoxyCompactList}\small\item\em construct an \hyperlink{classAmbiConnector}{Ambi\+Connector}, responsible for obtaining and updating the led data \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classAmbiConnector}{Ambi\+Connector} retrieves the image data from a \hyperlink{classBorderProvider}{Border\+Provider} and sends it to an Arduino. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Ambi\+Connector@{Ambi\+Connector}!Ambi\+Connector@{Ambi\+Connector}}
+\index{Ambi\+Connector@{Ambi\+Connector}!Ambi\+Connector@{Ambi\+Connector}}
+\subsubsection[{\texorpdfstring{Ambi\+Connector(std\+::shared\+\_\+ptr$<$ Border\+Provider $>$ border\+Provider, unsigned int horizontal\+Led\+Count, unsigned int vertical\+Led\+Count)}{AmbiConnector(std::shared_ptr< BorderProvider > borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount)}}]{\setlength{\rightskip}{0pt plus 5cm}Ambi\+Connector\+::\+Ambi\+Connector (
+\begin{DoxyParamCaption}
+\item[{std\+::shared\+\_\+ptr$<$ {\bf Border\+Provider} $>$}]{border\+Provider, }
+\item[{unsigned int}]{horizontal\+Led\+Count, }
+\item[{unsigned int}]{vertical\+Led\+Count}
+\end{DoxyParamCaption}
+)}\hypertarget{classAmbiConnector_a72b592fc07d3b3ea297d00cb9b87b1bc}{}\label{classAmbiConnector_a72b592fc07d3b3ea297d00cb9b87b1bc}
+
+
+construct an \hyperlink{classAmbiConnector}{Ambi\+Connector}, responsible for obtaining and updating the led data 
+
+
+\begin{DoxyParams}{Parameters}
+{\em border\+Provider} & will be used to obtain the border images \\
+\hline
+{\em horizontal\+Led\+Count} & how many leds are on each horizontal border \\
+\hline
+{\em vertical\+Led\+Count} & how many leds are on each vertical border \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Ambi\+Connector@{Ambi\+Connector}!connect@{connect}}
+\index{connect@{connect}!Ambi\+Connector@{Ambi\+Connector}}
+\subsubsection[{\texorpdfstring{connect(const std\+::\+\_\+\+\_\+cxx11\+::string \&port)}{connect(const std::__cxx11::string &port)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ambi\+Connector\+::connect (
+\begin{DoxyParamCaption}
+\item[{const std\+::\+\_\+\+\_\+cxx11\+::string \&}]{port}
+\end{DoxyParamCaption}
+)}\hypertarget{classAmbiConnector_ab093d68899b581349a0e2479c25da2ca}{}\label{classAmbiConnector_ab093d68899b581349a0e2479c25da2ca}
+
+
+connect to the arduino; because it waits for established comms, it is blocking 
+
+\begin{DoxyReturn}{Returns}
+true if connection establishment successfull 
+\end{DoxyReturn}
+\index{Ambi\+Connector@{Ambi\+Connector}!get\+Current\+Fps@{get\+Current\+Fps}}
+\index{get\+Current\+Fps@{get\+Current\+Fps}!Ambi\+Connector@{Ambi\+Connector}}
+\subsubsection[{\texorpdfstring{get\+Current\+Fps()}{getCurrentFps()}}]{\setlength{\rightskip}{0pt plus 5cm}float Ambi\+Connector\+::get\+Current\+Fps (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classAmbiConnector_acfd5219af9b1c1d7d7dfdfac420c970a}{}\label{classAmbiConnector_acfd5219af9b1c1d7d7dfdfac420c970a}
+
+
+calculate and return the current fps, measured by completed draw calls 
+
+\begin{DoxyReturn}{Returns}
+current fps 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+ambiconnector.\+h\item 
+ambiconnector.\+cpp\end{DoxyCompactItemize}
