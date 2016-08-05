@@ -57,6 +57,7 @@ std::unique_ptr<Image> RgbConverter::alignBorders() {
     // append via magick++
     appendImages(result, borderList.begin(), borderList.end());
 
+
     return std::unique_ptr<Image>(result);
 }
 
