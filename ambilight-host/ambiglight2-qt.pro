@@ -17,7 +17,8 @@ SOURCES += \
     ambiconnector.cpp \
     xlibscreenshot.cpp \
     triplescreenborderprovider.cpp \
-    vlcscreenshot.cpp
+    vlcscreenshot.cpp \
+    singlescreenborderprovider.cpp
 
 HEADERS += \
     rgbconstructor.h \
@@ -28,4 +29,5 @@ HEADERS += \
     xlibscreenshot.h \
     triplescreenborderprovider.h \
     vlcscreenshot.h \
-    datafilter.h
+    datafilter.h \
+    singlescreenborderprovider.h

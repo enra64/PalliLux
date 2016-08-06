@@ -9,6 +9,8 @@
  */
 class TripleScreenBorderProvider : public BorderProvider {
 public:
+    TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener);
+
     /**
      * @brief This function creates a shot of each border; the rgb constructor can then use it to create the LED data
      */
@@ -60,12 +62,6 @@ private: // screen config info
     const Magick::Geometry mBottomCenterBorderDimensions = Magick::Geometry(CENTER_SCREEN_WIDTH,    BORDER_SIZE, CENTER_X_POSITION, CENTER_SCREEN_HEIGHT - BORDER_SIZE);
     const Magick::Geometry mBottomRightBorderDimensions = Magick::Geometry(RIGHT_SCREEN_WIDTH,     BORDER_SIZE, RIGHT_X_POSITION, RIGHT_SCREEN_HEIGHT - BORDER_SIZE);
     //@}
-
-private:
-    /**
-     * @brief this class provides access to xlib screenshot functionality
-     */
-    XlibScreenshot mScreenshot;
 };
 
 #endif // BORDERSHOT_H

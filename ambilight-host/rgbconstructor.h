@@ -8,7 +8,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "triplescreenborderprovider.h"
+#include "datafilter.h"
+#include "borderprovider.h"
 
 /**
  * @brief The RgbConverter class is the link between the BorderProvider images and raw RGB data for the arduino

@@ -9,11 +9,21 @@ using namespace std;
 #include "ambiconnector.h"
 #include "rgbconstructor.h"
 
+
+#include "singlescreenborderprovider.h"
+#include "xlibscreenshot.h"
+
 using namespace std;
 
 int main() {
-    // create a shared pointe to the desired borderProvider (must be static_pointer_casted to the base class)
-    std::shared_ptr<BorderProvider> provider = std::static_pointer_cast<BorderProvider>(std::make_shared<TripleScreenBorderProvider>());
+
+    // create a unique pointer to an instance of the desired screenshot class (must be static_pointer_casted to the base class)
+    std::shared_ptr<Screenshot> screener =
+            std::static_pointer_cast<Screenshot>(std::make_shared<XlibScreenshot>());
+
+    // create a shared pointer to the desired borderProvider
+    std::shared_ptr<BorderProvider> provider =
+            std::static_pointer_cast<BorderProvider>(std::make_shared<SingleScreenBorderProvider>(1366, 768, screener));
 
     // supply our ledconnector with the desired borderProvider and the count of horizontal/vertical leds on each border
     AmbiConnector connector(provider, 60, 20);

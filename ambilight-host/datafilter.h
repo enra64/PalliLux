@@ -1,6 +1,8 @@
 #ifndef DATAFILTER_H
 #define DATAFILTER_H
 
+#include <cstring>
+
 /**
  * @brief An interface for functors implementing data filters for the rgb data, like brightness factoring or low-pass filters
  */
@@ -26,18 +28,40 @@ public:
     }
 
     void operator ()(uint8_t *rgbData, size_t dataLength) override {
-        for(int i = 0; i < dataLength; i++)
+        for(size_t i = 0; i < dataLength; i++)
             rgbData[i] *= mFactor;
     }
 };
 
 class LowPassFilter : public DataFilter {
-
-
+    uint8_t* mBuffer;///!< rgb data buffer
+    float mNewDataFactor;///!< amount that the new data will take in filter application
     // DataFilter interface
 public:
-    void operator ()(uint8_t *rgbData, size_t dataLength) override{
+    /**
+     * @brief Create somewhat of a gliding filter
+     * @param bufferLength how large the acquired buffer space must be
+     * @param newFactor the factor by which the new value should be used; old will use (1-newFactor)
+     */
+    LowPassFilter(size_t bufferLength, float newDataFactor = .9f) : mNewDataFactor(newDataFactor) {
+        mBuffer = new uint8_t[bufferLength];
+    }
 
+    /**
+      * Release buffer
+      */
+    ~LowPassFilter(){
+        delete[] mBuffer;
+    }
+
+    void operator ()(uint8_t *rgbData, size_t dataLength) override{
+        // replace the rgb data with weighted old + new data
+        for(size_t i = 0; i < dataLength; i++)
+            rgbData[i] = mNewDataFactor * rgbData[i] + (1 - mNewDataFactor) * mBuffer[i];
+
+
+        // set buffer to latest value
+        memcpy(mBuffer, rgbData, dataLength);
     }
 };
 
