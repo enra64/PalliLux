@@ -39,12 +39,18 @@ public:
     }
 
     /**
-     * @brief Set a factor for all channel brightnesses
-     * @param val new factor; values greater than 1 will be interesting...
+     * @brief Add a datafilter (brightness scaler, gliding filter)
+     * @param id how to reference to the filter
+     * @param filter the filter itself; the rgb converter will have sole ownership.
      */
-    void setBrightnessFactor(float val) {
-        mBrightnessFactor = val;
-    }
+    void addFilter(std::string id, std::unique_ptr<DataFilter> filter);
+
+    /**
+     * @brief Remove a filter from the list
+     * @param id filter name
+     * @return the filter
+     */
+    std::unique_ptr<DataFilter> removeFilter(std::string id);
 
 private:
 // functions
@@ -74,7 +80,7 @@ private:
     /**
      * @brief Apply all filters set for this RgbConverter.
      */
-    void applyFilters();
+    void applyFilters(uint8_t* resultBuffer);
 
 //members
     /**  @name images
@@ -90,13 +96,11 @@ private:
 
     const unsigned int LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2; ///!< aggregateled count
 
-    const Magick::Geometry mHorizontalLedGeometry = Magick::Geometry(HORIZONTAL_LED_COUNT, 1);///!< horizontal scaling target geometry
+    Magick::Geometry mHorizontalLedGeometry;///!< horizontal scaling target geometry
 
-    const Magick::Geometry mVerticalLedGeometry = Magick::Geometry(1, VERTICAL_LED_COUNT); ///!< vertical scaling target geometry
+    Magick::Geometry mVerticalLedGeometry; ///!< vertical scaling target geometry
 
     std::shared_ptr<BorderProvider> mBorderProvider; ///!< class instance used to create the images of each border
-
-    float mBrightnessFactor = 1.f;///!< factor for rgb data brightness regulation
 
     std::unordered_map<std::string, std::unique_ptr<DataFilter>> mDataFilters;///!< List of DataFilter objects that will be applied to the rgb data
 };

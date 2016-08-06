@@ -12,16 +12,15 @@ QMAKE_CXXFLAGS += $(shell Magick++-config --cppflags --cxxflags)
 LIBS += $(shell Magick++-config --ldflags --libs)
 
 SOURCES += \
-    rgbconstructor.cpp \
     main.cpp \
     ambiconnector.cpp \
     xlibscreenshot.cpp \
     triplescreenborderprovider.cpp \
     vlcscreenshot.cpp \
-    singlescreenborderprovider.cpp
+    singlescreenborderprovider.cpp \
+    rgbconverter.cpp
 
 HEADERS += \
-    rgbconstructor.h \
     borderprovider.h \
     ledexceptions.h \
     ambiconnector.h \
@@ -30,4 +29,5 @@ HEADERS += \
     triplescreenborderprovider.h \
     vlcscreenshot.h \
     datafilter.h \
-    singlescreenborderprovider.h
+    singlescreenborderprovider.h \
+    rgbconverter.h

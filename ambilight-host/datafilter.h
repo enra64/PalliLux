@@ -12,7 +12,7 @@ public:
      * @brief This operator will be applied if added to an RgbConverter
      * @param rgbData the data modifiable data
      */
-    virtual void operator()(uint8_t* rgbData, size_t dataLength);
+    virtual void operator()(uint8_t* rgbData, size_t dataLength) = 0;
 };
 
 class BrightnessFilter : public DataFilter {

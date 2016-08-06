@@ -19,7 +19,7 @@ public:
      */
     BorderProvider(std::shared_ptr<Screenshot> screener)
     {
-        mScreenshot = std::move(screener);
+        mScreenshot = screener;
     }
     /**
      * @brief This function must capture each screen border into a Magick++ image

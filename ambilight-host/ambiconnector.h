@@ -1,7 +1,7 @@
 #ifndef LEDCONNECTOR_H
 #define LEDCONNECTOR_H
 
-#include "rgbconstructor.h"
+#include "rgbconverter.h"
 #include "ledexceptions.h"
 
 /**
@@ -42,6 +42,35 @@ public:
     AmbiConnector(std::shared_ptr<BorderProvider> borderProvider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
 
     ~AmbiConnector();
+
+    /**
+     * @brief Close the connection. Optionally, the leds may be shut down
+     * @param blackoutLeds whether an all-black signal should be sent before disconnecting
+     */
+    void disconnect(bool blackoutLeds);
+
+    /**
+     * @brief Add a datafilter (brightness scaler, gliding filter)
+     * @param id how to reference to the filter
+     * @param filter the filter itself; the rgb converter will have sole ownership.
+     */
+    void addFilter(std::string id, std::unique_ptr<DataFilter> filter);
+
+    /**
+     * @brief Remove a filter from the list
+     * @param id filter name
+     * @return the filter
+     */
+    std::unique_ptr<DataFilter> removeFilter(std::string id);
+
+    /**
+     * @brief Retrieve the bufferspace required for a rgb dataset
+     * @return number of bytes required
+     */
+    size_t getRequiredBufferLength(){
+        return mRgbConverter->getRequiredBufferLength();
+    }
+
 private:
 
     /**

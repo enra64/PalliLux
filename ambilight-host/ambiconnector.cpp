@@ -73,6 +73,10 @@ void AmbiConnector::update() {
 }
 
 void AmbiConnector::draw() {
+    // notify if the serial connection has been closed or not yet opened
+    if(mSerialFd == -1)
+        throw new AmbiConnectorCommunicationException("No connection active!");
+
     // write data buffer
     write(mSerialFd, mRgbBuffer, mRgbConverter->getRequiredBufferLength());
 
@@ -98,9 +102,8 @@ bool AmbiConnector::connect(const string& port) {
     mSerialFd = open(port.c_str(), O_RDWR | O_NOCTTY);
 
     // -1 is returned on error
-    if(mSerialFd == -1) {
+    if(mSerialFd == -1)
         throw new AmbiConnectorCommunicationException("could not open " + port);
-    }
 
     // get current control struct
     struct termios options;
@@ -169,4 +172,24 @@ bool AmbiConnector::connect(const string& port) {
 AmbiConnector::~AmbiConnector() {
     delete[] mRgbBuffer;
     close(mSerialFd);
+}
+
+void AmbiConnector::disconnect(bool blackoutLeds)
+{
+    if(blackoutLeds){
+        memset(mRgbBuffer, 0, mRgbConverter->getRequiredBufferLength());
+        draw();
+    }
+    close(mSerialFd);
+    mSerialFd = -1;
+}
+
+void AmbiConnector::addFilter(string id, std::unique_ptr<DataFilter> filter)
+{
+    mRgbConverter->addFilter(id, move(filter));
+}
+
+std::unique_ptr<DataFilter> AmbiConnector::removeFilter(string id)
+{
+    return move(mRgbConverter->removeFilter(id));
 }
