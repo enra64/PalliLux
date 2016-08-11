@@ -1,26 +1,57 @@
 # ShittyAmbilight
-ShittyAmbilights primary aim is to create an Ambilight-like experience on computers using an Arduino for interfacing with individually adressable RGB leds. It is, however, also possible to supply other data, like a live spectrometer of your music.
-The ambilight-host folder contains the host-side code, the ambilight-arduino contains the slave-side code. An Arduino must be flashed with the slave side code, adjusted to match the correct number of leds.
+ShittyAmbilights primary goal is to create an Ambilight-like experience on computers using an Arduino.  
+It is, however, also possible to supply any other RGB data.  
 
-## Host-Code usage
-To skip all the explanation of my lunatic interface and go straight to the examples, [click here](#Examples).
+# Usage
+## Slave
+Just flash the sketch contained in ambilight-arduino to an arduino, but don't forget to adjust the number of LEDs.
 
-#### Creating an ArduinoConnector
-An ```ArduinoConnector```-instance will communicate with the slave Arduino. To do so, it needs a class instance implementing the ```RgbLineProvider``` interface, which will supply it with the rgb data for the arduino.
+## Host
+To skip the explanation and go straight to the examples, [click here](#examples).
 
+### ArduinoConnector
+An ```ArduinoConnector``` instance will communicate with the slave Arduino. To do so, it needs a class instance implementing the ```RgbLineProvider``` interface, which will supply the RGB data for the arduino. If used as an Ambilight, there are some other classes that need explanation:
 
-## AmbiConnector 
+### AmbiRgbLineProvider
+```AmbiRgbLineProvider``` implements the ```RgbLineProvider``` interface. It pulls captures of the screen borders from a ```BorderProvider``` implementation, and converts them to RGB data. 
 
+### BorderProvider
+A ```BorderProvider``` instance uses an implementation of ```Screenshot``` to capture the screen borders. The height does not matter, as the images will be scaled 
+to be a single pixel high anyway, but beware of the orientation, because ```AmbiRgbLineProvider``` will rotate the borders.
 
-## BorderProvider 
-A ```BorderProvider``` is responsible for delivering screen captures of each border. The resolution only matters for the achieved fps. 
-
-## ScreenShot 
-A class extending ```ScreenShot``` provides an interface for screen capture with a specific offset and size.
+### Screenshot
+A ```Screenshot``` implementation allows to capture screen areas with a specified size and offset. The ```XlibScreenshot``` uses the X server to do so, so it needs an environment where it is available. A windows ```Screenshot``` implementation is currently not available.
 
 # Examples
+## Instantiation
+### Basic:
+```c++
+// instantiate any RgbLineProvider implemenation
+unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new SpectrometerRgbLineProvider());
+
+// supply our ArduinoConnector with the RgbLineProvider
+ArduinoConnector connector(move(rgbProvider));
+```
+
+### Ambilight-mode
+The existing implementations for BorderProviders need a screenshot implementation. If you want to modify behaviour, you can swap out the implementations of 
+```Screenshot``` or ```BorderProvider```.
+```c++
+// instantiate any Screenshot implementation
+shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
+
+// instantiate any BorderProvider implementation. It does not have to use a screenshot class!
+shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768, screener));
+
+// instantiate an AmbiRgbLineProvider
+unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 12));
+
+// supply our AmbiConnector with its chosen RgbLineProvider
+ArduinoConnector connector(move(rgbProvider));
+```
+
 ## Running
-To run any ArduinoConnector combination, use the following code fragment:
+To run an ```ArduinoConnector```, you may use the following code fragment:
 ```c++
 // try sending to the arduino
 try {
@@ -29,7 +60,10 @@ try {
 
     // loop: update the screen images and push the data to the arduino
     while(1) {
+        // update screenshot data
         connector.update();
+        
+        // send updated data to arduino
         connector.draw();
 
         //std::cout << "avg fps:" << connector.getCurrentFps() << std::endl;
@@ -38,42 +72,9 @@ try {
     cout << "Ambiconnector experienced an exception: " << e.what() << endl;
 }
 ```
-## Instantiation
-### Single screen, Ambilight-mode
+
+# DataFilter
+```DataFilter``` implementations may modify the incoming RGB data in any way, for example to reduce the overall brightness, or modify color behaviour etc... They can be added like this:
 ```c++
-// create a screenshot instance
-shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
-
-// instantiate the desired borderProvider with screener. it will use the Screenshot instance to get screenshots from the system
-shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768, screener));
-
-// instantiate an AmbiRgbLineProvider, the RGB data source. It will use the BorderProvider to get images of the borders and convert them to RGB arrays
-unique_ptr<RgbLineProvider> rgbProvider = move(unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 12)));
-
-// supply our AmbiConnector with its chosen RgbLineProvider
-ArduinoConnector connector(move(rgbProvider));
-```
-
-### Three screens with different heights, Ambilight-mode
-```c++
-// create a screenshot instance
-shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
-
-// instantiate the desired borderProvider with screener. it will use the Screenshot instance to get screenshots from the system
-shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new TripleScreenBorderProvider(screener));
-
-// instantiate an AmbiRgbLineProvider, the RGB data source. It will use the BorderProvider to get images of the borders and convert them to RGB arrays
-unique_ptr<RgbLineProvider> rgbProvider = move(unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 12)));
-
-// supply our AmbiConnector with its chosen RgbLineProvider
-ArduinoConnector connector(move(rgbProvider));
-```
-
-### Spectrometer-mode
-```c++
-// instantiate an SpectrometerRgbLineProvider, the RGB data source.
-unique_ptr<RgbLineProvider> rgbProvider = move(unique_ptr<RgbLineProvider>(new SpectrometerRgbLineProvider()));
-
-// supply our AmbiConnector with its chosen RgbLineProvider
-ArduinoConnector connector(move(rgbProvider));
+arduinoConnector.addFilter("lowPassFilter", unique_ptr<DataFilter>(new LowPassFilter(connector.getRequiredBufferLength())));
 ```
