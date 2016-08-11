@@ -3,7 +3,7 @@ ShittyAmbilights primary aim is to create an Ambilight-like experience on comput
 The ambilight-host folder contains the host-side code, the ambilight-arduino contains the slave-side code. An Arduino must be flashed with the slave side code, adjusted to match the correct number of leds.
 
 ## Host-Code usage
-To skip all the explanation of my lunatic interface and go straight to the examples, (click here)[#Examples].
+To skip all the explanation of my lunatic interface and go straight to the examples, [click here](#Examples).
 
 #### Creating an ArduinoConnector
 An ```ArduinoConnector```-instance will communicate with the slave Arduino. To do so, it needs a class instance implementing the ```RgbLineProvider``` interface, which will supply it with the rgb data for the arduino.
