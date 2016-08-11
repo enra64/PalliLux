@@ -54,7 +54,7 @@ public:
         delete[] mBuffer;
     }
 
-    void operator ()(uint8_t *rgbData, size_t dataLength) override{
+    void operator ()(uint8_t *rgbData, size_t dataLength) override {
         // replace the rgb data with weighted old + new data
         for(size_t i = 0; i < dataLength; i++)
             rgbData[i] = mNewDataFactor * rgbData[i] + (1 - mNewDataFactor) * mBuffer[i];
@@ -62,6 +62,20 @@ public:
 
         // set buffer to latest value
         memcpy(mBuffer, rgbData, dataLength);
+    }
+};
+
+class LinearFactorFilter : public DataFilter {
+    float getFactor(uint8_t point){
+        if(point < 172)
+            return 1.f;
+        return (255 - point);
+    }
+
+public:
+    void operator ()(uint8_t *rgbData, size_t dataLength) override {
+        for(size_t i = 0; i < dataLength; i++)
+            rgbData[i] *= getFactor(rgbData[i]);
     }
 };
 

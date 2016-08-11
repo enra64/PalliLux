@@ -6,8 +6,8 @@
 
 using namespace std;
 
-#include "ambiconnector.h"
-#include "rgbconverter.h"
+#include "arduinoconnector.h"
+#include "ambirgblineprovider.h"
 
 
 #include "singlescreenborderprovider.h"
@@ -15,19 +15,31 @@ using namespace std;
 
 using namespace std;
 
-int main() {
-    // create a unique pointer to an instance of the desired screenshot class
+std::unique_ptr<RgbLineProvider> createAmbilightRgbProvider(){
+    // instantiate the desired screenshot class
     shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
 
-    // create a shared pointer to the desired borderProvider
-    shared_ptr<BorderProvider> provider =
+    // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
+    // to get screenshots from the system
+    shared_ptr<BorderProvider> borderProvider =
             shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768, screener));
 
-    // supply our ledconnector with the count of horizontal/vertical leds on each border
-    AmbiConnector connector(provider, 60, 12);
+    // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
+    // BorderProvider to get images of the borders and convert them to RGB arrays
+    return move(unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 12)));
+}
+
+int main() {
+    // audio spectrum rgb provider
+
+    // ambilight rgb provider
+    unique_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+
+    // supply our AmbiConnector with its chosen RgbLineProvider
+    ArduinoConnector connector(move(rgbProvider));
 
     // add the filters we want
-    //connector.addFilter("brightnessFilter", unique_ptr<DataFilter>(new LowPassFilter(connector.getRequiredBufferLength())));
+    connector.addFilter("lowPassFilter", unique_ptr<DataFilter>(new LowPassFilter(connector.getRequiredBufferLength())));
 
     // try sending to the arduino
     try {
@@ -42,8 +54,8 @@ int main() {
 
             //cout << "avg draw fps:" << connector.getCurrentFps() << endl;
         }
-    } catch(AmbiConnectorException* e) {
-        cout << "Ambiconnector experienced an exception: " << e->what() << endl;
+    } catch(AmbiConnectorException e) {
+        cout << "Ambiconnector experienced an exception: " << e.what() << endl;
     }
 
     return 0;

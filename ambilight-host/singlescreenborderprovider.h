@@ -1,5 +1,5 @@
-#ifndef SINGELESCREENBORDERPROVIDER_H
-#define SINGELESCREENBORDERPROVIDER_H
+#ifndef SINGLESCREENBORDERPROVIDER_H
+#define SINGLESCREENBORDERPROVIDER_H
 
 #include "borderprovider.h"
 
@@ -19,4 +19,4 @@ private:
     const size_t BORDER_WIDTH = 100;///!< how wide should the borders be
 };
 
-#endif // SINGELESCREENBORDERPROVIDER_H
+#endif // SINGLESCREENBORDERPROVIDER_H
