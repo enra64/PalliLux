@@ -9,6 +9,8 @@ Just flash the sketch contained in ambilight-arduino to an arduino, but don't fo
 ## Host
 To skip the explanation and go straight to the examples, [click here](#examples).
 
+![class diagram](classes.png)
+
 ### ArduinoConnector
 An ```ArduinoConnector``` instance will communicate with the slave Arduino. To do so, it needs a class instance implementing the ```RgbLineProvider``` interface, which will supply the RGB data for the arduino. If used as an Ambilight, there are some other classes that need explanation:
 
