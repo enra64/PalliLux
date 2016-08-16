@@ -7,6 +7,8 @@
 using namespace std;
 
 #include "arduinoconnector.h"
+
+#include "spectrometerrgblineprovider.h"
 #include "ambirgblineprovider.h"
 
 
@@ -32,9 +34,10 @@ std::unique_ptr<RgbLineProvider> createAmbilightRgbProvider(){
 
 int main() {
     // audio spectrum rgb provider
+    unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new SpectrometerRgbLineProvider(60, 20));
 
     // ambilight rgb provider
-    unique_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+    //unique_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
 
     // supply our AmbiConnector with its chosen RgbLineProvider
     ArduinoConnector connector(move(rgbProvider));

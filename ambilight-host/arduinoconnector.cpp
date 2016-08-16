@@ -92,6 +92,17 @@ void ArduinoConnector::draw() {
 
     // keep check of how long draw-to-draw takes
     updateFps();
+
+    // wait if custom target fps were set
+    if(mTargetFps > 0){
+        // only wait if our framerate is too high
+        if(mCurrentFps > mTargetFps){
+            // calculate microsecond waiting time
+            float waitTime = 1000000 / (mCurrentFps - mTargetFps);
+            // wait
+            usleep(waitTime);
+        }
+    }
 }
 
 bool ArduinoConnector::connect(const string& port) {

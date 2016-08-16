@@ -69,6 +69,22 @@ public:
         return mRgbLineProvider->getRequiredBufferLength();
     }
 
+    /**
+     * @brief Set a target as to what fps should be achieved
+     * @param fps target fps in seconds. if lower than 0, the target is reset.
+     */
+    void setTargetFps(float fps){
+        mTargetFps = fps;
+    }
+
+    /**
+     * @brief Get current target fps
+     * @return current target fps in seconds
+     */
+    float getTargetFps(){
+        return mTargetFps;
+    }
+
 private:
 
     /**
@@ -101,7 +117,7 @@ private:
 
     float mCurrentFps;//!< current fps, saved so the timekeeping code can always be called at the same moment
 
-
+    float mTargetFps = -1;//!< target fps; important when using spectrometer
 };
 
 #endif // LEDCONNECTOR_H
