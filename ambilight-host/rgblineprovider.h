@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <memory>
 
+#include "datafilter.h"
+
 /**
  * @brief An interface to provide an array of rgb data.
  * It also provides "::"<applyFilters>, which applies all DataFilter objects set with "::"<addFilter> to the provided buffer.

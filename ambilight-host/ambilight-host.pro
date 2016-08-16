@@ -7,9 +7,17 @@ CONFIG -= qt
 CONFIG += link_pkgconfig
 PKGCONFIG += x11
 
-#magick++ stuff
+# magick++ stuff
 QMAKE_CXXFLAGS += $(shell Magick++-config --cppflags --cxxflags)
 LIBS += $(shell Magick++-config --ldflags --libs)
+
+# fftw stuff
+LIBS += -lfftw3
+
+#pulseaudio
+LIBS += -lpulse-simple
+# pa_strerror is in here
+LIBS += -lpulse
 
 SOURCES += \
     main.cpp \
@@ -18,7 +26,8 @@ SOURCES += \
     vlcscreenshot.cpp \
     singlescreenborderprovider.cpp \
     ambirgblineprovider.cpp \
-    arduinoconnector.cpp
+    arduinoconnector.cpp \
+    spectrometerrgblineprovider.cpp
 
 HEADERS += \
     borderprovider.h \
@@ -31,4 +40,5 @@ HEADERS += \
     rgblineprovider.h \
     ambirgblineprovider.h \
     arduinoconnector.h \
-    customexceptions.h
+    customexceptions.h \
+    spectrometerrgblineprovider.h
