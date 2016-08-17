@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
-CONFIG += console c++14
-
+SUBDIRS += \
+    gui
