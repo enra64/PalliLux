@@ -41,4 +41,5 @@ HEADERS += \
     ambirgblineprovider.h \
     arduinoconnector.h \
     customexceptions.h \
-    spectrometerrgblineprovider.h
+    spectrometerrgblineprovider.h \
+    lest.hpp

@@ -4,6 +4,9 @@
 // cout
 #include <iostream>
 
+// assertions
+#include <assert.h>
+
 // strerror
 #include <string.h>
 
@@ -105,16 +108,24 @@ void ArduinoConnector::draw() {
     }
 }
 
-bool ArduinoConnector::connect(const string& port) {
+void ArduinoConnector::connect(const string& port) {
+    mTtyDevice = port;
+    connect();
+}
+
+void ArduinoConnector::connect() {
+    // check that a tty device has been set
+    assert(mTtyDevice.length() > 0);
+
     // close previous serial connection
     close(mSerialFd);
 
     // open serial connection
-    mSerialFd = open(port.c_str(), O_RDWR | O_NOCTTY);
+    mSerialFd = open(mTtyDevice.c_str(), O_RDWR | O_NOCTTY);
 
-    // -1 is returned on error
+    // exception on error
     if(mSerialFd == -1)
-        throw AmbiConnectorCommunicationException("could not open " + port);
+        throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
 
     // get current control struct
     struct termios options;
@@ -174,10 +185,10 @@ bool ArduinoConnector::connect(const string& port) {
     // check whether the arduino responded correctly
     if(string(mCommBuffer, rec) == "SAM") {
         cout << "opening sequence ok" << endl;
-        return true;
+        // success: no exception!
+        return;
     }
     throw AmbiConnectorProtocolException("faulty opening sequence");
-    return false;
 }
 
 ArduinoConnector::~ArduinoConnector() {

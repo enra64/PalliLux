@@ -21,8 +21,11 @@ LIBS += $(shell Magick++-config --ldflags --libs)
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    controldialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    controldialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    controldialog.ui

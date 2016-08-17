@@ -20,10 +20,16 @@ public:
     void draw();
 
     /**
-     * @brief connect to the arduino; because it waits for established comms, it is blocking
-     * @return true if connection establishment successfull
+     * @brief connect to the arduino; because it waits for established comms, it is blocking. An exception will be thrown on failure.
+     * @param port the tty device to use
      */
-    bool connect(const std::__cxx11::string &port);
+    void connect(const std::__cxx11::string &port);
+
+    /**
+     * @brief connect to the arduino; because it waits for established comms, it is blocking.
+     * It is assumed the tty device has been set. An exception will be thrown on failure.
+     */
+    void connect();
 
     /**
      * @brief calculate and return the current fps, measured by completed draw calls
@@ -81,8 +87,16 @@ public:
      * @brief Get current target fps
      * @return current target fps in seconds
      */
-    float getTargetFps(){
+    float getTargetFps() const {
         return mTargetFps;
+    }
+
+    /**
+     * @brief Set the port that will be used in the next connection attempt
+     * @param port device name, like /dev/tty0
+     */
+    void setPort(const std::string& port){
+        mTtyDevice = port;
     }
 
 private:
@@ -118,6 +132,8 @@ private:
     float mCurrentFps;//!< current fps, saved so the timekeeping code can always be called at the same moment
 
     float mTargetFps = -1;//!< target fps; important when using spectrometer
+
+    std::string mTtyDevice;///!< arduino connection name
 };
 
 #endif // LEDCONNECTOR_H
