@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "../host/include/arduinoconnector.h"
+#include "arduinoconnector.h"
 
 namespace Ui {
 class MainWindow;
