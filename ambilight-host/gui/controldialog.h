@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "../ambilight-host/arduinoconnector.h"
+#include "arduinoconnector.h"
 
 namespace Ui {
 class ControlDialog;

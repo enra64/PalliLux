@@ -1,7 +1,7 @@
 #ifndef LEDCONNECTOR_H
 #define LEDCONNECTOR_H
 
-#include "ambirgblineprovider.h"
+#include "rgblineprovider/ambirgblineprovider.h"
 #include "customexceptions.h"
 
 /**

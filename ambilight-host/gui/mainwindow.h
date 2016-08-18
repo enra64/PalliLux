@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "../ambilight-host/arduinoconnector.h"
+
+#include <memory>
+
+#include "../host/include/arduinoconnector.h"
 
 namespace Ui {
 class MainWindow;

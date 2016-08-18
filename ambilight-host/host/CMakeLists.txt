@@ -41,8 +41,11 @@ include_directories("include" "include/implementations"
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${MYSOURCES} ${MYHEADERS})
 
-# LIB
 
+
+
+
+# LIB
 
 # imageMagick
 find_package(ImageMagick COMPONENTS Magick++ MagickCore convert composite REQUIRED)
