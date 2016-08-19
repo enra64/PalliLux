@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <ctime>
+#include <iostream>
 
 #include "xlibscreenshot.h"
 

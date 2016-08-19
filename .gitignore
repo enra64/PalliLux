@@ -8,3 +8,5 @@
 **/install_manifest.txt
 **/CTestTestfile.cmake
 **/*.a
+**/flataligned.jpg
+**/host.cbp

@@ -3,6 +3,7 @@
 
 #include "ambirgblineprovider.h"
 #include "customexceptions.h"
+#include <string>
 
 /**
  * @brief The AmbiConnector retrieves the image data from a BorderProvider and sends it to an Arduino.
@@ -44,6 +45,13 @@ public:
      * @param borderProvider will be used to obtain the border images
      */
     ArduinoConnector(std::unique_ptr<RgbLineProvider> borderProvider);
+
+    /**
+     * @brief construct an AmbiConnector, responsible for obtaining and updating the led data
+     * @param borderProvider will be used to obtain the border images
+     * @param port tty port for comms
+     */
+    ArduinoConnector(std::unique_ptr<RgbLineProvider> borderProvider, const std::string port);
 
     ~ArduinoConnector();
 

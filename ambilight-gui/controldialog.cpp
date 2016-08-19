@@ -57,6 +57,7 @@ void ControlDialog::on_runButton_clicked()
         try {
             mArduinoConnector->update();
             mArduinoConnector->draw();
+            ui->stateFps->setText(QString::number(mArduinoConnector->getCurrentFps()));
             qApp->processEvents();
         } catch(AmbiConnectorException e){
             // ui update
@@ -72,6 +73,9 @@ void ControlDialog::on_stopButton_clicked()
 {
     // disable the run button
     setButtonState(false);
+
+    // stop the arduino lighting
+    mArduinoConnector->disconnect(true);
 }
 
 void ControlDialog::setButtonState(bool currentlyRunning)
@@ -87,22 +91,21 @@ void ControlDialog::updateStatus(const string&msg)
 
 void ControlDialog::updateProgressbar(ProgressState state, int progress, int maximum)
 {
-    // not implemented here
-    assert(state != ProgressState::working);
-
-    // handle other cases
+    // handle progress display
     switch(state){
-    case ProgressState::failure:
-        ui->stateProgressBar->setDisabled(true);
-    break;
-    case ProgressState::indefinite:
-        ui->stateProgressBar->setDisabled(false);
-        ui->stateProgressBar->setRange(0, 0);
-    break;
-    case ProgressState::working:
-        ui->stateProgressBar->setDisabled(false);
-        ui->stateProgressBar->setRange(0, maximum);
-        ui->stateProgressBar->setValue(progress);
+        case ProgressState::failure:
+            ui->stateProgressBar->setDisabled(true);
+            ui->stateProgressBar->setRange(0, 1);
+            ui->stateProgressBar->setValue(0);
+        break;
+        case ProgressState::indefinite:
+            ui->stateProgressBar->setDisabled(false);
+            ui->stateProgressBar->setRange(0, 0);
+        break;
+        case ProgressState::working:
+            ui->stateProgressBar->setDisabled(false);
+            ui->stateProgressBar->setRange(0, maximum);
+            ui->stateProgressBar->setValue(progress);
         break;
     }
 }

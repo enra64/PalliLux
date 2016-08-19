@@ -1,5 +1,6 @@
 project(host)
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # get qt creator to show these headers
 SET(MYHEADERS
@@ -35,15 +36,18 @@ include_directories(
     "include/implementations/screenshot"
     "include/implementations/rgblineprovider")
 
+#debug mode?
+set(CMAKE_BUILD_TYPE Debug)
+
 #add_executable(${PROJECT_NAME} "main.cpp" ${MYSOURCES} ${MYHEADERS})
 add_library(${PROJECT_NAME} ${MYSOURCES} ${MYHEADERS})
 
 # library stuff that needs to be included etc
 # imageMagick
-find_package(ImageMagick COMPONENTS Magick++ MagickCore convert composite REQUIRED)
+find_package(ImageMagick COMPONENTS Magick++ MagickCore REQUIRED)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
-target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=0" "-DMAGICKCORE_QUANTUM_DEPTH=16")
+target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
 
 
 

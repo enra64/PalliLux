@@ -6,7 +6,7 @@
 class SingleScreenBorderProvider : public BorderProvider
 {
 public:
-    SingleScreenBorderProvider(size_t width, size_t height, std::shared_ptr<Screenshot> screener);
+    SingleScreenBorderProvider(size_t width, size_t height, std::shared_ptr<Screenshot> screener, size_t xOffset = 0, size_t yOffset = 0);
 
     void retrieveBorders(Magick::Image &right, Magick::Image &top, Magick::Image &left, Magick::Image &bottom);
 

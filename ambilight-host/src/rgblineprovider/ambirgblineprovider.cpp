@@ -32,12 +32,12 @@ float AmbiRgbLineProvider::getData(uint8_t *resultBuffer) {
     flattenBorders();
 
     // debug save
-    debugSaveBorders();
+    //debugSaveBorders();
     // second, align the borders so they form a line
     unique_ptr<Image> pixelLine = alignBorders();
 
     // debug print
-    pixelLine->write("test/flataligned.jpg");
+    //pixelLine->write("flataligned.jpg");
 
     // last, convert the line to rgb data
     imageToRgb(move(pixelLine), resultBuffer);
@@ -59,10 +59,10 @@ std::unique_ptr<Image> AmbiRgbLineProvider::alignBorders() {
 
     // append the borders to a single image
     vector<Image> borderList = vector<Image>();
+    borderList.push_back(mBottomImage);
     borderList.push_back(mRightImage);
     borderList.push_back(mTopImage);
     borderList.push_back(mLeftImage);
-    borderList.push_back(mBottomImage);
 
     // append the rotated images to a line
     appendImages(result, borderList.begin(), borderList.end());
@@ -72,16 +72,15 @@ std::unique_ptr<Image> AmbiRgbLineProvider::alignBorders() {
 
 void AmbiRgbLineProvider::flattenBorders() {
     // scale the vertical border images to a line
-    mRightImage.sample(mVerticalLedGeometry);
-    mLeftImage.sample(mVerticalLedGeometry);
+    mRightImage.scale(mVerticalLedGeometry);
+    mLeftImage.scale(mVerticalLedGeometry);
 
     // scale the horizontal border images to a line
-    mTopImage.sample(mHorizontalLedGeometry);
-    mBottomImage.sample(mHorizontalLedGeometry);
+    mTopImage.scale(mHorizontalLedGeometry);
+    mBottomImage.scale(mHorizontalLedGeometry);
 }
 
 void AmbiRgbLineProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t *result) {
-    cout << "begin" << endl;
     // for each led
     for(unsigned int i = 0; i < LED_COUNT; i++) {
         // retrieve rgb data from the line
@@ -90,7 +89,7 @@ void AmbiRgbLineProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t 
         result[i * 3 + 0] = (255 * data.red());
         result[i * 3 + 1] = (255 * data.green());
         result[i * 3 + 2] = (255 * data.blue());
-        cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
+        //cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
     }
 }
 

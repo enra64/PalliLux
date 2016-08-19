@@ -26,8 +26,16 @@
 
 using namespace std;
 
-ArduinoConnector::ArduinoConnector(std::unique_ptr<RgbLineProvider> rgbProvider) {
+ArduinoConnector::ArduinoConnector(std::unique_ptr<RgbLineProvider> rgbProvider) : ArduinoConnector(move(rgbProvider), ""){
+
+}
+
+ArduinoConnector::ArduinoConnector(std::unique_ptr<RgbLineProvider> rgbProvider, const std::string port) : mTtyDevice(port)
+{
+    // save rgb line provider
     mRgbLineProvider = move(rgbProvider);
+
+    // reserve buffer space
     mRgbBuffer = new uint8_t[mRgbLineProvider->getRequiredBufferLength()];
 
     // initialise timekeeping
