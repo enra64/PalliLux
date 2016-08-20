@@ -31,7 +31,7 @@ private:
     size_t mXOffset, mYOffset;
     size_t mLetterBoxX, mLetterBoxY;
 
-    size_t mBorderWidth = 200;///!< how wide should the borders be
+    size_t mBorderWidth = 100;///!< how wide should the borders be
 };
 
 #endif // SINGLESCREENBORDERPROVIDER_H

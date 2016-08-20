@@ -32,6 +32,7 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // set up fps axes
     QValueAxis* xAxis = new QValueAxis();
     xAxis->setMax(mFpsPointCount);
+    xAxis->setVisible(false);
     QValueAxis* yAxis = new QValueAxis();
     yAxis->setMax(100);
 
@@ -64,26 +65,20 @@ void ControlDialog::on_runButton_clicked()
 
     // ui update
     updateStatus("beginning connection attempt");
-    updateProgressbar(ProgressState::working, 0, 1);
 
     try {
         // try to connect
         mArduinoConnector->connect();
         // ui update
         updateStatus("");
-        updateProgressbar(ProgressState::working, 1, 1);
     } catch(AmbiConnectorException e){
         // ui update
         updateStatus(string("catastrophic failure: ") + e.what(), true);
-        updateProgressbar(ProgressState::failure);
     }
 
     // start timing
     QTime startTime;
     startTime.start();
-
-    // set progress to indefinite as we dont know how long data will be sent
-    updateProgressbar(ProgressState::indefinite);
 
     // begin sending data
     while(1){
@@ -113,7 +108,6 @@ void ControlDialog::on_runButton_clicked()
         } catch(AmbiConnectorException e){
             // ui update
             updateStatus(string("catastrophic failure: ") + e.what(), true);
-            updateProgressbar(ProgressState::failure);
             break;
         }
     }
@@ -141,27 +135,6 @@ void ControlDialog::updateStatus(const string&msg, bool isFailure)
         ui->stateState->setStyleSheet("QLabel { color : red; }");
     else
         ui->stateState->setStyleSheet("QLabel { color : black; }");
-}
-
-void ControlDialog::updateProgressbar(ProgressState state, int progress, int maximum)
-{
-    // handle progress display
-    switch(state){
-        case ProgressState::failure:
-            ui->stateProgressBar->setDisabled(true);
-            ui->stateProgressBar->setRange(0, 1);
-            ui->stateProgressBar->setValue(0);
-        break;
-        case ProgressState::indefinite:
-            ui->stateProgressBar->setDisabled(false);
-            ui->stateProgressBar->setRange(0, 0);
-        break;
-        case ProgressState::working:
-            ui->stateProgressBar->setDisabled(false);
-            ui->stateProgressBar->setRange(0, maximum);
-            ui->stateProgressBar->setValue(progress);
-        break;
-    }
 }
 
 void ControlDialog::on_newdataFactorSpinbox_valueChanged(double arg1)

@@ -17,12 +17,6 @@ namespace Ui {
 class ControlDialog;
 }
 
-enum struct ProgressState {
-    indefinite,
-    failure,
-    working
-};
-
 class ControlDialog : public QDialog
 {
     Q_OBJECT
@@ -45,7 +39,6 @@ private slots:
 private:
     void setButtonState(bool currentlyRunning);
     void updateStatus(const std::__cxx11::string &msg, bool isFailure = false);
-    void updateProgressbar(ProgressState state, int progress = 0, int maximum = 1);
     Ui::ControlDialog *ui;
     std::shared_ptr<ArduinoConnector> mArduinoConnector;
 
