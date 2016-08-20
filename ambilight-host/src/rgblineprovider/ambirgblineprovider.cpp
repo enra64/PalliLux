@@ -91,6 +91,8 @@ void AmbiRgbLineProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t 
         result[i * 3 + 2] = (255 * data.blue());
         //cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
     }
+    
+    mLastLineImage = move(lineBorder);
 }
 
 void AmbiRgbLineProvider::debugSaveBorders() {

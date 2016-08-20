@@ -1,12 +1,12 @@
 #ifndef CONTROLDIALOG_H
 #define CONTROLDIALOG_H
 
+#include "histogram.h"
+
 #include <QDialog>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
-
-// using namespace qtcharts
-QT_CHARTS_USE_NAMESPACE
+QT_CHARTS_USE_NAMESPACE // using namespace qtcharts
 
 #include <memory>
 
@@ -49,6 +49,12 @@ private:// fps chart stuff
     uint mFpsTickCount = 0;
     const int mFpsPointCount = 200;
     std::shared_ptr<SingleScreenBorderProvider> getBorderProvider();
+    std::shared_ptr<AmbiRgbLineProvider> getRgbLineProvider();
+    QPixmap* mLastLineImage;
+
+private://histogram stuff
+    Histogram* mHistogramChart;
+    QChartView* mHistogramChartView;
 };
 
 #endif // CONTROLDIALOG_H

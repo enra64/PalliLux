@@ -11,6 +11,9 @@
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
 
+#include <ImageMagick-6/Magick++.h>
+#include <ImageMagick-6/magick/image.h>
+
 using namespace std;
 
 ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *parent, const QString& infoString) :
@@ -29,12 +32,17 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // update border width
     ui->borderWidthSpinbox->setValue(getBorderProvider()->getBorderWidth());
 
+    // space for last border image
+    mLastLineImage = new QPixmap();
+
+    // fps chart stuff
     // set up fps axes
     QValueAxis* xAxis = new QValueAxis();
     xAxis->setMax(mFpsPointCount);
     xAxis->setVisible(false);
     QValueAxis* yAxis = new QValueAxis();
     yAxis->setMax(100);
+
 
     // set up fps chart
     mFpsChart->legend()->hide();
@@ -47,7 +55,16 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     mFpsChartView->setRenderHint(QPainter::Antialiasing);
 
     // add fps chart to window
-    ui->stateLayout->layout()->addWidget(mFpsChartView);
+    ui->mainLayout->addWidget(mFpsChartView);
+
+
+    // set up histogram chart
+    //mHistogramChart = new Histogram();
+    //mHistogramChartView = new QChartView(mHistogramChart);
+    //mHistogramChartView->setRenderHint(QPainter::Antialiasing);
+
+    // add histogram chart to window
+    //ui->mainLayout->addWidget(mHistogramChartView);
 }
 
 ControlDialog::~ControlDialog()
@@ -103,6 +120,20 @@ void ControlDialog::on_runButton_clicked()
             QString h = QString::number(sec / 60 / 60);
             ui->runningforState->setText(h + ":" + m + ":" + s);
 
+            // show last border line
+            std::unique_ptr<Magick::Image> lastLine = getRgbLineProvider()->getLastLineImage();
+            Magick::Blob bob;
+            lastLine->write(&bob, "PNG");
+            QPixmap line;
+            line.loadFromData((uchar*)(bob.data()), bob.length());
+            ui->lastLineView->setPixmap(line.scaled(ui->lastLineView->width(), ui->lastLineView->height()));
+
+            // update histogram chart
+            lastLine->write("histogram:line.png");
+            QPixmap histogram;
+            histogram.loadFromData("line.png");
+            ui->lastLineView->setPixmap(histogram);
+
             // process ui events
             qApp->processEvents();
         } catch(AmbiConnectorException e){
@@ -157,10 +188,12 @@ void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1)
     filter->setFactor((float) arg1);
 }
 
+shared_ptr<AmbiRgbLineProvider> ControlDialog::getRgbLineProvider(){
+    return dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
+}
+
 shared_ptr<SingleScreenBorderProvider> ControlDialog::getBorderProvider(){
-    // maybe the interface is a bit shitty. just maybe.
-    shared_ptr<AmbiRgbLineProvider> lineProvider = dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
-    return dynamic_pointer_cast<SingleScreenBorderProvider>(lineProvider->getBorderProvider());
+    return dynamic_pointer_cast<SingleScreenBorderProvider>(getRgbLineProvider()->getBorderProvider());
 }
 
 void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1)

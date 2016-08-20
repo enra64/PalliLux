@@ -32,6 +32,10 @@ public:
      */
     float getData(uint8_t *resultSpace) override;
     
+    std::unique_ptr<Magick::Image> getLastLineImage(){
+        return move(mLastLineImage);
+    }
+
     std::shared_ptr<BorderProvider> getBorderProvider(){
         return mBorderProvider;
     }
@@ -68,6 +72,8 @@ private:
     ///@{
     Magick::Image mRightImage, mTopImage, mLeftImage, mBottomImage;
     ///@}
+
+    std::unique_ptr<Magick::Image> mLastLineImage;///!< last complete border image, scaled down
 
     Magick::Geometry mHorizontalLedGeometry;///!< horizontal scaling target geometry
 
