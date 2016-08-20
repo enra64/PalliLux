@@ -1,4 +1,3 @@
-#include "triplescreenborderprovider.h"
 #include "arduinoconnector.h"
 
 // cout
@@ -222,4 +221,9 @@ void ArduinoConnector::addFilter(string id, std::unique_ptr<DataFilter> filter)
 std::unique_ptr<DataFilter> ArduinoConnector::removeFilter(string id)
 {
     return move(mRgbLineProvider->removeFilter(id));
+}
+
+std::unique_ptr<DataFilter> &ArduinoConnector::getFilter(std::__cxx11::string id)
+{
+    return mRgbLineProvider->getFilter(id);
 }

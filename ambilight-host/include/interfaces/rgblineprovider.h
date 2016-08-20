@@ -70,6 +70,24 @@ public:
         return move(tmp);
     }
 
+    /**
+     * @brief Get a DataFilter for editing
+     * @param id DataFilter name
+     * @return reference to the DataFilter
+     */
+    std::unique_ptr<DataFilter>& getFilter(std::string id)
+    {
+        // find the filter
+        const auto& result = mDataFilters.find(id);
+
+        // cant find that filter
+        if(result == mDataFilters.end())
+            throw new std::invalid_argument("could not find datafilter id" + id);
+
+        // return
+        return result->second;
+    }
+
 protected:
     /**
      * @brief Apply all filters that were set

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,10 +32,11 @@ HOST_PATH = /home/arne/Documents/Development/ShittyAmbilight/ambilight-host/
 HOST_INC_PATH = $${HOST_PATH}/include
 LIBS += $${HOST_PATH}/libhost.a
 INCLUDEPATH += $${HOST_INC_PATH} \
-    $${HOST_INC_PATH}/implementations/borderproviders \
-    $${HOST_INC_PATH}/implementations/interfaces \
-    $${HOST_INC_PATH}/implementations/rgblineprovider \
-    $${HOST_INC_PATH}/implementations/screenshot
+    $${HOST_INC_PATH}/borderproviders \
+    $${HOST_INC_PATH}/interfaces \
+    $${HOST_INC_PATH}/rgblineprovider \
+    $${HOST_INC_PATH}/datafilters \
+    $${HOST_INC_PATH}/screenshot
 
 
 

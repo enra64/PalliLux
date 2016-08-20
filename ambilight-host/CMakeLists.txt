@@ -6,22 +6,28 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 SET(MYHEADERS
     "include/arduinoconnector.h"
     "include/customexceptions.h"
-    "include/implementations/borderproviders/singlescreenborderprovider.h"
-    "include/implementations/borderproviders/triplescreenborderprovider.h"
-    "include/implementations/interfaces/borderprovider.h"
-    "include/implementations/interfaces/datafilter.h"
-    "include/implementations/interfaces/rgblineprovider.h"
-    "include/implementations/interfaces/screenshot.h"
-    "include/implementations/rgblineprovider/ambirgblineprovider.h"
-    "include/implementations/rgblineprovider/spectrometerrgblineprovider.h"
-    "include/implementations/screenshot/vlcscreenshot.h"
-    "include/implementations/screenshot/xlibscreenshot.h")
+    "include/borderproviders/singlescreenborderprovider.h"
+    "include/borderproviders/triplescreenborderprovider.h"
+    "include/datafilters/brightnessfilter.h"
+    "include/datafilters/linearfactorfilter.h"
+    "include/datafilters/lowpassfilter.h"
+    "include/rgblineprovider/ambirgblineprovider.h"
+    "include/rgblineprovider/spectrometerrgblineprovider.h"
+    "include/screenshot/vlcscreenshot.h"
+    "include/screenshot/xlibscreenshot.h"
+    "include/interfaces/borderprovider.h"
+    "include/interfaces/datafilter.h"
+    "include/interfaces/rgblineprovider.h"
+    "include/interfaces/screenshot.h")
 
 # relevant source files
 SET(MYSOURCES
     "src/arduinoconnector.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
     "src/borderproviders/triplescreenborderprovider.cpp"
+    "src/datafilters/brightnessfilter.cpp"
+    "src/datafilters/linearfactorfilter.cpp"
+    "src/datafilters/lowpassfilter.cpp"
     "src/rgblineprovider/ambirgblineprovider.cpp"
     "src/rgblineprovider/spectrometerrgblineprovider.cpp"
     "src/screenshot/vlcscreenshot.cpp"
@@ -29,12 +35,12 @@ SET(MYSOURCES
 
 #include subdirectories
 include_directories(
-    "include" 
-    "include/implementations"
-    "include/implementations/interfaces"
-    "include/implementations/borderproviders"
-    "include/implementations/screenshot"
-    "include/implementations/rgblineprovider")
+    "include"
+    "include/interfaces"
+    "include/borderproviders"
+    "include/screenshot"
+    "include/datafilters"
+    "include/rgblineprovider")
 
 #debug mode?
 set(CMAKE_BUILD_TYPE Debug)

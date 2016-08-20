@@ -76,6 +76,13 @@ public:
     std::unique_ptr<DataFilter> removeFilter(std::string id);
 
     /**
+     * @brief getFilter get a filter for editing
+     * @param id filter name
+     * @return reference to the filter
+     */
+    std::unique_ptr<DataFilter>& getFilter(std::string id);
+
+    /**
      * @brief Retrieve the bufferspace required for a rgb dataset
      * @return number of bytes required
      */
