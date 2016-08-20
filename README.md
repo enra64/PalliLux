@@ -7,7 +7,7 @@ It is, however, also possible to supply any other RGB data.
 Just flash the sketch contained in ambilight-arduino to an arduino, but don't forget to adjust the number of LEDs.
 
 ## Host
-The host code in ambilight-host is a powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an executable file in debug mode, so to compile your version you just need to ```cmake CMakeLists.txt && make```.
+The host code in ambilight-host is a powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an executable file in debug mode, so to compile your version you just need to ```cmake CMakeLists.txt && make```. If you do not have pulseaudio and fftw, or are not using the x11 libs, you currently will have to remove their find passages from the CMakeLists.txt, as well as all files referencing the libs.
 
 ### Instantiation
 ```c++
