@@ -43,7 +43,7 @@ shared_ptr<BorderProvider> MainWindow::getSingleScreenBorderProvider(shared_ptr<
     return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, screener, xOff, yOff, xLetterbox, yLetterbox));
 }
 
-std::unique_ptr<RgbLineProvider> MainWindow::createAmbilightRgbProvider() {
+std::shared_ptr<RgbLineProvider> MainWindow::createAmbilightRgbProvider() {
     // instantiate the desired screenshot class
     shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
 
@@ -53,7 +53,7 @@ std::unique_ptr<RgbLineProvider> MainWindow::createAmbilightRgbProvider() {
 
     // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
     // BorderProvider to get images of the borders and convert them to RGB arrays
-    return std::move(unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18)));
+    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18));
 }
 
 QString MainWindow::getInfoText()
@@ -70,10 +70,10 @@ QString MainWindow::getInfoText()
 
 void MainWindow::on_pushButton_clicked() {
     // ambilight rgb provider
-    unique_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+    shared_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
 
     // supply our AmbiConnector with its chosen RgbLineProvider
-    shared_ptr<ArduinoConnector> connector = shared_ptr<ArduinoConnector>(new ArduinoConnector(std::move(rgbProvider), "/dev/ttyUSB0"));
+    shared_ptr<ArduinoConnector> connector = shared_ptr<ArduinoConnector>(new ArduinoConnector(rgbProvider, "/dev/ttyUSB0"));
 
     // add low pass filter
     unique_ptr<DataFilter> lpFilter(new LowPassFilter(connector->getRequiredBufferLength(), .6f));

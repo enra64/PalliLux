@@ -46,8 +46,8 @@ include_directories(
 set(CMAKE_BUILD_TYPE Debug)
 
 # create a library or an executable?
-add_executable(${PROJECT_NAME} "main.cpp" ${MYSOURCES} ${MYHEADERS})
-#add_library(${PROJECT_NAME} ${MYSOURCES} ${MYHEADERS})
+#add_executable(${PROJECT_NAME} "main.cpp" ${MYSOURCES} ${MYHEADERS})
+add_library(${PROJECT_NAME} ${MYSOURCES} ${MYHEADERS})
 
 # library stuff that needs to be included etc
 # imageMagick

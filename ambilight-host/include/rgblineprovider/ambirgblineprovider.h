@@ -31,6 +31,10 @@ public:
      * @param[out] resultSpace Storage provided for the rgb output data; length must be at least the value of "::"<getRequiredBufferLength>
      */
     float getData(uint8_t *resultSpace) override;
+    
+    std::shared_ptr<BorderProvider> getBorderProvider(){
+        return mBorderProvider;
+    }
 
 private:
 // functions

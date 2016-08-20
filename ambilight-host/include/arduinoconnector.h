@@ -44,14 +44,14 @@ public:
      * @brief construct an AmbiConnector, responsible for obtaining and updating the led data
      * @param borderProvider will be used to obtain the border images
      */
-    ArduinoConnector(std::unique_ptr<RgbLineProvider> borderProvider);
+    ArduinoConnector(std::shared_ptr<RgbLineProvider> borderProvider);
 
     /**
      * @brief construct an AmbiConnector, responsible for obtaining and updating the led data
      * @param borderProvider will be used to obtain the border images
      * @param port tty port for comms
      */
-    ArduinoConnector(std::unique_ptr<RgbLineProvider> borderProvider, const std::string port);
+    ArduinoConnector(std::shared_ptr<RgbLineProvider> borderProvider, const std::string port);
 
     ~ArduinoConnector();
 
@@ -114,6 +114,10 @@ public:
         mTtyDevice = port;
     }
 
+    std::shared_ptr<RgbLineProvider> getRgbLineProvider(){
+        return mRgbLineProvider;
+    }
+
 private:
 
     /**
@@ -134,7 +138,7 @@ private:
      */
     void updateFps();
 
-    std::unique_ptr<RgbLineProvider> mRgbLineProvider;//!< the object that provides the RGB led data as a uint8_t array
+    std::shared_ptr<RgbLineProvider> mRgbLineProvider;//!< the object that provides the RGB led data as a uint8_t array
 
     uint8_t* mRgbBuffer;//!< our very own bufferspace for led data
 

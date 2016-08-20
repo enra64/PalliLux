@@ -10,7 +10,8 @@ QT_CHARTS_USE_NAMESPACE
 
 #include <memory>
 
-#include "arduinoconnector.h"
+#include <arduinoconnector.h>
+#include <singlescreenborderprovider.h>
 
 namespace Ui {
 class ControlDialog;
@@ -39,9 +40,11 @@ private slots:
 
     void on_brightnessFactorSpinbox_valueChanged(double arg1);
 
+    void on_borderWidthSpinbox_valueChanged(int arg1);
+
 private:
     void setButtonState(bool currentlyRunning);
-    void updateStatus(const std::__cxx11::string &msg);
+    void updateStatus(const std::__cxx11::string &msg, bool isFailure = false);
     void updateProgressbar(ProgressState state, int progress = 0, int maximum = 1);
     Ui::ControlDialog *ui;
     std::shared_ptr<ArduinoConnector> mArduinoConnector;
@@ -52,6 +55,7 @@ private:// fps chart stuff
     QChartView* mFpsChartView;
     uint mFpsTickCount = 0;
     const int mFpsPointCount = 200;
+    std::shared_ptr<SingleScreenBorderProvider> getBorderProvider();
 };
 
 #endif // CONTROLDIALOG_H

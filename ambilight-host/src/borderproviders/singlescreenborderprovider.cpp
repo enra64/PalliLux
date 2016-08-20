@@ -6,31 +6,36 @@ SingleScreenBorderProvider::SingleScreenBorderProvider(
         size_t width, size_t height, 
         std::shared_ptr<Screenshot> screener, 
         size_t xOffset, size_t yOffset, 
-        size_t blackbarOffsetX, size_t blackBarOffsetY) : BorderProvider(screener) {
+        size_t blackbarOffsetX, size_t blackBarOffsetY) : 
+            BorderProvider(screener), mWidth(width), mHeight(height), mXOffset(xOffset), mYOffset(yOffset), mLetterBoxX(blackbarOffsetX), mLetterBoxY(blackBarOffsetY) {
+    updateGeometry();
+}
+
+void SingleScreenBorderProvider::updateGeometry(){
     mLeftGeometry = Geometry(
-        BORDER_WIDTH, //width
-        height - 2 * BORDER_WIDTH - (2 * blackBarOffsetY), //height
-        blackbarOffsetX + xOffset + 0, //x offset
-        blackBarOffsetY + yOffset + BORDER_WIDTH);// y offset
+        mBorderWidth, //width
+        mHeight - 2 * mBorderWidth - (2 * mLetterBoxY), //height
+        mLetterBoxX + mXOffset + 0, //x offset
+        mLetterBoxY + mLetterBoxY + mBorderWidth);// y offset
         
     mRightGeometry = Geometry(
-        BORDER_WIDTH, //width
-        height - 2 * BORDER_WIDTH - (2 * blackBarOffsetY), //height
-        (-blackbarOffsetX) + xOffset + width - BORDER_WIDTH, //x offset
-        blackBarOffsetY + yOffset + BORDER_WIDTH);// y offset
+        mBorderWidth, //width
+        mHeight - 2 * mBorderWidth - (2 * mLetterBoxY), //height
+        (-mLetterBoxX) + mXOffset + mWidth - mBorderWidth, //x offset
+        mLetterBoxY + mLetterBoxY + mBorderWidth);// y offset
     
 
     mTopGeometry = Geometry(
-        width  - (2 * blackbarOffsetX), //width
-        BORDER_WIDTH, //height
-        blackbarOffsetX + xOffset + 0, //x offset
-        blackBarOffsetY + yOffset + 0);// y offset
+        mWidth  - (2 * mLetterBoxX), //width
+        mBorderWidth, //height
+        mLetterBoxX + mXOffset + 0, //x offset
+        mLetterBoxY + mLetterBoxY + 0);// y offset
     
     mBottomGeometry = Geometry(
-        width - (2 * blackbarOffsetX), //width
-        BORDER_WIDTH, //height
-        blackbarOffsetX + xOffset + 0, //x offset
-        (-blackBarOffsetY) + yOffset + height - BORDER_WIDTH);// y offset
+        mWidth - (2 * mLetterBoxX), //width
+        mBorderWidth, //height
+        mLetterBoxX + mXOffset + 0, //x offset
+        (-mLetterBoxY) + mLetterBoxY + mHeight - mBorderWidth);// y offset
 }
 
 void SingleScreenBorderProvider::retrieveBorders(Magick::Image &right, Magick::Image &top, Magick::Image &left, Magick::Image &bottom)

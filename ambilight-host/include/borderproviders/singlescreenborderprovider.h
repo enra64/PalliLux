@@ -10,13 +10,28 @@ public:
 
     void retrieveBorders(Magick::Image &right, Magick::Image &top, Magick::Image &left, Magick::Image &bottom);
 
+    void setBorderWidth(size_t width){
+        mBorderWidth = width;
+        updateGeometry();
+    }
+
+    size_t getBorderWidth() const {
+        return mBorderWidth;
+    }
+
 private:
     Magick::Geometry mRightGeometry;///!< right border geometry
     Magick::Geometry mTopGeometry;///!< top border geometry
     Magick::Geometry mLeftGeometry;///!< left border geometry
     Magick::Geometry mBottomGeometry;///!< bottom border geometry
 
-    const size_t BORDER_WIDTH = 70;///!< how wide should the borders be
+    void updateGeometry();
+
+    size_t mWidth, mHeight;
+    size_t mXOffset, mYOffset;
+    size_t mLetterBoxX, mLetterBoxY;
+
+    size_t mBorderWidth = 200;///!< how wide should the borders be
 };
 
 #endif // SINGLESCREENBORDERPROVIDER_H

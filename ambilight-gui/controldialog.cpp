@@ -26,6 +26,9 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // set info string
     ui->infoState->setText(infoString);
 
+    // update border width
+    ui->borderWidthSpinbox->setValue(getBorderProvider()->getBorderWidth());
+
     // set up fps axes
     QValueAxis* xAxis = new QValueAxis();
     xAxis->setMax(mFpsPointCount);
@@ -71,7 +74,7 @@ void ControlDialog::on_runButton_clicked()
         updateProgressbar(ProgressState::working, 1, 1);
     } catch(AmbiConnectorException e){
         // ui update
-        updateStatus(string("catastrophic failure: ") + e.what());
+        updateStatus(string("catastrophic failure: ") + e.what(), true);
         updateProgressbar(ProgressState::failure);
     }
 
@@ -109,7 +112,7 @@ void ControlDialog::on_runButton_clicked()
             qApp->processEvents();
         } catch(AmbiConnectorException e){
             // ui update
-            updateStatus(string("catastrophic failure: ") + e.what());
+            updateStatus(string("catastrophic failure: ") + e.what(), true);
             updateProgressbar(ProgressState::failure);
             break;
         }
@@ -131,9 +134,13 @@ void ControlDialog::setButtonState(bool currentlyRunning)
     ui->stopButton->setEnabled(currentlyRunning);
 }
 
-void ControlDialog::updateStatus(const string&msg)
+void ControlDialog::updateStatus(const string&msg, bool isFailure)
 {
     ui->stateState->setText(QString(msg.c_str()));
+    if(isFailure)
+        ui->stateState->setStyleSheet("QLabel { color : red; }");
+    else
+        ui->stateState->setStyleSheet("QLabel { color : black; }");
 }
 
 void ControlDialog::updateProgressbar(ProgressState state, int progress, int maximum)
@@ -175,4 +182,15 @@ void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1)
     assert(filter);
     // apply change
     filter->setFactor((float) arg1);
+}
+
+shared_ptr<SingleScreenBorderProvider> ControlDialog::getBorderProvider(){
+    // maybe the interface is a bit shitty. just maybe.
+    shared_ptr<AmbiRgbLineProvider> lineProvider = dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
+    return dynamic_pointer_cast<SingleScreenBorderProvider>(lineProvider->getBorderProvider());
+}
+
+void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1)
+{
+    getBorderProvider()->setBorderWidth(arg1);
 }

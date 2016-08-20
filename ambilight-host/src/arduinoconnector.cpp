@@ -25,14 +25,14 @@
 
 using namespace std;
 
-ArduinoConnector::ArduinoConnector(std::unique_ptr<RgbLineProvider> rgbProvider) : ArduinoConnector(move(rgbProvider), ""){
+ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider) : ArduinoConnector(rgbProvider, ""){
 
 }
 
-ArduinoConnector::ArduinoConnector(std::unique_ptr<RgbLineProvider> rgbProvider, const std::string port) : mTtyDevice(port)
+ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider, const std::string port) : mTtyDevice(port)
 {
     // save rgb line provider
-    mRgbLineProvider = move(rgbProvider);
+    mRgbLineProvider = rgbProvider;
 
     // reserve buffer space
     mRgbBuffer = new uint8_t[mRgbLineProvider->getRequiredBufferLength()];

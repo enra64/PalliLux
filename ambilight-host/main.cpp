@@ -18,7 +18,7 @@ using namespace std;
 
 using namespace std;
 
-std::unique_ptr<RgbLineProvider> createAmbilightRgbProvider(){
+std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider(){
     // instantiate the desired screenshot class
     shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
 
@@ -29,7 +29,7 @@ std::unique_ptr<RgbLineProvider> createAmbilightRgbProvider(){
 
     // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
     // BorderProvider to get images of the borders and convert them to RGB arrays
-    return move(unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18)));
+    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18));
 }
 
 int main() {
@@ -37,10 +37,10 @@ int main() {
     //unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new SpectrometerRgbLineProvider(60, 18));
 
     // ambilight rgb provider
-    unique_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+    shared_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
 
     // supply our AmbiConnector with its chosen RgbLineProvider
-    ArduinoConnector connector(move(rgbProvider));
+    ArduinoConnector connector(rgbProvider);
 
     // add the filters we want
     //connector.addFilter("lowPassFilter", unique_ptr<DataFilter>(new LowPassFilter(connector.getRequiredBufferLength())));
