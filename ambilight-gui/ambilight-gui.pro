@@ -42,12 +42,10 @@ INCLUDEPATH += $${HOST_INC_PATH} \
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    controldialog.cpp \
-    histogram.cpp
+    controldialog.cpp
 
 HEADERS  += mainwindow.h \
-    controldialog.h \
-    histogram.h
+    controldialog.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui

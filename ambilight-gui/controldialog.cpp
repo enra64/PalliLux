@@ -19,8 +19,7 @@ using namespace std;
 ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *parent, const QString& infoString) :
     QDialog(parent),
     ui(new Ui::ControlDialog),
-    mArduinoConnector(connector)
-{
+    mArduinoConnector(connector) {
     ui->setupUi(this);
 
     // disable the stop button
@@ -32,9 +31,6 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // update border width
     ui->borderWidthSpinbox->setValue(getBorderProvider()->getBorderWidth());
 
-    // space for last border image
-    mLastLineImage = new QPixmap();
-
     // fps chart stuff
     // set up fps axes
     QValueAxis* xAxis = new QValueAxis();
@@ -43,37 +39,27 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     QValueAxis* yAxis = new QValueAxis();
     yAxis->setMax(100);
 
+    // set up last line view
+    mLastLineView = new QLabel(this);
+
+    // set up histogram
+    mHistogramView = new QLabel(this);
 
     // set up fps chart
     mFpsChart->legend()->hide();
     mFpsChart->addSeries(mFpsLineSeries);
     mFpsChart->setAxisX(xAxis, mFpsLineSeries);
     mFpsChart->setAxisY(yAxis, mFpsLineSeries);
-    mFpsChart->setTitle("fps");
 
     mFpsChartView = new QChartView(mFpsChart);
     mFpsChartView->setRenderHint(QPainter::Antialiasing);
-
-    // add fps chart to window
-    ui->mainLayout->addWidget(mFpsChartView);
-
-
-    // set up histogram chart
-    //mHistogramChart = new Histogram();
-    //mHistogramChartView = new QChartView(mHistogramChart);
-    //mHistogramChartView->setRenderHint(QPainter::Antialiasing);
-
-    // add histogram chart to window
-    //ui->mainLayout->addWidget(mHistogramChartView);
 }
 
-ControlDialog::~ControlDialog()
-{
+ControlDialog::~ControlDialog() {
     delete ui;
 }
 
-void ControlDialog::on_runButton_clicked()
-{
+void ControlDialog::on_runButton_clicked() {
     // disable the stop button
     setButtonState(true);
 
@@ -88,7 +74,7 @@ void ControlDialog::on_runButton_clicked()
         mArduinoConnector->connect();
         // ui update
         updateStatus("");
-    } catch(AmbiConnectorException e){
+    } catch(AmbiConnectorException e) {
         // ui update
         updateStatus(string("catastrophic failure: ") + e.what(), true);
     }
@@ -98,20 +84,23 @@ void ControlDialog::on_runButton_clicked()
     startTime.start();
 
     // begin sending data
-    while(1){
+    while(1) {
         try {
             // update leds
             mArduinoConnector->update();
             mArduinoConnector->draw();
 
             // update fps chart
-            mFpsLineSeries->append(mFpsTickCount++, mArduinoConnector->getCurrentFps());
-            while(mFpsLineSeries->count() > mFpsPointCount){
-                qreal xDelta = mFpsChart->mapToPosition(mFpsLineSeries->at(1)).rx() - mFpsChart->mapToPosition(mFpsLineSeries->at(0)).rx();
-                mFpsLineSeries->removePoints(0, 1);
-                mFpsChart->scroll(xDelta, 0);
+            if(mEnableFpsChart) {
+                mFpsLineSeries->append(mFpsTickCount++, mArduinoConnector->getCurrentFps());
+                while(mFpsLineSeries->count() > mFpsPointCount) {
+                    qreal xDelta = mFpsChart->mapToPosition(
+                                       mFpsLineSeries->at(1)).rx() - mFpsChart->mapToPosition(mFpsLineSeries->at(0)).rx();
+                    mFpsLineSeries->removePoints(0, 1);
+                    mFpsChart->scroll(xDelta, 0);
+                }
+                mFpsChartView->repaint();
             }
-            mFpsChartView->repaint();
 
             // update "running for" label
             int sec = startTime.elapsed() / 1000;
@@ -120,23 +109,28 @@ void ControlDialog::on_runButton_clicked()
             QString h = QString::number(sec / 60 / 60);
             ui->runningforState->setText(h + ":" + m + ":" + s);
 
-            // show last border line
             std::unique_ptr<Magick::Image> lastLine = getRgbLineProvider()->getLastLineImage();
-            Magick::Blob bob;
-            lastLine->write(&bob, "PNG");
-            QPixmap line;
-            line.loadFromData((uchar*)(bob.data()), bob.length());
-            ui->lastLineView->setPixmap(line.scaled(ui->lastLineView->width(), ui->lastLineView->height()));
+
+            // show last border line
+            if(mEnableLastLineView) {
+                Magick::Blob bob;
+                lastLine->write(&bob, "PNG");
+                QPixmap line;
+                line.loadFromData((uchar*)(bob.data()), bob.length());
+                mLastLineView->setPixmap(line.scaled(mLastLineView->width(), mLastLineView->height()));
+            }
 
             // update histogram chart
-            lastLine->write("histogram:line.png");
-            QPixmap histogram;
-            histogram.loadFromData("line.png");
-            ui->lastLineView->setPixmap(histogram);
+            if(mEnableHistogram) {
+                lastLine->write("histogram:/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-gui-Desktop-Debug/line.png");
+                QPixmap histogram("/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-gui-Desktop-Debug/line.png");
+                mHistogramView->setMinimumSize(histogram.width(), histogram.height());
+                mHistogramView->setPixmap(histogram);
+            }
 
             // process ui events
             qApp->processEvents();
-        } catch(AmbiConnectorException e){
+        } catch(AmbiConnectorException e) {
             // ui update
             updateStatus(string("catastrophic failure: ") + e.what(), true);
             break;
@@ -144,8 +138,7 @@ void ControlDialog::on_runButton_clicked()
     }
 }
 
-void ControlDialog::on_stopButton_clicked()
-{
+void ControlDialog::on_stopButton_clicked() {
     // disable the run button
     setButtonState(false);
 
@@ -153,14 +146,12 @@ void ControlDialog::on_stopButton_clicked()
     mArduinoConnector->disconnect(true);
 }
 
-void ControlDialog::setButtonState(bool currentlyRunning)
-{
+void ControlDialog::setButtonState(bool currentlyRunning) {
     ui->runButton->setEnabled(!currentlyRunning);
     ui->stopButton->setEnabled(currentlyRunning);
 }
 
-void ControlDialog::updateStatus(const string&msg, bool isFailure)
-{
+void ControlDialog::updateStatus(const string&msg, bool isFailure) {
     ui->stateState->setText(QString(msg.c_str()));
     if(isFailure)
         ui->stateState->setStyleSheet("QLabel { color : red; }");
@@ -168,8 +159,7 @@ void ControlDialog::updateStatus(const string&msg, bool isFailure)
         ui->stateState->setStyleSheet("QLabel { color : black; }");
 }
 
-void ControlDialog::on_newdataFactorSpinbox_valueChanged(double arg1)
-{
+void ControlDialog::on_newdataFactorSpinbox_valueChanged(double arg1) {
     // im sorry
     LowPassFilter* filter = dynamic_cast<LowPassFilter*>(mArduinoConnector->getFilter("lowpass").get());
     // check that cast & finding worked
@@ -178,8 +168,7 @@ void ControlDialog::on_newdataFactorSpinbox_valueChanged(double arg1)
     filter->setNewDataFactor((float) arg1);
 }
 
-void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1)
-{
+void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1) {
     // sorry for this, too
     BrightnessFilter* filter = dynamic_cast<BrightnessFilter*>(mArduinoConnector->getFilter("brightness").get());
     // check that cast & finding worked
@@ -188,15 +177,46 @@ void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1)
     filter->setFactor((float) arg1);
 }
 
-shared_ptr<AmbiRgbLineProvider> ControlDialog::getRgbLineProvider(){
+shared_ptr<AmbiRgbLineProvider> ControlDialog::getRgbLineProvider() {
     return dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
 }
 
-shared_ptr<SingleScreenBorderProvider> ControlDialog::getBorderProvider(){
+shared_ptr<SingleScreenBorderProvider> ControlDialog::getBorderProvider() {
     return dynamic_pointer_cast<SingleScreenBorderProvider>(getRgbLineProvider()->getBorderProvider());
 }
 
-void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1)
-{
+void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
     getBorderProvider()->setBorderWidth(arg1);
+}
+
+void ControlDialog::on_fpsCheckbox_clicked(bool checked) {
+    mEnableFpsChart = checked;
+    mFpsChartView->setVisible(checked);
+    if(checked)
+        ui->fpsLayout->addWidget(mFpsChartView);
+    else
+        ui->fpsLayout->removeWidget(mFpsChartView);
+}
+
+void ControlDialog::on_histogramCheckbox_clicked(bool checked) {
+    mEnableHistogram = checked;
+    mHistogramView->setVisible(checked);
+    if(checked){
+        ui->histogramLayout->addWidget(mHistogramView);
+    }
+    else{
+        ui->histogramLayout->removeWidget(mHistogramView);
+    }
+}
+
+void ControlDialog::on_lineCheckbox_clicked(bool checked)
+{
+    mEnableLastLineView = checked;
+    mLastLineView->setVisible(checked);
+    if(checked){
+        ui->lineLayout->addWidget(mLastLineView);
+    }
+    else{
+        ui->lineLayout->removeWidget(mLastLineView);
+    }
 }

@@ -1,8 +1,6 @@
 #ifndef CONTROLDIALOG_H
 #define CONTROLDIALOG_H
 
-#include "histogram.h"
-
 #include <QDialog>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
@@ -10,6 +8,7 @@ QT_CHARTS_USE_NAMESPACE // using namespace qtcharts
 
 #include <memory>
 
+#include <QLabel>
 #include <arduinoconnector.h>
 #include <singlescreenborderprovider.h>
 
@@ -36,11 +35,28 @@ private slots:
 
     void on_borderWidthSpinbox_valueChanged(int arg1);
 
+    void on_fpsCheckbox_clicked(bool checked);
+
+    void on_histogramCheckbox_clicked(bool checked);
+
+    void on_lineCheckbox_clicked(bool checked);
+
 private:
     void setButtonState(bool currentlyRunning);
     void updateStatus(const std::__cxx11::string &msg, bool isFailure = false);
     Ui::ControlDialog *ui;
     std::shared_ptr<ArduinoConnector> mArduinoConnector;
+
+private:
+    bool mEnableFpsChart = false;
+    bool mEnableHistogram = false;
+    bool mEnableLastLineView = false;
+
+private:// last line view
+    QLabel* mLastLineView;
+
+private:// histogram
+    QLabel* mHistogramView;
 
 private:// fps chart stuff
     QLineSeries* mFpsLineSeries = new QLineSeries();
@@ -50,11 +66,6 @@ private:// fps chart stuff
     const int mFpsPointCount = 200;
     std::shared_ptr<SingleScreenBorderProvider> getBorderProvider();
     std::shared_ptr<AmbiRgbLineProvider> getRgbLineProvider();
-    QPixmap* mLastLineImage;
-
-private://histogram stuff
-    Histogram* mHistogramChart;
-    QChartView* mHistogramChartView;
 };
 
 #endif // CONTROLDIALOG_H

@@ -138,6 +138,42 @@
     </widget>
    </item>
    <item>
+    <layout class="QVBoxLayout" name="lineLayout">
+     <item>
+      <widget class="QCheckBox" name="lineCheckbox">
+       <property name="text">
+        <string>last data line</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="fpsLayout">
+     <item>
+      <widget class="QCheckBox" name="fpsCheckbox">
+       <property name="text">
+        <string>fps graph</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="histogramLayout">
+     <item>
+      <widget class="QCheckBox" name="histogramCheckbox">
+       <property name="text">
+        <string>histogram</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="buttonBox">
      <property name="spacing">
       <number>6</number>
@@ -175,25 +211,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="lastLineView">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
