@@ -15,9 +15,8 @@ public:
         updateGeometry();
     }
 
-    size_t getBorderWidth() const {
-        return mBorderWidth;
-    }
+protected:
+    void updateGeometry() override;
 
 private:
     Magick::Geometry mRightGeometry;///!< right border geometry
@@ -25,13 +24,9 @@ private:
     Magick::Geometry mLeftGeometry;///!< left border geometry
     Magick::Geometry mBottomGeometry;///!< bottom border geometry
 
-    void updateGeometry();
-
     size_t mWidth, mHeight;
     size_t mXOffset, mYOffset;
     size_t mLetterBoxX, mLetterBoxY;
-
-    size_t mBorderWidth = 100;///!< how wide should the borders be
 };
 
 #endif // SINGLESCREENBORDERPROVIDER_H

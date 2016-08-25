@@ -12,7 +12,8 @@
 using namespace Magick;
 using namespace std;
 
-TripleScreenBorderProvider::TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener) : BorderProvider(screener) {
+TripleScreenBorderProvider::TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener, size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(screener), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3) {
+    updateGeometry();
 }
 
 void TripleScreenBorderProvider::retrieveBorders(Image &right, Image &top, Image &left, Image &bottom) {
@@ -35,4 +36,23 @@ void TripleScreenBorderProvider::retrieveBorders(Image &right, Image &top, Image
     mScreenshot->getScreenCrop(bottomBorderVector[2], mBottomRightBorderDimensions);
 
     appendImages(&bottom, bottomBorderVector.begin(), bottomBorderVector.end());
+}
+
+void TripleScreenBorderProvider::updateGeometry() {
+    LEFT_X_POSITION = 0;
+    LEFT_Y_POSITION = 0;
+    
+    CENTER_X_POSITION = LEFT_SCREEN_WIDTH;
+    CENTER_Y_POSITION = 0;
+    
+    RIGHT_X_POSITION = LEFT_SCREEN_WIDTH + CENTER_SCREEN_WIDTH;
+    RIGHT_Y_POSITION = 0;
+    
+    mTopBorderDimensions = Magick::Geometry(ALL_WIDTH, mBorderWidth, LEFT_X_POSITION, LEFT_Y_POSITION);
+    mLeftBorderDimensions = Magick::Geometry(mBorderWidth, LEFT_SCREEN_HEIGHT - 2 * mBorderWidth, LEFT_X_POSITION, mBorderWidth);
+    mRightBorderDimensions = Magick::Geometry(mBorderWidth, RIGHT_SCREEN_HEIGHT - 2 * mBorderWidth, ALL_WIDTH - mBorderWidth,  mBorderWidth);
+
+    mBottomLeftBorderDimensions = Magick::Geometry(LEFT_SCREEN_WIDTH, mBorderWidth, LEFT_X_POSITION, LEFT_SCREEN_HEIGHT - mBorderWidth);
+    mBottomCenterBorderDimensions = Magick::Geometry(CENTER_SCREEN_WIDTH,    mBorderWidth, CENTER_X_POSITION, CENTER_SCREEN_HEIGHT - mBorderWidth);
+    mBottomRightBorderDimensions = Magick::Geometry(RIGHT_SCREEN_WIDTH,     mBorderWidth, RIGHT_X_POSITION, RIGHT_SCREEN_HEIGHT - mBorderWidth);
 }

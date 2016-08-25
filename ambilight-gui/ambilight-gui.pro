@@ -42,10 +42,17 @@ INCLUDEPATH += $${HOST_INC_PATH} \
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    controldialog.cpp
+    controldialog.cpp \
+    singlescreenconfigpage.cpp \
+    triplescreenconfigpage.cpp
 
 HEADERS  += mainwindow.h \
-    controldialog.h
+    controldialog.h \
+    singlescreenconfigpage.h \
+    iconfigpage.h \
+    triplescreenconfigpage.h
 
 FORMS    += mainwindow.ui \
-    controldialog.ui
+    controldialog.ui \
+    singlescreenconfigpage.ui \
+    triplescreenconfigpage.ui

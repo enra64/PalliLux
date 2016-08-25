@@ -6,13 +6,13 @@
 #include <memory>
 
 #include "arduinoconnector.h"
+#include "iconfigpage.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -23,8 +23,10 @@ private slots:
     void on_pushButton_clicked();
 
     void on_yLedSpin_valueChanged(int);
-
     void on_xLedSpin_valueChanged(int);
+
+    void on_configStackPrevButton_clicked();
+    void on_configStackNextButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -32,6 +34,7 @@ private:
     void refreshLedCount();
     std::shared_ptr<BorderProvider> getSingleScreenBorderProvider(std::shared_ptr<Screenshot> screener);
     std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider();
+    const IScreenConfigPage* getCurrentPage();
     QString getInfoText();
 };
 

@@ -11,7 +11,7 @@ SingleScreenBorderProvider::SingleScreenBorderProvider(
     updateGeometry();
 }
 
-void SingleScreenBorderProvider::updateGeometry(){
+void SingleScreenBorderProvider::updateGeometry() {
     mLeftGeometry = Geometry(
         mBorderWidth, //width
         mHeight - 2 * mBorderWidth - (2 * mLetterBoxY), //height

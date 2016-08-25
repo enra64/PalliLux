@@ -1,4 +1,5 @@
 #include "controldialog.h"
+#include "iconfigpage.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -32,48 +33,18 @@ void MainWindow::refreshLedCount() {
     ui->ledCountLabel->setText(QString::number(ledCount));
 }
 
-shared_ptr<BorderProvider> MainWindow::getSingleScreenBorderProvider(shared_ptr<Screenshot> screener) {
-    int w = ui->resolutionWidthSpinbox->value();
-    int h = ui->resolutionHeightSpinbox->value();
-    int xOff = ui->xOffsetSpinbox->value();
-    int yOff = ui->yOffsetSpinbox->value();
-    int xLetterbox = ui->letterboxingWidthSpinBox->value();
-    int yLetterbox = ui->letterboxingHeightSpinBox->value();
-
-    return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, screener, xOff, yOff, xLetterbox, yLetterbox));
-}
-
-std::shared_ptr<RgbLineProvider> MainWindow::createAmbilightRgbProvider() {
-    // instantiate the desired screenshot class
-    shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
-
-    // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
-    // to get screenshots from the system
-    shared_ptr<BorderProvider> borderProvider = getSingleScreenBorderProvider(screener);
-
-    // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
-    // BorderProvider to get images of the borders and convert them to RGB arrays
-    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18));
-}
-
-QString MainWindow::getInfoText()
-{
-    QString w = QString::number(ui->resolutionWidthSpinbox->value());
-    QString h = QString::number(ui->resolutionHeightSpinbox->value());
-    QString xOff = QString::number(ui->xOffsetSpinbox->value());
-    QString yOff = QString::number(ui->yOffsetSpinbox->value());
-    QString xLetterbox = QString::number(ui->letterboxingWidthSpinBox->value());
-    QString yLetterbox = QString::number(ui->letterboxingHeightSpinBox->value());
-
-    return QString("Single screen, %1x%2+%3+%4, letterboxing %5x%6").arg(w, h, xOff, yOff, xLetterbox, yLetterbox);
+const IScreenConfigPage* MainWindow::getCurrentPage() {
+    return dynamic_cast<IScreenConfigPage*>(ui->configStack->currentWidget());
 }
 
 void MainWindow::on_pushButton_clicked() {
+    const IScreenConfigPage* currentPage = getCurrentPage();
+
     // ambilight rgb provider
-    shared_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+    shared_ptr<RgbLineProvider> rgbProvider = currentPage->rgbProvider(ui->xLedSpin->value(), ui->yLedSpin->value());
 
     // supply our AmbiConnector with its chosen RgbLineProvider
-    shared_ptr<ArduinoConnector> connector = shared_ptr<ArduinoConnector>(new ArduinoConnector(rgbProvider, "/dev/ttyUSB0"));
+    shared_ptr<ArduinoConnector> connector = shared_ptr<ArduinoConnector>(new ArduinoConnector(rgbProvider, ui->ttyState->text().toStdString()));
 
     // add low pass filter
     unique_ptr<DataFilter> lpFilter(new LowPassFilter(connector->getRequiredBufferLength(), .6f));
@@ -83,7 +54,7 @@ void MainWindow::on_pushButton_clicked() {
     unique_ptr<DataFilter> brFilter(new BrightnessFilter(1.f));
     connector->addFilter("brightness", std::move(brFilter));
 
-    ControlDialog c(connector, this, getInfoText());
+    ControlDialog c(connector, this, currentPage->infoText());
     c.exec();
 }
 
@@ -93,4 +64,32 @@ void MainWindow::on_yLedSpin_valueChanged(int) {
 
 void MainWindow::on_xLedSpin_valueChanged(int) {
     refreshLedCount();
+}
+
+void MainWindow::on_configStackPrevButton_clicked() {
+    // get current index
+    int index = ui->configStack->currentIndex() - 1;
+
+    // clamp to positive indices
+    if(index < 0) index += ui->configStack->count();
+
+    // update page
+    ui->configStack->setCurrentIndex(index);
+
+    // update label
+    ui->configStackLabel->setText(getCurrentPage()->pageLabel());
+}
+
+void MainWindow::on_configStackNextButton_clicked() {
+    // get current index
+    int nextIndex = ui->configStack->currentIndex() + 1;
+
+    // clamp to valid values
+    nextIndex %= ui->configStack->count();
+
+    // update oage
+    ui->configStack->setCurrentIndex(nextIndex);
+
+    // update label
+    ui->configStackLabel->setText(getCurrentPage()->pageLabel());
 }

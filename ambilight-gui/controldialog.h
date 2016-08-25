@@ -64,7 +64,7 @@ private:// fps chart stuff
     QChartView* mFpsChartView;
     uint mFpsTickCount = 0;
     const int mFpsPointCount = 200;
-    std::shared_ptr<SingleScreenBorderProvider> getBorderProvider();
+    std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiRgbLineProvider> getRgbLineProvider();
 };
 

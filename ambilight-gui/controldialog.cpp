@@ -181,8 +181,8 @@ shared_ptr<AmbiRgbLineProvider> ControlDialog::getRgbLineProvider() {
     return dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
 }
 
-shared_ptr<SingleScreenBorderProvider> ControlDialog::getBorderProvider() {
-    return dynamic_pointer_cast<SingleScreenBorderProvider>(getRgbLineProvider()->getBorderProvider());
+shared_ptr<BorderProvider> ControlDialog::getBorderProvider() {
+    return dynamic_pointer_cast<BorderProvider>(getRgbLineProvider()->getBorderProvider());
 }
 
 void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
