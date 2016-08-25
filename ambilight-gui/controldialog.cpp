@@ -143,7 +143,12 @@ void ControlDialog::on_stopButton_clicked() {
     setButtonState(false);
 
     // stop the arduino lighting
-    mArduinoConnector->disconnect(true);
+    try {
+        mArduinoConnector->disconnect(true);
+    }
+    catch (AmbiConnectorException e){
+        updateStatus(string("disconnect failed: ") + e.what(), true);
+    }
 }
 
 void ControlDialog::setButtonState(bool currentlyRunning) {

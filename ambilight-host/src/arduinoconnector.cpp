@@ -134,6 +134,8 @@ void ArduinoConnector::connect() {
     if(mSerialFd == -1)
         throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
 
+    cout << "serial fd is " << mSerialFd << endl;
+
     // get current control struct
     struct termios options;
     tcgetattr(mSerialFd, &options);
