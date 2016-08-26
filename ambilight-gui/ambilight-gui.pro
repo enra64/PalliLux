@@ -44,15 +44,18 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     controldialog.cpp \
     singlescreenconfigpage.cpp \
-    triplescreenconfigpage.cpp
+    triplescreenconfigpage.cpp \
+    letterboxingautoconfigdialog.cpp
 
 HEADERS  += mainwindow.h \
     controldialog.h \
     singlescreenconfigpage.h \
     iconfigpage.h \
-    triplescreenconfigpage.h
+    triplescreenconfigpage.h \
+    letterboxingautoconfigdialog.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui \
     singlescreenconfigpage.ui \
-    triplescreenconfigpage.ui
+    triplescreenconfigpage.ui \
+    letterboxingautoconfigdialog.ui

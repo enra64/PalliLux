@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>204</height>
+    <height>235</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -113,7 +113,7 @@
    <item row="4" column="0" colspan="2">
     <widget class="QPushButton" name="letterboxAutoConfigButton">
      <property name="text">
-      <string>Try letterboxing autoconfig (5s delay, activate video player!)</string>
+      <string>autoconfigure letterboxing</string>
      </property>
     </widget>
    </item>
