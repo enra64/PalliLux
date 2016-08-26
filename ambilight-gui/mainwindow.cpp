@@ -41,7 +41,7 @@ const IScreenConfigPage* MainWindow::getCurrentPage() {
     return dynamic_cast<IScreenConfigPage*>(ui->configStack->currentWidget());
 }
 
-void MainWindow::on_pushButton_clicked() {
+void MainWindow::on_startControlDialogButton_clicked() {
     const IScreenConfigPage* currentPage = getCurrentPage();
 
     // ambilight rgb provider

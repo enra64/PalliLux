@@ -122,8 +122,8 @@ void ControlDialog::on_runButton_clicked() {
 
             // update histogram chart
             if(mEnableHistogram) {
-                lastLine->write("histogram:/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-gui-Desktop-Debug/line.png");
-                QPixmap histogram("/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-gui-Desktop-Debug/line.png");
+                lastLine->write("histogram:/tmp/line.png");
+                QPixmap histogram("/tmp/line.png");
                 mHistogramView->setMinimumSize(histogram.width(), histogram.height());
                 mHistogramView->setPixmap(histogram);
             }

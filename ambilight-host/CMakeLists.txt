@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 SET(MYHEADERS
     "include/arduinoconnector.h"
     "include/customexceptions.h"
+    "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
     "include/borderproviders/triplescreenborderprovider.h"
     "include/datafilters/brightnessfilter.h"
@@ -23,6 +24,7 @@ SET(MYHEADERS
 # relevant source files
 SET(MYSOURCES
     "src/arduinoconnector.cpp"
+    "src/letterboxometer.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
     "src/borderproviders/triplescreenborderprovider.cpp"
     "src/datafilters/brightnessfilter.cpp"

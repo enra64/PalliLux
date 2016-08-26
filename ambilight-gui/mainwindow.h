@@ -20,8 +20,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
-
     void on_yLedSpin_valueChanged(int);
     void on_xLedSpin_valueChanged(int);
 
@@ -29,6 +27,8 @@ private slots:
     void on_configStackNextButton_clicked();
 
     void on_ttyState_textChanged(const QString &arg1);
+
+    void on_startControlDialogButton_clicked();
 
 private:
     Ui::MainWindow *ui;

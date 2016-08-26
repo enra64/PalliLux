@@ -79,14 +79,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_8">
      <property name="text">
       <string>Letterboxing width</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QSpinBox" name="letterboxingWidthSpinBox">
      <property name="maximum">
       <number>1000000000</number>
@@ -96,17 +96,24 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="label_9">
      <property name="text">
       <string>Letterboxing height</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QSpinBox" name="letterboxingHeightSpinBox">
      <property name="maximum">
       <number>1000000000</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QPushButton" name="letterboxAutoConfigButton">
+     <property name="text">
+      <string>Try letterboxing autoconfig (5s delay, activate video player!)</string>
      </property>
     </widget>
    </item>
