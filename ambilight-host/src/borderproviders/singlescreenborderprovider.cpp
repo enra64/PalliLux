@@ -16,26 +16,26 @@ void SingleScreenBorderProvider::updateGeometry() {
         mBorderWidth, //width
         mHeight - 2 * mBorderWidth - (2 * mLetterBoxY), //height
         mLetterBoxX + mXOffset + 0, //x offset
-        mLetterBoxY + mLetterBoxY + mBorderWidth);// y offset
+        mLetterBoxY + mYOffset + mBorderWidth);// y offset
         
     mRightGeometry = Geometry(
         mBorderWidth, //width
         mHeight - 2 * mBorderWidth - (2 * mLetterBoxY), //height
         (-mLetterBoxX) + mXOffset + mWidth - mBorderWidth, //x offset
-        mLetterBoxY + mLetterBoxY + mBorderWidth);// y offset
+        mLetterBoxY + mYOffset + mBorderWidth);// y offset
     
 
     mTopGeometry = Geometry(
         mWidth  - (2 * mLetterBoxX), //width
         mBorderWidth, //height
         mLetterBoxX + mXOffset + 0, //x offset
-        mLetterBoxY + mLetterBoxY + 0);// y offset
+        mLetterBoxY + mYOffset + 0);// y offset
     
     mBottomGeometry = Geometry(
         mWidth - (2 * mLetterBoxX), //width
         mBorderWidth, //height
         mLetterBoxX + mXOffset + 0, //x offset
-        (-mLetterBoxY) + mLetterBoxY + mHeight - mBorderWidth);// y offset
+        (-mLetterBoxY) + mYOffset + mHeight - mBorderWidth);// y offset
 }
 
 void SingleScreenBorderProvider::retrieveBorders(Magick::Image &right, Magick::Image &top, Magick::Image &left, Magick::Image &bottom)

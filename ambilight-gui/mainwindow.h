@@ -28,6 +28,8 @@ private slots:
     void on_configStackPrevButton_clicked();
     void on_configStackNextButton_clicked();
 
+    void on_ttyState_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     std::unique_ptr<ArduinoConnector> mAmbiConnector = std::unique_ptr<ArduinoConnector>(nullptr);

@@ -62,6 +62,7 @@ ControlDialog::~ControlDialog() {
 void ControlDialog::on_runButton_clicked() {
     // disable the stop button
     setButtonState(true);
+    mStopClicked = false;
 
     // check for null
     assert(mArduinoConnector);
@@ -73,10 +74,12 @@ void ControlDialog::on_runButton_clicked() {
         // try to connect
         mArduinoConnector->connect();
         // ui update
-        updateStatus("");
+        updateStatus("connection ok");
     } catch(AmbiConnectorException e) {
         // ui update
         updateStatus(string("catastrophic failure: ") + e.what(), true);
+        setButtonState(false);
+        return;
     }
 
     // start timing
@@ -84,7 +87,7 @@ void ControlDialog::on_runButton_clicked() {
     startTime.start();
 
     // begin sending data
-    while(1) {
+    while(!mStopClicked) {
         try {
             // update leds
             mArduinoConnector->update();
@@ -102,12 +105,9 @@ void ControlDialog::on_runButton_clicked() {
                 mFpsChartView->repaint();
             }
 
-            // update "running for" label
-            int sec = startTime.elapsed() / 1000;
-            QString s = QString::number(sec % 60);
-            QString m = QString::number((sec / 60) % 60);
-            QString h = QString::number(sec / 60 / 60);
-            ui->runningforState->setText(h + ":" + m + ":" + s);
+            // update state label with runtime information
+            QTime elapsed = QTime(0, 0).addMSecs(startTime.elapsed());
+            updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
 
             std::unique_ptr<Magick::Image> lastLine = getRgbLineProvider()->getLastLineImage();
 
@@ -133,6 +133,7 @@ void ControlDialog::on_runButton_clicked() {
         } catch(AmbiConnectorException e) {
             // ui update
             updateStatus(string("catastrophic failure: ") + e.what(), true);
+            setButtonState(false);
             break;
         }
     }
@@ -141,10 +142,12 @@ void ControlDialog::on_runButton_clicked() {
 void ControlDialog::on_stopButton_clicked() {
     // disable the run button
     setButtonState(false);
+    mStopClicked = true;
 
     // stop the arduino lighting
     try {
         mArduinoConnector->disconnect(true);
+        updateStatus("ambilight shut down");
     }
     catch (AmbiConnectorException e){
         updateStatus(string("disconnect failed: ") + e.what(), true);

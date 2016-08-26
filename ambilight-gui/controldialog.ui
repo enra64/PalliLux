@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
-    <height>496</height>
+    <width>452</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -47,30 +47,16 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="runningforLabel">
+       <widget class="QLabel" name="stateLabel">
         <property name="text">
-         <string>Running for:</string>
+         <string>State:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="runningforState">
-        <property name="text">
-         <string>0s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
        <widget class="QLabel" name="stateState">
         <property name="text">
          <string>not connected</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="stateLabel">
-        <property name="text">
-         <string>State:</string>
         </property>
        </widget>
       </item>

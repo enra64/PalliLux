@@ -4,6 +4,7 @@
 #include "ui_mainwindow.h"
 
 #include <memory>
+#include <unistd.h>
 
 #include <ambirgblineprovider.h>
 #include <rgblineprovider.h>
@@ -22,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    // check whether the default tty device exists
+    on_ttyState_textChanged(ui->ttyState->text());
 }
 
 MainWindow::~MainWindow() {
@@ -92,4 +96,12 @@ void MainWindow::on_configStackNextButton_clicked() {
 
     // update label
     ui->configStackLabel->setText(getCurrentPage()->pageLabel());
+}
+
+void MainWindow::on_ttyState_textChanged(const QString &ttyDevice) {
+    // check whether the tty device exists
+    if(access(ttyDevice.toStdString().c_str(), F_OK) < 0)
+        ui->ttyState->setStyleSheet("color : red;");
+    else
+        ui->ttyState->setStyleSheet("color : black;");
 }

@@ -17,6 +17,7 @@
 
 // file access
 #include <fcntl.h>
+#include <unistd.h>// access()
 
 // serial
 #include <termios.h>
@@ -127,14 +128,16 @@ void ArduinoConnector::connect() {
     // close previous serial connection
     close(mSerialFd);
 
+    // check whether the tty device exists
+    if(access(mTtyDevice.c_str(), F_OK) < 0)
+        throw AmbiConnectorCommunicationException(mTtyDevice + " does not exist");
+
     // open serial connection
     mSerialFd = open(mTtyDevice.c_str(), O_RDWR | O_NOCTTY);
 
     // exception on error
     if(mSerialFd == -1)
         throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
-
-    cout << "serial fd is " << mSerialFd << endl;
 
     // get current control struct
     struct termios options;
@@ -190,6 +193,10 @@ void ArduinoConnector::connect() {
 
     // null-terminate string
     mCommBuffer[rec] = 0;
+
+    // exception on error
+    if(mSerialFd < 0)
+        throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
 
     // check whether the arduino responded correctly
     if(string(mCommBuffer, rec) == "SAM") {

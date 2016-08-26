@@ -24,6 +24,7 @@ public:
     explicit ControlDialog(std::shared_ptr<ArduinoConnector> connector, QWidget *parent = 0, const QString &infoString = "");
     ~ControlDialog();
 
+
 private slots:
     void on_runButton_clicked();
 
@@ -66,6 +67,7 @@ private:// fps chart stuff
     const int mFpsPointCount = 200;
     std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiRgbLineProvider> getRgbLineProvider();
+    bool mStopClicked = false;
 };
 
 #endif // CONTROLDIALOG_H
