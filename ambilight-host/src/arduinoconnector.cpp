@@ -194,10 +194,6 @@ void ArduinoConnector::connect() {
     // null-terminate string
     mCommBuffer[rec] = 0;
 
-    // exception on error
-    if(mSerialFd < 0)
-        throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
-
     // check whether the arduino responded correctly
     if(string(mCommBuffer, rec) == "SAM") {
         cout << "opening sequence ok" << endl;

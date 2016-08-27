@@ -2,8 +2,24 @@ project(host)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+######################################################################################################################################################
+######################################################################################################################################################
+######################################################################################################################################################
+#
+#
+#
+# Available options are X11 and SPECTROMETER, both on linux only, both enabled by default
+# use "cmake CMakeLists.txt (-DX11=OFF) (-DSPECTROMETER=OFF)" to disable them
+#
+#
+#
+######################################################################################################################################################
+######################################################################################################################################################
+######################################################################################################################################################
+
+
 # get qt creator to show these headers
-SET(MYHEADERS
+SET(BASE_HEADERS
     "include/arduinoconnector.h"
     "include/customexceptions.h"
     "include/letterboxometer.h"
@@ -13,16 +29,16 @@ SET(MYHEADERS
     "include/datafilters/linearfactorfilter.h"
     "include/datafilters/lowpassfilter.h"
     "include/rgblineprovider/ambirgblineprovider.h"
-    "include/rgblineprovider/spectrometerrgblineprovider.h"
     "include/screenshot/vlcscreenshot.h"
-    "include/screenshot/xlibscreenshot.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
     "include/interfaces/rgblineprovider.h"
-    "include/interfaces/screenshot.h")
+    "include/interfaces/screenshot.h"
+    "include/interfaces/serial.h")
+
 
 # relevant source files
-SET(MYSOURCES
+SET(BASE_SOURCES
     "src/arduinoconnector.cpp"
     "src/letterboxometer.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
@@ -31,28 +47,75 @@ SET(MYSOURCES
     "src/datafilters/linearfactorfilter.cpp"
     "src/datafilters/lowpassfilter.cpp"
     "src/rgblineprovider/ambirgblineprovider.cpp"
-    "src/rgblineprovider/spectrometerrgblineprovider.cpp"
-    "src/screenshot/vlcscreenshot.cpp"
-    "src/screenshot/xlibscreenshot.cpp")
+    "src/screenshot/vlcscreenshot.cpp")
+
 
 #include subdirectories
 include_directories(
     "include"
+    "include/serial"
     "include/interfaces"
     "include/borderproviders"
     "include/screenshot"
     "include/datafilters"
     "include/rgblineprovider")
+    
 
-#debug mode?
+
+######################################################################################################################################################
+# LINUX
+######################################################################################################################################################
+SET(LINUX_ONLY_HEADERS
+    "include/serial/linuxserial.h")
+    
+SET(LINUX_ONLY_SOURCES
+    "src/serial/linuxserial.cpp")
+    
+if(UNIX)
+    SET(BASE_HEADERS ${BASE_HEADERS} ${LINUX_ONLY_HEADERS})
+    SET(BASE_SOURCES ${BASE_SOURCES} ${LINUX_ONLY_SOURCES})
+endif(UNIX)
+    
+    
+    
+    
+######################################################################################################################################################
+# WIN
+######################################################################################################################################################
+SET(WIN_ONLY_HEADERS
+    "include/serial/windowsserial.h")
+    
+SET(WIN_ONLY_SOURCES
+    "src/serial/windowsserial.cpp")
+    
+if(WIN32)
+    SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
+    SET(BASE_SOURCES ${BASE_SOURCES} ${WIN_ONLY_SOURCES})
+endif(WIN32)
+
+
+
+######################################################################################################################################################
+######################################################################################################################################################
+# LIBRARY OR EXECUTABLE ?
+######################################################################################################################################################
+######################################################################################################################################################
+#add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
+add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+
+
+######################################################################################################################################################
+######################################################################################################################################################
+# debug mode?
+######################################################################################################################################################
+######################################################################################################################################################
 set(CMAKE_BUILD_TYPE Debug)
 
-# create a library or an executable?
-#add_executable(${PROJECT_NAME} "main.cpp" ${MYSOURCES} ${MYHEADERS})
-add_library(${PROJECT_NAME} ${MYSOURCES} ${MYHEADERS})
 
-# library stuff that needs to be included etc
-# imageMagick
+
+######################################################################################################################################################
+# IMAGEMAGICK - REQUIRED
+######################################################################################################################################################
 find_package(ImageMagick COMPONENTS Magick++ MagickCore REQUIRED)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
@@ -60,20 +123,34 @@ target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMA
 
 
 
-# X11 - needed for xlibborderprovider
-find_package(X11 REQUIRED)
-INCLUDE_DIRECTORIES ( ${X11_INCLUDE_DIR} )
-TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${X11_LIBRARIES} )
+######################################################################################################################################################
+# X11 OPTION - needed for xlibscreenshot - LINUX ONLY
+######################################################################################################################################################
+option(X11 "find and include x11 lib" ON)
+if(UNIX AND X11)
+    target_sources(${PROJECT_NAME} PUBLIC "src/screenshot/xlibscreenshot.cpp" "include/screenshot/xlibscreenshot.h")
+    find_package(X11 REQUIRED)
+    INCLUDE_DIRECTORIES ( ${X11_INCLUDE_DIR} )
+    TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${X11_LIBRARIES})
+endif(UNIX AND X11)
 
 
 
-# libraries used only for spectrometer functionality:
-#fftw
-find_path (FFTW_INCLUDE_DIR fftw3.h)
-find_library (FFTW_LIBRARIES NAMES fftw3)
-INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
-TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
-
-#pulseaudio
-TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
-TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
+######################################################################################################################################################
+# SPECTROMETER OPTION - LINUX ONLY
+######################################################################################################################################################
+option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
+if(UNIX AND SPECTROMETER)
+    # add spectrometer files to target
+    target_sources(${PROJECT_NAME} PUBLIC "include/rgblineprovider/spectrometerrgblineprovider.h" "src/rgblineprovider/spectrometerrgblineprovider.cpp")
+    
+    # pulseaudio libs
+    TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
+    TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
+    
+    # fftw lib
+    find_path (FFTW_INCLUDE_DIR fftw3.h)
+    find_library (FFTW_LIBRARIES NAMES fftw3)
+    INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
+    TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
+endif(UNIX AND SPECTROMETER)
