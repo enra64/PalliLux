@@ -1,8 +1,8 @@
 #ifndef BORDERPROVIDER_H
 #define BORDERPROVIDER_H
 
-#include "ImageMagick-6/Magick++.h"
-#include "ImageMagick-6/magick/image.h"
+#include "Magick++.h"
+#include "Magick++/Image.h"
 
 #include "screenshot.h"
 
@@ -21,6 +21,9 @@ public:
     {
         mScreenshot = screener;
     }
+
+	virtual ~BorderProvider() {}
+
     /**
      * @brief This function must capture each screen border into a Magick++ image
      */
@@ -30,7 +33,7 @@ public:
         return mBorderWidth;
     }
     
-    void setBorderWidth(size_t width){
+    virtual void setBorderWidth(size_t width){
         mBorderWidth = width;
         updateGeometry();
     }

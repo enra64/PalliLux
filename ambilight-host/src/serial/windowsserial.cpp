@@ -1,10 +1,9 @@
-#include "/home/arne/Documents/Development/ShittyAmbilight/ambilight-host/include/serial/windowsserial.h"
-
+#include "windowsserial.h"
 
 void WindowsSerial::waitForData() const {
     DWORD dwEventMask;
     // wait for any character
-    if(!WaitCommEvent(hComm, &dwEventMask, NULL))
+    if(!WaitCommEvent(mSerialHandle, &dwEventMask, NULL))
         throw SerialException("failure while waiting for serial event");
 }
 
@@ -14,12 +13,15 @@ void WindowsSerial::send(const uint8_t *buf, size_t len) const {
     // Try to write the buffer on the Serial port
     if(!WriteFile(mSerialHandle, buf, len, &bytesSent, 0)) {
         // In case it don't work get comm error
-        //ClearCommError(hSerial, &errors, &status);
-        throw new SerialException("could not write");
+        //ClearCommError(mSerialHandle, &errors, &status);
+        throw SerialException("could not write");
     }
 }
 
 size_t WindowsSerial::receive(uint8_t *buf, size_t len) const {
+	COMSTAT status;
+	DWORD errors;
+
     // Number of bytes we'll have read
     DWORD bytesRead;
 
@@ -34,7 +36,7 @@ size_t WindowsSerial::receive(uint8_t *buf, size_t len) const {
     unsigned int bytesToRead = status.cbInQue < len ? status.cbInQue : len;
 
     // Try to read the require number of chars, and return the number of read bytes on success
-    if(ReadFile(hSerial, buffer, bytesToRead, &bytesRead, NULL) == 0)
+    if(ReadFile(mSerialHandle, buf, bytesToRead, &bytesRead, NULL) == 0)
         throw SerialException("no data read");
 
     return bytesRead;
@@ -42,7 +44,7 @@ size_t WindowsSerial::receive(uint8_t *buf, size_t len) const {
 
 void WindowsSerial::open(const std::string &port) {
     // Try to connect to the given port throuh CreateFile
-    mSerialHandle = CreateFile(portName,
+    mSerialHandle = CreateFile(port.c_str(),
                                GENERIC_READ | GENERIC_WRITE,
                                0,
                                NULL,
@@ -82,7 +84,7 @@ void WindowsSerial::open(const std::string &port) {
     // Flush any remaining characters in the buffers
     PurgeComm(mSerialHandle, PURGE_RXCLEAR | PURGE_TXCLEAR);
     // We wait 2s as the arduino board will be reseting
-    Sleep(ARDUINO_WAIT_TIME);
+    Sleep(2000);
 }
 
 void WindowsSerial::close() {
@@ -92,7 +94,7 @@ void WindowsSerial::close() {
 
 bool WindowsSerial::deviceExists(const std::string& port) const {
     // Try to connect to the given port throuh CreateFile
-    HANDLE serialHandle = CreateFile(portName,
+    HANDLE serialHandle = CreateFile(port.c_str(),
                                      GENERIC_READ | GENERIC_WRITE,
                                      0,
                                      NULL,

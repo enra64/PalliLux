@@ -83,10 +83,12 @@ endif(UNIX)
 # WIN
 ######################################################################################################################################################
 SET(WIN_ONLY_HEADERS
-    "include/serial/windowsserial.h")
+    "include/serial/windowsserial.h"
+    "include/screenshot/winscreenshot.h")
     
 SET(WIN_ONLY_SOURCES
-    "src/serial/windowsserial.cpp")
+    "src/serial/windowsserial.cpp"
+    "src/screenshot/winscreenshot.cpp")
     
 if(WIN32)
     SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
@@ -123,7 +125,7 @@ option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 ######################################################################################################################################################
 # IMAGEMAGICK - REQUIRED
 ######################################################################################################################################################
-find_package(ImageMagick COMPONENTS Magick++ MagickCore REQUIRED)
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
