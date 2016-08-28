@@ -125,7 +125,14 @@ option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 ######################################################################################################################################################
 # IMAGEMAGICK - REQUIRED
 ######################################################################################################################################################
-find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+
+if(UNIX)
+    find_package(ImageMagick COMPONENTS Magick++ MagickCore REQUIRED)
+endif(UNIX)
+if(WIN32)
+    find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+endif(WIN32)
+
 include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
