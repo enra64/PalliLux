@@ -12,8 +12,8 @@ class LetterboxOMeter
 public:
 	LetterboxOMeter(std::shared_ptr<Screenshot> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold);
 	void measure();
-	size_t getLetterboxHeight();
-	size_t getLetterboxWidth();
+	size_t getLetterboxHeight() const;
+	size_t getLetterboxWidth() const;
 private:// constant or input members
 	const std::shared_ptr<Screenshot> mScreenshot;
 	const size_t mScreenWidth;
@@ -27,9 +27,9 @@ private:// result members
 	size_t mLetterboxHorizontalBarHeight = -1;
 
 private://functions
-	bool isBlack(Magick::Image img, Magick::Geometry imgGeometry, uint8_t threshold);
-	Magick::Geometry getHorizontalBar(size_t height, size_t topOffset);
-	Magick::Geometry getVerticalBar(size_t width, size_t leftOffset);
+	static bool isBlack(Magick::Image img, Magick::Geometry imgGeometry, uint8_t threshold);
+	Magick::Geometry getHorizontalBar(size_t height, size_t topOffset) const;
+	Magick::Geometry getVerticalBar(size_t width, size_t leftOffset) const;
 };
 
 #endif
