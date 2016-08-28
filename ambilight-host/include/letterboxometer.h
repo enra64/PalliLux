@@ -28,7 +28,6 @@ private:// result members
 
 private://functions
 	bool isBlack(Magick::Image img, Magick::Geometry imgGeometry, uint8_t threshold);
-	static bool isBlack(Magick::Image img, Magick::Geometry imgGeometry, uint8_t threshold);
 	Magick::Geometry getHorizontalBar(size_t height, size_t topOffset) const;
 	Magick::Geometry getVerticalBar(size_t width, size_t leftOffset) const;
 };
