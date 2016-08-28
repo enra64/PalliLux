@@ -12,12 +12,13 @@
  */
 class LinuxSerial : public Serial{
 public:
-    void waitForData() override;
-    void send(uint8_t *buf, size_t len) override;
-    void receive(uint8_t *buf, size_t len) override;
+    void waitForData() const override;
+    void send(const uint8_t *buf, size_t len) const override;
+    size_t receive(uint8_t *buf, size_t len) const override;
     void open(const std::string &port) override;
     void close() override;
-    bool deviceExists(const std::string& port) override;
+    bool deviceExists(const std::string& port) const override;
+    bool good(const std::string& ttyDevice) const override;
 private:
     int mFd;///!< serial file descriptor
 };

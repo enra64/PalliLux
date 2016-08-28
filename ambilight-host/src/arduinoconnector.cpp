@@ -18,11 +18,18 @@
 // file access
 #include <fcntl.h>
 #include <unistd.h>// access()
+#include <fstream>
 
 // serial
-#include <termios.h>
-#include <unistd.h>
-#include <sys/poll.h>
+#ifdef __linux__
+    #include "linuxserial.h"
+#elif _WIN32
+    #include "windowsserial.h"
+#else
+    #error Platform not recognized
+#endif
+
+
 
 using namespace std;
 
@@ -40,37 +47,36 @@ ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider,
 
     // initialise timekeeping
     mLastDraw = clock();
+
+    // get a serial connection
+    #ifdef __linux__
+        mSerial = new LinuxSerial();
+    #elif _WIN32
+        mSerial = new WindowsSerial();
+    #else
+        #error Platform not recognized
+    #endif
 }
 
 void ArduinoConnector::writeRgbBufferToText(string path) {
     // open the file
-    FILE* debugFile = fopen(path.c_str(), "w+");
+    ofstream file;
+    file.open(path.c_str(), std::fstream::trunc);
 
     // check the file handle
-    if(debugFile == NULL)
-        throw invalid_argument("No file could be opened at " + path);
+    if(!file.good())
+        throw invalid_argument("bad file write for " + path);
 
     // print a rgb triple per line
     for(size_t i = 0; i < mRgbLineProvider->getRequiredBufferLength(); i+=3) {
         // data string
         string line = "R" + to_string(mRgbBuffer[i]) + "G" + to_string(mRgbBuffer[i+1]) + "B" + to_string(mRgbBuffer[i+2]) + "\n";
         // write to file
-        fputs(line.c_str(), debugFile);
+        file << line;
     }
 
     // close file
-    fclose(debugFile);
-}
-
-void ArduinoConnector::waitForSerialInput() {
-    // create poll struct, watching our serial file descriptor for input events
-    struct pollfd pollStruct[1];
-    pollStruct[0].fd = mSerialFd;
-    pollStruct[0].events = POLLIN ;
-
-    // poll, checking for failure
-    if (poll(pollStruct, 1, 1000) < 0)
-        throw AmbiConnectorCommunicationException(strerror(errno));
+    file.close();
 }
 
 void ArduinoConnector::updateFps() {
@@ -85,21 +91,24 @@ void ArduinoConnector::update() {
 
 void ArduinoConnector::draw() {
     // notify if the serial connection has been closed or not yet opened
-    if(mSerialFd == -1)
-        throw AmbiConnectorCommunicationException("No connection active!");
+    if(!mSerial->good(mTtyDevice))
+        throw AmbiConnectorCommunicationException("Connection is bad!");
 
     // write data buffer
-    write(mSerialFd, mRgbBuffer, mRgbLineProvider->getRequiredBufferLength());
+    mSerial->send(mRgbBuffer, mRgbLineProvider->getRequiredBufferLength());
 
     // wait for arduino acknowledgement
-    waitForSerialInput();
+    mSerial->waitForData();
 
     // read input
-    read(mSerialFd, mCommBuffer, 128);
+    mSerial->receive(mCommBuffer, 128);
 
     // check the acknowledgement char
     if(mCommBuffer[0] != 'k')
         throw AmbiConnectorProtocolException("incorrect acknowledgement character received");
+
+    // reset ACK char
+    mCommBuffer[0] = 0;
 
     // keep check of how long draw-to-draw takes
     updateFps();
@@ -125,70 +134,17 @@ void ArduinoConnector::connect() {
     // check that a tty device has been set
     assert(mTtyDevice.length() > 0);
 
-    // close previous serial connection
-    close(mSerialFd);
-
-    // check whether the tty device exists
-    if(access(mTtyDevice.c_str(), F_OK) < 0)
-        throw AmbiConnectorCommunicationException(mTtyDevice + " does not exist");
-
-    // open serial connection
-    mSerialFd = open(mTtyDevice.c_str(), O_RDWR | O_NOCTTY);
-
-    // exception on error
-    if(mSerialFd == -1)
-        throw AmbiConnectorCommunicationException("could not open " + mTtyDevice);
-
-    // get current control struct
-    struct termios options;
-    tcgetattr(mSerialFd, &options);
-
-    // set our options:
-    // https://chrisheydrick.com/2012/06/17/how-to-read-serial-data-from-an-arduino-in-linux-with-c-part-3/
-
-    // 115200 baud in and out
-    cfsetispeed(&options, B115200);
-    cfsetospeed(&options, B115200);
-
-    // 8 bits, no parity, no stop bits
-    options.c_cflag &= ~PARENB;
-    options.c_cflag &= ~CSTOPB;
-    options.c_cflag &= ~CSIZE;
-    options.c_cflag |= CS8;
-
-    // no hardware flow control
-    options.c_cflag &= ~CRTSCTS;
-
-    // enable receiver, ignore status lines
-    options.c_cflag |= CREAD | CLOCAL;
-
-    // disable input/output flow control, disable restart chars
-    options.c_iflag &= ~(IXON | IXOFF | IXANY);
-
-    // disable: canonical input, echo, visually erase chars, terminal-generated signals
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-
-    // disable output processing
-    options.c_oflag &= ~OPOST;
-
-    // commit the options
-    tcsetattr(mSerialFd, TCSANOW, &options);
-
-    // wait for arduino reset
-    usleep(1000*2000);
-
-    // flush serial buffer
-    tcflush(mSerialFd, TCIFLUSH);
+    mSerial->open(mTtyDevice);
 
     // check connection
-    write(mSerialFd, "hello", 5);
+    mSerial->send("hello", 5);
 
     // read arduino response
     size_t rec = 0;
 
     while(rec < 3) {
-        waitForSerialInput();
-        rec += read(mSerialFd, &mCommBuffer, 128);
+        mSerial->waitForData();
+        rec += mSerial->receive(mCommBuffer, 128);
     }
 
     // null-terminate string
@@ -205,7 +161,8 @@ void ArduinoConnector::connect() {
 
 ArduinoConnector::~ArduinoConnector() {
     delete[] mRgbBuffer;
-    close(mSerialFd);
+    mSerial->close();
+    delete mSerial;
 }
 
 void ArduinoConnector::disconnect(bool blackoutLeds)
@@ -214,8 +171,7 @@ void ArduinoConnector::disconnect(bool blackoutLeds)
         memset(mRgbBuffer, 0, mRgbLineProvider->getRequiredBufferLength());
         draw();
     }
-    close(mSerialFd);
-    mSerialFd = -1;
+    mSerial->close();
 }
 
 void ArduinoConnector::addFilter(string id, std::unique_ptr<DataFilter> filter)

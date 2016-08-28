@@ -3,6 +3,8 @@
 
 #include "ambirgblineprovider.h"
 #include "customexceptions.h"
+#include "serial.h"
+
 #include <string>
 
 /**
@@ -129,11 +131,6 @@ private:
     void writeRgbBufferToText(std::string path);
 
     /**
-     * @brief this function implements non-busy waiting for a response on the serial file descriptor
-     */
-    void waitForSerialInput();
-
-    /**
      * @brief update "::"<mCurrentFps> and "::"<mLastDraw>
      */
     void updateFps();
@@ -153,6 +150,8 @@ private:
     float mTargetFps = -1;//!< target fps; important when using spectrometer
 
     std::string mTtyDevice;///!< arduino connection name
+
+    Serial* mSerial;
 };
 
 #endif // LEDCONNECTOR_H

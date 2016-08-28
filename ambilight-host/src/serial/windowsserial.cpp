@@ -1,14 +1,14 @@
 #include "/home/arne/Documents/Development/ShittyAmbilight/ambilight-host/include/serial/windowsserial.h"
 
 
-void WindowsSerial::waitForData() {
+void WindowsSerial::waitForData() const {
     DWORD dwEventMask;
     // wait for any character
     if(!WaitCommEvent(hComm, &dwEventMask, NULL))
         throw SerialException("failure while waiting for serial event");
 }
 
-void WindowsSerial::send(uint8_t *buf, size_t len) {
+void WindowsSerial::send(const uint8_t *buf, size_t len) const {
     DWORD bytesSent;
 
     // Try to write the buffer on the Serial port
@@ -19,7 +19,7 @@ void WindowsSerial::send(uint8_t *buf, size_t len) {
     }
 }
 
-void WindowsSerial::receive(uint8_t *buf, size_t len) {
+size_t WindowsSerial::receive(uint8_t *buf, size_t len) const {
     // Number of bytes we'll have read
     DWORD bytesRead;
 
@@ -36,6 +36,8 @@ void WindowsSerial::receive(uint8_t *buf, size_t len) {
     // Try to read the require number of chars, and return the number of read bytes on success
     if(ReadFile(hSerial, buffer, bytesToRead, &bytesRead, NULL) == 0)
         throw SerialException("no data read");
+
+    return bytesRead;
 }
 
 void WindowsSerial::open(const std::string &port) {
@@ -88,19 +90,23 @@ void WindowsSerial::close() {
     CloseHandle(mSerialHandle);
 }
 
-bool WindowsSerial::deviceExists(const std::string& port) {
+bool WindowsSerial::deviceExists(const std::string& port) const {
     // Try to connect to the given port throuh CreateFile
     HANDLE serialHandle = CreateFile(portName,
-                               GENERIC_READ | GENERIC_WRITE,
-                               0,
-                               NULL,
-                               OPEN_EXISTING,
-                               FILE_ATTRIBUTE_NORMAL,
-                               NULL);
+                                     GENERIC_READ | GENERIC_WRITE,
+                                     0,
+                                     NULL,
+                                     OPEN_EXISTING,
+                                     FILE_ATTRIBUTE_NORMAL,
+                                     NULL);
 
     // close the handle again
     CloseHandle(serialHandle);
 
     // check for success
     return serialHandle != INVALID_HANDLE_VALUE;
+}
+
+bool WindowsSerial::good(const std::string& ttyDevice) const {
+
 }

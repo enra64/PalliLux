@@ -15,7 +15,7 @@
 
 #include <string>
 
-void LinuxSerial::waitForData() {
+void LinuxSerial::waitForData() const {
     // create poll struct, watching our serial file descriptor for input events
     struct pollfd pollStruct[1];
     pollStruct[0].fd = mFd;
@@ -26,7 +26,7 @@ void LinuxSerial::waitForData() {
         throw SerialException(std::string("polling timeout: ") + strerror(errno));
 }
 
-void LinuxSerial::send(uint8_t *buf, size_t len) {
+void LinuxSerial::send(const uint8_t *buf, size_t len) const {
     // check whether our fd is ok
     if(mFd < 0)
         throw SerialException("Connection closed");
@@ -35,9 +35,13 @@ void LinuxSerial::send(uint8_t *buf, size_t len) {
     write(mFd, buf, len);
 }
 
-void LinuxSerial::receive(uint8_t *buf, size_t len) {
+bool LinuxSerial::good(const std::__cxx11::string &ttyDevice) const {
+    return mFd >= 0 && deviceExists(ttyDevice);
+}
+
+size_t LinuxSerial::receive(uint8_t *buf, size_t len) const {
     // read from fd
-    read(mFd, buf, len);
+    return read(mFd, buf, len);
 }
 
 void LinuxSerial::open(const std::string &port) {
@@ -99,8 +103,9 @@ void LinuxSerial::open(const std::string &port) {
 
 void LinuxSerial::close() {
     ::close(mFd);
+    mFd = -1;
 }
 
-bool LinuxSerial::deviceExists(const std::string& port) {
+bool LinuxSerial::deviceExists(const std::string& port) const {
     return access(port.c_str(), F_OK) >= 0;
 }
