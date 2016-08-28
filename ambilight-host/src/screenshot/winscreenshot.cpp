@@ -2,7 +2,6 @@
 
 #include <ctime>
 
-#include <Windows.Graphics.DirectX.Direct3D11.interop.h>
 #include <dxgi.h>
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::WRL;

@@ -1,4 +1,5 @@
 #include "lowpassfilter.h"
+#include <cstring>
 
 /**
  * @brief Create somewhat of a gliding filter
