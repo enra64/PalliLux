@@ -3,9 +3,6 @@
 #include <ctime>
 
 #include <dxgi.h>
-using namespace Windows::Graphics::DirectX::Direct3D11;
-using namespace Microsoft::WRL;
-
 
 using namespace Magick;
 
@@ -17,42 +14,47 @@ WinScreenshot::~WinScreenshot()
 {
 }
 
+
+
 float WinScreenshot::getScreenCrop(Image& result, const Geometry& d)
 {
 	// benchmarking start
 	clock_t start = clock();
 
-	IDirect3DSurface9* pRenderTarget = NULL;
-	IDirect3DSurface9* pDestTarget = NULL;
-	const char file[] = "Pickture.bmp";
-	// sanity checks.
-	if (Device == NULL)
-		return;
+	HDC hScreen = GetDC(GetDesktopWindow());
+	int ScreenX = GetDeviceCaps(hScreen, HORZRES);
+	int ScreenY = GetDeviceCaps(hScreen, VERTRES);
+	uint8_t* ScreenData = 0;
 
-	// get the render target surface.
-	HRESULT hr = Device->GetRenderTarget(0, &pRenderTarget);
-	// get the current adapter display mode.
-	//hr = pDirect3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT,&d3ddisplaymode);
+	HDC hdcMem = CreateCompatibleDC(hScreen);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, ScreenX, ScreenY);
+	HGDIOBJ hOld = SelectObject(hdcMem, hBitmap);
+	BitBlt(hdcMem, 0, 0, ScreenX, ScreenY, hScreen, 0, 0, SRCCOPY);
+	SelectObject(hdcMem, hOld);
 
-	// create a destination surface.
-	hr = Device->CreateOffscreenPlainSurface(DisplayMde.Width,
-	                                         DisplayMde.Height,
-	                                         DisplayMde.Format,
-	                                         D3DPOOL_SYSTEMMEM,
-	                                         &pDestTarget,
-	                                         NULL);
-	//copy the render target to the destination surface.
-	hr = Device->GetRenderTargetData(pRenderTarget, pDestTarget);
-	//save its contents to a bitmap file.
-	hr = D3DXSaveSurfaceToFile(file,
-	                           D3DXIFF_BMP,
-	                           pDestTarget,
-	                           NULL,
-	                           NULL);
+	BITMAPINFOHEADER bmi = { 0 };
+	bmi.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.biPlanes = 1;
+	bmi.biBitCount = 32;
+	bmi.biWidth = ScreenX;
+	bmi.biHeight = -ScreenY;
+	bmi.biCompression = BI_RGB;
+	bmi.biSizeImage = 0;// 3 * ScreenX * ScreenY;
 
-	// clean up.
-	pRenderTarget->Release();
-	pDestTarget->Release();
+	if (ScreenData)
+		free(ScreenData);
+
+	size_t screenDataLength = 4 * ScreenX * ScreenY;
+
+	ScreenData = new uint8_t[screenDataLength];
+
+	GetDIBits(hdcMem, hBitmap, 0, ScreenY, ScreenData, reinterpret_cast<BITMAPINFO*>(&bmi), DIB_RGB_COLORS);
+
+	result.read(Blob(ScreenData, screenDataLength));
+
+	ReleaseDC(GetDesktopWindow(), hScreen);
+	DeleteDC(hdcMem);
+	DeleteObject(hBitmap);
 
 	// return benchmarking value
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;

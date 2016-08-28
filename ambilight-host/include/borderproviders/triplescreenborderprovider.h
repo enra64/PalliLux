@@ -2,7 +2,6 @@
 #define BORDERSHOT_H
 
 #include "borderprovider.h"
-#include "xlibscreenshot.h"
 
 #include <algorithm>
 

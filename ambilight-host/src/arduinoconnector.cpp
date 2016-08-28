@@ -22,11 +22,11 @@
 #include <chrono>
 #include <thread>
 
-// serial
+// choose appropriate serial header
 #ifdef __linux__
     #include "linuxserial.h"
 #elif _WIN32
-#include "windowsserial.h"
+	#include "windowsserial.h"
 #else
     #error Platform not recognized
 #endif

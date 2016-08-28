@@ -1,5 +1,5 @@
-#ifndef XLIBSCREENSHOT_H
-#define XLIBSCREENSHOT_H
+#ifndef WINSCREENSHOT_H
+#define WINSCREENSHOT_H
 
 #include "screenshot.h"
 
@@ -22,4 +22,4 @@ public:
 	float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) override;
 };
 
-#endif // XLIBSCREENSHOT_H
+#endif // WINSCREENSHOT_H

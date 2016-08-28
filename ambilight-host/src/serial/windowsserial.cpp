@@ -34,7 +34,7 @@ size_t WindowsSerial::receive(uint8_t* buf, size_t len) const
 
 	// Check if there is something to read
 	if (status.cbInQue <= 0)
-		return;
+		return status.cbInQue;
 
 	// read only as much as available, and dont read more than our buffer can handle
 	unsigned int bytesToRead = status.cbInQue < len ? status.cbInQue : len;

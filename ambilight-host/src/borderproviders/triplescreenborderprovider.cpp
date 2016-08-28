@@ -2,9 +2,7 @@
 
 #include <Magick++.h>
 
-#include <vector>
-
-#include "xlibscreenshot.h"
+#include <vector>"
 
 using namespace Magick;
 using namespace std;
