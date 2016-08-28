@@ -11,6 +11,7 @@ using namespace std;
 #include "spectrometerrgblineprovider.h"
 #include "ambirgblineprovider.h"
 
+#include "customexceptions.h"
 
 #include "singlescreenborderprovider.h"
 #include "triplescreenborderprovider.h"

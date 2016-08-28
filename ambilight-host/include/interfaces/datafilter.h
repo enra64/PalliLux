@@ -2,6 +2,7 @@
 #define DATAFILTER_H
 
 #include <cstdint>
+#include <stddef.h>
 
 /**
  * @brief An interface for functors implementing data filters for the rgb data, like brightness factoring or low-pass filters
