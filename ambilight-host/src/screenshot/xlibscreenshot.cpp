@@ -6,7 +6,7 @@
 #include <vector>
 #include <iostream>
 
-#include <ImageMagick-6/magick/xwindow.h>
+#include <Magick++.h>
 
 using namespace Magick;
 

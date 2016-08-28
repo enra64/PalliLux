@@ -1,8 +1,7 @@
 #ifndef RGBCONSTRUCTOR_H
 #define RGBCONSTRUCTOR_H
 
-#include <ImageMagick-6/Magick++.h>
-#include <ImageMagick-6/magick/image.h>
+#include <Magick++.h>
 
 #include <cstdint>
 #include <memory>

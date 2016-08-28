@@ -1,7 +1,6 @@
 #include "triplescreenborderprovider.h"
 
-#include <ImageMagick-6/Magick++.h>
-#include <ImageMagick-6/magick/image.h>
+#include <Magick++.h>
 
 #include <vector>
 #include <ctime>
