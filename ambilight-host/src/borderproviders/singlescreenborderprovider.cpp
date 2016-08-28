@@ -8,7 +8,7 @@ SingleScreenBorderProvider::SingleScreenBorderProvider(
         size_t xOffset, size_t yOffset, 
         size_t blackbarOffsetX, size_t blackBarOffsetY) : 
             BorderProvider(screener), mWidth(width), mHeight(height), mXOffset(xOffset), mYOffset(yOffset), mLetterBoxX(blackbarOffsetX), mLetterBoxY(blackBarOffsetY) {
-    updateGeometry();
+    SingleScreenBorderProvider::updateGeometry();
 }
 
 void SingleScreenBorderProvider::updateGeometry() {

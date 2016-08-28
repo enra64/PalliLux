@@ -7,7 +7,6 @@
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::WRL;
 
-#include <ImageMagick-6/magick/xwindow.h>
 
 using namespace Magick;
 
