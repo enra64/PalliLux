@@ -49,7 +49,7 @@ void LinuxSerial::open(const std::string &port) {
     ::close(mFd);
 
     // check whether the tty device exists
-    if(access(port.c_str(), F_OK) < 0)
+    if(!deviceExists(port))
         throw SerialException(port + std::string(" does not exist"));
 
     // open serial connection

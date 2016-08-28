@@ -80,6 +80,11 @@ void ControlDialog::on_runButton_clicked() {
         updateStatus(string("catastrophic failure: ") + e.what(), true);
         setButtonState(false);
         return;
+    } catch(SerialException e){
+        // ui update
+        updateStatus(string("serial failure: ") + e.what(), true);
+        setButtonState(false);
+        return;
     }
 
     // start timing

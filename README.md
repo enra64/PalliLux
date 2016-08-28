@@ -7,7 +7,7 @@ It is, however, also possible to supply any other RGB data.
 Just flash the sketch contained in ambilight-arduino to an arduino, but don't forget to adjust the number of LEDs.
 
 ## Host
-The host code in ambilight-host is a powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an executable file in debug mode, so to compile your version you just need to ```cmake CMakeLists.txt && make```. If you do not have pulseaudio and fftw, or are not using the x11 libs, you currently will have to remove their find passages from the CMakeLists.txt, as well as all files referencing the libs.
+The host code in ambilight-host is a powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an executable file in debug mode, so to compile your version you just need to ```cmake CMakeLists.txt && make```. If you are compiling for linux, and do not want to include X11 or spectrometer (pulseaudio+fftw3) libraries, you can use ```cmake (-DX11=OFF) (-DSPECTROMETER=OFF) CMakeLists.txt``` respectively to disable including and linking them.
 
 ### Instantiation
 ```c++
@@ -46,7 +46,7 @@ while(1) {
 Be aware that an ```AmbiConnectorException``` will be thrown if something goes wrong.
 
 # More
-[More info about the classes](class_info.md). In [ambilight-gui](ambilight-gui/) there is a gui for single screen ambilight.
+[More info about the classes](class_info.md). In [ambilight-gui](ambilight-gui/) there is a gui uising Qt for single and triple screen ambilight.
 
 ## SpectrometerRgbLineProvider
 This class can create a spectrogram of your current music using the fftw3 library and pulseaudio.

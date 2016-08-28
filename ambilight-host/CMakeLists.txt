@@ -114,6 +114,13 @@ set(CMAKE_BUILD_TYPE Debug)
 
 
 ######################################################################################################################################################
+# OPTIONS
+######################################################################################################################################################
+option(X11 "find and include x11 lib" ON)
+option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
+
+
+######################################################################################################################################################
 # IMAGEMAGICK - REQUIRED
 ######################################################################################################################################################
 find_package(ImageMagick COMPONENTS Magick++ MagickCore REQUIRED)
@@ -121,36 +128,39 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
 
+######################################################################################################################################################
+# LINUX ONLY LIBRARIES
+######################################################################################################################################################
+if(UNIX)
 
 
 ######################################################################################################################################################
 # X11 OPTION - needed for xlibscreenshot - LINUX ONLY
 ######################################################################################################################################################
-option(X11 "find and include x11 lib" ON)
-if(UNIX AND X11)
-    target_sources(${PROJECT_NAME} PUBLIC "src/screenshot/xlibscreenshot.cpp" "include/screenshot/xlibscreenshot.h")
-    find_package(X11 REQUIRED)
-    INCLUDE_DIRECTORIES ( ${X11_INCLUDE_DIR} )
-    TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${X11_LIBRARIES})
-endif(UNIX AND X11)
-
+    if(X11)
+        target_sources(${PROJECT_NAME} PUBLIC "src/screenshot/xlibscreenshot.cpp" "include/screenshot/xlibscreenshot.h")
+        find_package(X11 REQUIRED)
+        INCLUDE_DIRECTORIES ( ${X11_INCLUDE_DIR} )
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${X11_LIBRARIES})
+    endif(X11)
 
 
 ######################################################################################################################################################
 # SPECTROMETER OPTION - LINUX ONLY
 ######################################################################################################################################################
-option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
-if(UNIX AND SPECTROMETER)
-    # add spectrometer files to target
-    target_sources(${PROJECT_NAME} PUBLIC "include/rgblineprovider/spectrometerrgblineprovider.h" "src/rgblineprovider/spectrometerrgblineprovider.cpp")
-    
-    # pulseaudio libs
-    TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
-    TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
-    
-    # fftw lib
-    find_path (FFTW_INCLUDE_DIR fftw3.h)
-    find_library (FFTW_LIBRARIES NAMES fftw3)
-    INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
-    TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
-endif(UNIX AND SPECTROMETER)
+    if(SPECTROMETER)
+        # add spectrometer files to target
+        target_sources(${PROJECT_NAME} PUBLIC "include/rgblineprovider/spectrometerrgblineprovider.h" "src/rgblineprovider/spectrometerrgblineprovider.cpp")
+        
+        # pulseaudio libs
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
+        
+        # fftw lib
+        find_path (FFTW_INCLUDE_DIR fftw3.h)
+        find_library (FFTW_LIBRARIES NAMES fftw3)
+        INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
+    endif(SPECTROMETER)
+
+endif(UNIX)
