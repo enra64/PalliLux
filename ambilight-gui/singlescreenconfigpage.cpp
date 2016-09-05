@@ -7,7 +7,6 @@
 #include <ambirgblineprovider.h>
 #include <letterboxometer.h>
 #include <singlescreenborderprovider.h>
-#include <xlibscreenshot.h>
 
 using namespace std;
 
@@ -49,7 +48,7 @@ QString SingleScreenConfigPage::infoText() const {
 
 std::shared_ptr<RgbLineProvider> SingleScreenConfigPage::rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const {
     // instantiate the desired screenshot class
-    shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
+    shared_ptr<Screenshot> screener = IScreenConfigPage::getPlatformAppropriateScreenshot();
 
     // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
     // to get screenshots from the system
@@ -71,7 +70,7 @@ void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
     dialog.exec();
 
     if(!dialog.wasCanceled()){
-        ui->letterboxingHeightSpinBox->setValue(dialog.getLetterboxHeight());
-        ui->letterboxingWidthSpinBox->setValue(dialog.getLetterboxWidth());
+        ui->letterboxingHeightSpinBox->setValue(static_cast<int>(dialog.getLetterboxHeight()));
+        ui->letterboxingWidthSpinBox->setValue(static_cast<int>(dialog.getLetterboxWidth()));
     }
 }

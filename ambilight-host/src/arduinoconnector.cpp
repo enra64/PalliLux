@@ -36,18 +36,7 @@
 
 using namespace std;
 
-ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider) : ArduinoConnector(rgbProvider, "")
-{
-}
-
-ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider, const std::string port) : mTtyDevice(port)
-{
-	// save rgb line provider
-	mRgbLineProvider = rgbProvider;
-
-	// reserve buffer space
-	mRgbBuffer = new uint8_t[mRgbLineProvider->getRequiredBufferLength()];
-
+ArduinoConnector::ArduinoConnector() {
 	// initialise timekeeping
 	mLastDraw = clock();
 
@@ -60,6 +49,11 @@ ArduinoConnector::ArduinoConnector(std::shared_ptr<RgbLineProvider> rgbProvider,
         #error Platform not recognized
 #endif
 }
+
+ArduinoConnector::ArduinoConnector(const string& port) : ArduinoConnector() {
+	mTtyDevice = port;
+}
+
 
 void ArduinoConnector::writeRgbBufferToText(string path) const
 {
@@ -128,7 +122,7 @@ void ArduinoConnector::draw()
 		if (mCurrentFps > mTargetFps)
 		{
 			// calculate millisecond waiting time
-			uint64_t waitTime = 1000.f / (mCurrentFps - mTargetFps);
+			uint64_t waitTime = static_cast<uint64_t>(1000.f / (mCurrentFps - mTargetFps));
 			// wait
 			this_thread::sleep_for(chrono::milliseconds(waitTime));
 		}
@@ -178,6 +172,13 @@ ArduinoConnector::~ArduinoConnector()
 	delete[] mRgbBuffer;
 	mSerial->close();
 	delete mSerial;
+}
+
+void ArduinoConnector::setRgbLineProvider(std::shared_ptr<RgbLineProvider> lineProvider) {
+	mRgbLineProvider = lineProvider;
+
+	delete[] mRgbBuffer;
+	mRgbBuffer = new uint8_t[mRgbLineProvider->getRequiredBufferLength()];
 }
 
 void ArduinoConnector::disconnect(bool blackoutLeds)

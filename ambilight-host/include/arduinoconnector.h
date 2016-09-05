@@ -44,17 +44,17 @@ public:
 	}
 
 	/**
-	 * @brief construct an AmbiConnector, responsible for obtaining and updating the led data
-	 * @param borderProvider will be used to obtain the border images
+	 * @brief constructs an ArduinoConnector without a BorderProvider instance. The instance must be set manually.
 	 */
-	ArduinoConnector(std::shared_ptr<RgbLineProvider> borderProvider);
+	ArduinoConnector();
+	
 
 	/**
-	 * @brief construct an AmbiConnector, responsible for obtaining and updating the led data
+	 * @brief construct an ArduinoConnector, responsible for obtaining and updating the led data
 	 * @param borderProvider will be used to obtain the border images
 	 * @param port tty port for comms
 	 */
-	ArduinoConnector(std::shared_ptr<RgbLineProvider> borderProvider, const std::string port);
+	explicit ArduinoConnector(const std::string& port);
 
 	~ArduinoConnector();
 
@@ -98,8 +98,7 @@ public:
 	 * @brief Set a target as to what fps should be achieved
 	 * @param fps target fps in seconds. if lower than 0, the target is reset.
 	 */
-	void setTargetFps(float fps)
-	{
+	void setTargetFps(float fps) {
 		mTargetFps = fps;
 	}
 
@@ -107,8 +106,7 @@ public:
 	 * @brief Get current target fps
 	 * @return current target fps in seconds
 	 */
-	float getTargetFps() const
-	{
+	float getTargetFps() const {
 		return mTargetFps;
 	}
 
@@ -116,14 +114,20 @@ public:
 	 * @brief Set the port that will be used in the next connection attempt
 	 * @param port device name, like /dev/tty0
 	 */
-	void setPort(const std::string& port)
-	{
+        void setPort(const std::string port) {
 		mTtyDevice = port;
 	}
+	
+	void setRgbLineProvider(std::shared_ptr<RgbLineProvider> lineProvider);
 
 	std::shared_ptr<RgbLineProvider> getRgbLineProvider() const
 	{
 		return mRgbLineProvider;
+	}
+
+	const Serial* getSerial() const
+	{
+		return mSerial;
 	}
 
 private:
@@ -143,7 +147,7 @@ private:
 
 	std::shared_ptr<RgbLineProvider> mRgbLineProvider;//!< the object that provides the RGB led data as a uint8_t array
 
-	uint8_t* mRgbBuffer;//!< our very own bufferspace for led data
+	uint8_t* mRgbBuffer = nullptr;//!< our very own bufferspace for led data
 
 	char mCommBuffer[128];//!< buffer for arduino responses
 

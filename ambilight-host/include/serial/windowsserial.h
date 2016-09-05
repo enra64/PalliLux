@@ -21,7 +21,7 @@ public:
 	bool deviceExists(const std::string& port) const override;
 	bool good(const std::string& ttyDevice) const override;
 private:
-	HANDLE mSerialHandle;
+	HANDLE mSerialHandle = nullptr;
 };
 
 #endif // WINDOWS_SERIAL_H

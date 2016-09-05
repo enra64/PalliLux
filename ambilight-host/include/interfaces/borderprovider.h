@@ -2,7 +2,6 @@
 #define BORDERPROVIDER_H
 
 #include "Magick++.h"
-#include "Magick++/Image.h"
 
 #include "screenshot.h"
 

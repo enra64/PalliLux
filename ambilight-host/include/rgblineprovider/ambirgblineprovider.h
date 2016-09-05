@@ -1,7 +1,7 @@
 #ifndef RGBCONSTRUCTOR_H
 #define RGBCONSTRUCTOR_H
 
-#include <Magick++.h>
+#include "Magick++.h"
 
 #include <cstdint>
 #include <memory>
