@@ -26,7 +26,7 @@ private slots:
     void on_configStackPrevButton_clicked();
     void on_configStackNextButton_clicked();
 
-    void on_ttyState_textChanged(const QString &arg1);
+    void on_ttyState_textChanged(const QString &);
 
     void on_startControlDialogButton_clicked();
 
@@ -38,6 +38,8 @@ private:
     std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider();
     const IScreenConfigPage* getCurrentPage();
     QString getInfoText();
+    void showNoSerialWarning();
+    bool enteredSerialOk();
 };
 
 #endif // MAINWINDOW_H

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Control</string>
+   <string>AmbiLight run control</string>
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
    <item>

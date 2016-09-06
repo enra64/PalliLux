@@ -25,6 +25,7 @@
 
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
+#include <QMessageBox>
 
 using namespace std;
 
@@ -53,7 +54,32 @@ const IScreenConfigPage* MainWindow::getCurrentPage() {
     return dynamic_cast<IScreenConfigPage*>(ui->configStack->currentWidget());
 }
 
+void MainWindow::showNoSerialWarning()
+{
+    QMessageBox::warning(this, "Serial device error", QString("The serial device %1 could not be found!").arg(ui->ttyState->text()), QMessageBox::Ok);
+}
+
+bool MainWindow::enteredSerialOk() {
+    // check whether the tty device exists
+#ifdef __linux__
+        LinuxSerial serial;
+#elif _WIN32_WINNT
+        WindowsSerial serial;
+#else
+        #error Platform not recognized
+#endif
+
+    return serial.deviceExists(ui->ttyState->text().toStdString());
+}
+
 void MainWindow::on_startControlDialogButton_clicked() {
+    // if the serial device does not exist, the user should not be able to start the control dialog
+    if(!enteredSerialOk()){
+        showNoSerialWarning();
+        return;
+    }
+
+    // get the currently displayed configuration page to retrieve a rgbProvider
     const IScreenConfigPage* currentPage = getCurrentPage();
 
     // ambilight rgb provider
@@ -111,15 +137,9 @@ void MainWindow::on_configStackNextButton_clicked() {
     ui->configStackLabel->setText(getCurrentPage()->pageLabel());
 }
 
-void MainWindow::on_ttyState_textChanged(const QString &ttyDevice) {
-    // check whether the tty device exists
-    Serial* serial;
-#ifdef __linux__
-        serial = new LinuxSerial();
-#elif _WIN32_WINNT
-    serial = new WindowsSerial();
-#else
-        #error Platform not recognized
-#endif
-    serial->deviceExists(ttyDevice.toStdString());
+void MainWindow::on_ttyState_textChanged(const QString &) {
+    if(enteredSerialOk())
+        ui->ttyState->setStyleSheet("color: black;");
+    else
+        ui->ttyState->setStyleSheet("color: red;");
 }
