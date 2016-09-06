@@ -1,8 +1,9 @@
-#include "letterboxingautoconfigdialog.h"
-#include "singlescreenconfigpage.h"
-#include "ui_singlescreenconfigpage.h"
-
 #include <QTimer>
+
+#include "ui_singlescreenconfigpage.h"
+#include "singlescreenconfigpage.h"
+
+#include "letterboxingautoconfigdialog.h"
 
 #include <ambirgblineprovider.h>
 #include <letterboxometer.h>

@@ -2,10 +2,10 @@
 #define CONTROLDIALOG_H
 
 #include <QDialog>
+#include <QLabel>
 
 #include <memory>
 
-#include <QLabel>
 #include <arduinoconnector.h>
 #include <singlescreenborderprovider.h>
 

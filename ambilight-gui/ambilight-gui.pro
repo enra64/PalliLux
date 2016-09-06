@@ -14,9 +14,32 @@ TEMPLATE = app
 # amblight host library folder location
 AMBILIGHT_LIB_PATH = ../ambilight-host/
 
+SOURCES += main.cpp\
+    mainwindow.cpp \
+    controldialog.cpp \
+    singlescreenconfigpage.cpp \
+    triplescreenconfigpage.cpp \
+    letterboxingautoconfigdialog.cpp \
+    fpsmeter.cpp
+
+HEADERS  += mainwindow.h \
+    controldialog.h \
+    singlescreenconfigpage.h \
+    iconfigpage.h \
+    triplescreenconfigpage.h \
+    letterboxingautoconfigdialog.h \
+    fpsmeter.h
+
+FORMS    += mainwindow.ui \
+    controldialog.ui \
+    singlescreenconfigpage.ui \
+    triplescreenconfigpage.ui \
+    letterboxingautoconfigdialog.ui \
+    fpsmeter.ui
+
 # check whether we can use qt charts
 qtHaveModule(charts){
-    QT     += charts
+    QT += charts
     DEFINES += QT_CHARTS_FOUND
     message("qt charts component found")
 }
@@ -62,27 +85,3 @@ INCLUDEPATH += $${AMBILIGHT_LIB_PATH}/include \
     $${AMBILIGHT_LIB_PATH}/include/datafilters \
     $${AMBILIGHT_LIB_PATH}/include/serial \
     $${AMBILIGHT_LIB_PATH}/include/screenshot
-
-
-SOURCES += main.cpp\
-    mainwindow.cpp \
-    controldialog.cpp \
-    singlescreenconfigpage.cpp \
-    triplescreenconfigpage.cpp \
-    letterboxingautoconfigdialog.cpp \
-    fpsmeter.cpp
-
-HEADERS  += mainwindow.h \
-    controldialog.h \
-    singlescreenconfigpage.h \
-    iconfigpage.h \
-    triplescreenconfigpage.h \
-    letterboxingautoconfigdialog.h \
-    fpsmeter.h
-
-FORMS    += mainwindow.ui \
-    controldialog.ui \
-    singlescreenconfigpage.ui \
-    triplescreenconfigpage.ui \
-    letterboxingautoconfigdialog.ui \
-    fpsmeter.ui

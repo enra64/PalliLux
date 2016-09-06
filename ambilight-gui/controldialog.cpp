@@ -11,7 +11,7 @@
 #include <brightnessfilter.h>
 #include <customexceptions.h>
 
-#include <magick++.h>
+#include <Magick++.h>
 
 using namespace std;
 

@@ -1,7 +1,8 @@
+#include <QLabel>
+
 #include "fpsmeter.h"
 #include "ui_fpsmeter.h"
 
-#include <QLabel>
 
 FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter){
     // set up ui

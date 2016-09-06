@@ -1,7 +1,7 @@
+#include <QTimer>
+
 #include "letterboxingautoconfigdialog.h"
 #include "ui_letterboxingautoconfigdialog.h"
-
-#include <QTimer>
 
 #include <memory>
 

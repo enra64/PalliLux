@@ -1,9 +1,9 @@
 #ifndef TRIPLESCREENCONFIGPAGE_H
 #define TRIPLESCREENCONFIGPAGE_H
 
-#include "iconfigpage.h"
-
 #include <QWidget>
+
+#include "iconfigpage.h"
 
 namespace Ui {
 class TripleScreenConfigPage;

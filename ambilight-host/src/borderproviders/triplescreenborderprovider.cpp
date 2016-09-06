@@ -2,7 +2,7 @@
 
 #include <Magick++.h>
 
-#include <vector>"
+#include <vector>
 
 using namespace Magick;
 using namespace std;

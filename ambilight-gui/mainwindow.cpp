@@ -1,7 +1,8 @@
+#include "ui_mainwindow.h"
+#include "mainwindow.h"
+
 #include "controldialog.h"
 #include "iconfigpage.h"
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 #include <memory>
 

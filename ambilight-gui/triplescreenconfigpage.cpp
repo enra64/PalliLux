@@ -1,5 +1,5 @@
-#include "triplescreenconfigpage.h"
 #include "ui_triplescreenconfigpage.h"
+#include "triplescreenconfigpage.h"
 
 #include <ambirgblineprovider.h>
 #include <triplescreenborderprovider.h>
@@ -33,7 +33,7 @@ QString TripleScreenConfigPage::pageLabel() const {
 
 std::shared_ptr<RgbLineProvider> TripleScreenConfigPage::rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const {
     // first, we need a screenshot implementation
-    shared_ptr<Screenshot> screenshotProvider = shared_ptr<Screenshot>(new WinScreenshot());
+    shared_ptr<Screenshot> screenshotProvider = IScreenConfigPage::getPlatformAppropriateScreenshot();
 
     // second, we need a triplescreen borderprovider
     shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new TripleScreenBorderProvider(
