@@ -6,53 +6,34 @@
 #include "assert.h"
 #include <string>
 
-#include <QValueAxis>
 #include <ctime>
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
+#include <customexceptions.h>
 
-#include <ImageMagick-6/Magick++.h>
-#include <ImageMagick-6/magick/image.h>
+#include <magick++.h>
 
 using namespace std;
 
 ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *parent, const QString& infoString) :
-    QDialog(parent),
-    ui(new Ui::ControlDialog),
-    mArduinoConnector(connector) {
+    QDialog(parent), ui(new Ui::ControlDialog), mArduinoConnector(connector) {
+    //setup ui
     ui->setupUi(this);
 
-    // disable the stop button
+    // disable the stop button (we havent even started yet)
     ui->stopButton->setEnabled(false);
 
     // set info string
     ui->infoState->setText(infoString);
 
     // update border width
-    ui->borderWidthSpinbox->setValue(getBorderProvider()->getBorderWidth());
-
-    // fps chart stuff
-    // set up fps axes
-    QValueAxis* xAxis = new QValueAxis();
-    xAxis->setMax(mFpsPointCount);
-    xAxis->setVisible(false);
-    QValueAxis* yAxis = new QValueAxis();
-    yAxis->setMax(100);
+    ui->borderWidthSpinbox->setValue(static_cast<int>(getBorderProvider()->getBorderWidth()));
 
     // set up last line view
     mLastLineView = new QLabel(this);
 
     // set up histogram
     mHistogramView = new QLabel(this);
-
-    // set up fps chart
-    mFpsChart->legend()->hide();
-    mFpsChart->addSeries(mFpsLineSeries);
-    mFpsChart->setAxisX(xAxis, mFpsLineSeries);
-    mFpsChart->setAxisY(yAxis, mFpsLineSeries);
-
-    mFpsChartView = new QChartView(mFpsChart);
-    mFpsChartView->setRenderHint(QPainter::Antialiasing);
 }
 
 ControlDialog::~ControlDialog() {
@@ -98,22 +79,14 @@ void ControlDialog::on_runButton_clicked() {
             mArduinoConnector->update();
             mArduinoConnector->draw();
 
-            // update fps chart
-            if(mEnableFpsChart) {
-                mFpsLineSeries->append(mFpsTickCount++, mArduinoConnector->getCurrentFps());
-                while(mFpsLineSeries->count() > mFpsPointCount) {
-                    qreal xDelta = mFpsChart->mapToPosition(
-                                       mFpsLineSeries->at(1)).rx() - mFpsChart->mapToPosition(mFpsLineSeries->at(0)).rx();
-                    mFpsLineSeries->removePoints(0, 1);
-                    mFpsChart->scroll(xDelta, 0);
-                }
-                mFpsChartView->repaint();
-            }
+            // update fps widget
+            ui->fpsWidget->update(mArduinoConnector->getCurrentFps());
 
             // update state label with runtime information
             QTime elapsed = QTime(0, 0).addMSecs(startTime.elapsed());
             updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
 
+            // get last border line
             std::unique_ptr<Magick::Image> lastLine = getRgbLineProvider()->getLastLineImage();
 
             // show last border line
@@ -121,12 +94,14 @@ void ControlDialog::on_runButton_clicked() {
                 Magick::Blob bob;
                 lastLine->write(&bob, "PNG");
                 QPixmap line;
-                line.loadFromData((uchar*)(bob.data()), bob.length());
+                line.loadFromData((uchar*)(bob.data()), static_cast<uint>(bob.length()));
                 mLastLineView->setPixmap(line.scaled(mLastLineView->width(), mLastLineView->height()));
             }
 
             // update histogram chart
             if(mEnableHistogram) {
+                // temporarily save our line picture, must be crossplatformed
+                //todo:crossplatformify;
                 lastLine->write("histogram:/tmp/line.png");
                 QPixmap histogram("/tmp/line.png");
                 mHistogramView->setMinimumSize(histogram.width(), histogram.height());
@@ -202,15 +177,6 @@ void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
     getBorderProvider()->setBorderWidth(arg1);
 }
 
-void ControlDialog::on_fpsCheckbox_clicked(bool checked) {
-    mEnableFpsChart = checked;
-    mFpsChartView->setVisible(checked);
-    if(checked)
-        ui->fpsLayout->addWidget(mFpsChartView);
-    else
-        ui->fpsLayout->removeWidget(mFpsChartView);
-}
-
 void ControlDialog::on_histogramCheckbox_clicked(bool checked) {
     mEnableHistogram = checked;
     mHistogramView->setVisible(checked);
@@ -222,8 +188,7 @@ void ControlDialog::on_histogramCheckbox_clicked(bool checked) {
     }
 }
 
-void ControlDialog::on_lineCheckbox_clicked(bool checked)
-{
+void ControlDialog::on_lineCheckbox_clicked(bool checked){
     mEnableLastLineView = checked;
     mLastLineView->setVisible(checked);
     if(checked){

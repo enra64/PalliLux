@@ -4,7 +4,6 @@
 #include "ui_mainwindow.h"
 
 #include <memory>
-#include <unistd.h>
 
 #include <ambirgblineprovider.h>
 #include <rgblineprovider.h>
@@ -12,7 +11,16 @@
 
 #include <singlescreenborderprovider.h>
 #include <triplescreenborderprovider.h>
-#include <xlibscreenshot.h>
+
+#ifdef __linux__
+    #include <xlibscreenshot.h>
+    #include <linuxserial.h>
+#elif _WIN32_WINNT
+    #include <winscreenshot.h>
+    #include <windowsserial.h>
+#else
+    #error Platform not recognized
+#endif
 
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
@@ -26,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // check whether the default tty device exists
     on_ttyState_textChanged(ui->ttyState->text());
+
+    // initialise our ambiconnector so we can later set the rgb provider
+    mAmbiConnector = shared_ptr<ArduinoConnector>(new ArduinoConnector());
 }
 
 MainWindow::~MainWindow() {
@@ -47,18 +58,19 @@ void MainWindow::on_startControlDialogButton_clicked() {
     // ambilight rgb provider
     shared_ptr<RgbLineProvider> rgbProvider = currentPage->rgbProvider(ui->xLedSpin->value(), ui->yLedSpin->value());
 
-    // supply our AmbiConnector with its chosen RgbLineProvider
-    shared_ptr<ArduinoConnector> connector = shared_ptr<ArduinoConnector>(new ArduinoConnector(rgbProvider, ui->ttyState->text().toStdString()));
+    // parametrize the ArduinoConnector
+    mAmbiConnector->setRgbLineProvider(rgbProvider);
+    mAmbiConnector->setPort(ui->ttyState->text().toStdString());
 
     // add low pass filter
-    unique_ptr<DataFilter> lpFilter(new LowPassFilter(connector->getRequiredBufferLength(), .6f));
-    connector->addFilter("lowpass", std::move(lpFilter));
+    unique_ptr<DataFilter> lpFilter(new LowPassFilter(mAmbiConnector->getRequiredBufferLength(), .6f));
+    mAmbiConnector->addFilter("lowpass", std::move(lpFilter));
 
     // add brightness filter
     unique_ptr<DataFilter> brFilter(new BrightnessFilter(1.f));
-    connector->addFilter("brightness", std::move(brFilter));
+    mAmbiConnector->addFilter("brightness", std::move(brFilter));
 
-    ControlDialog c(connector, this, currentPage->infoText());
+    ControlDialog c(mAmbiConnector, this, currentPage->infoText());
     c.exec();
 }
 
@@ -100,8 +112,13 @@ void MainWindow::on_configStackNextButton_clicked() {
 
 void MainWindow::on_ttyState_textChanged(const QString &ttyDevice) {
     // check whether the tty device exists
-    if(access(ttyDevice.toStdString().c_str(), F_OK) < 0)
-        ui->ttyState->setStyleSheet("color : red;");
-    else
-        ui->ttyState->setStyleSheet("color : black;");
+    Serial* serial;
+#ifdef __linux__
+        serial = new LinuxSerial();
+#elif _WIN32_WINNT
+    serial = new WindowsSerial();
+#else
+        #error Platform not recognized
+#endif
+    serial->deviceExists(ttyDevice.toStdString());
 }

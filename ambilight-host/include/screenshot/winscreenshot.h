@@ -1,5 +1,5 @@
-#ifndef XLIBSCREENSHOT_H
-#define XLIBSCREENSHOT_H
+#ifndef WINSCREENSHOT_H
+#define WINSCREENSHOT_H
 
 #include "screenshot.h"
 
@@ -7,20 +7,19 @@
 /**
  * @brief An implementation of the Screenshot interface for windows
  */
-class WinScreenshot : public Screenshot {
+class WinScreenshot : public Screenshot
+{
 public:
-    WinScreenshot();
-    ~WinScreenshot();
+	WinScreenshot();
+	~WinScreenshot();
 
-    /**
-     * @brief takeScreenshot Take a screenshot, converting it to a Magick++ image
-     * @param result the resulting image
-     * @param d the dimensions the image will be; these are the dimensions requested from X
-     * @return the time in seconds required
-     */
-    float getScreenCrop(Magick::Image& result, const Magick::Geometry &d) override;
-
-private:
+	/**
+	 * @brief takeScreenshot Take a screenshot, converting it to a Magick++ image
+	 * @param result the resulting image
+	 * @param d the dimensions the image will be; these are the dimensions requested from X
+	 * @return the time in seconds required
+	 */
+	float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) override;
 };
 
-#endif // XLIBSCREENSHOT_H
+#endif // WINSCREENSHOT_H

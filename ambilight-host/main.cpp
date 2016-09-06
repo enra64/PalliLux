@@ -1,26 +1,39 @@
 #include <iostream>
-#include <algorithm>
 #include <string>
 
 #include <assert.h>
 
-using namespace std;
-
 #include "arduinoconnector.h"
-
-#include "spectrometerrgblineprovider.h"
 #include "ambirgblineprovider.h"
-
-
+#include "customexceptions.h"
 #include "singlescreenborderprovider.h"
-#include "triplescreenborderprovider.h"
-#include "xlibscreenshot.h"
 
 using namespace std;
+
+#ifdef __linux__
+	#include "xlibscreenshot.h"
+	string mDefaultTtyDevice("/dev/ttyUSB0");
+#elif _WIN32
+	#include "winscreenshot.h"
+	string mDefaultTtyDevice("COM0");
+#else
+#error Platform not recognized
+#endif
+
+shared_ptr<Screenshot> getScreenshot()
+{
+	#ifdef __linux__
+	return static_pointer_cast<Screenshot>(make_shared<XlibScreenshot>());
+	#elif _WIN32
+	return static_pointer_cast<Screenshot>(make_shared<WinScreenshot>());
+	#else
+	#error Platform not recognized
+	#endif
+}
 
 std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider(){
     // instantiate the desired screenshot class
-    shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
+    shared_ptr<Screenshot> screener = getScreenshot();
 
     // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
     // to get screenshots from the system
@@ -48,7 +61,7 @@ int main() {
     // try sending to the arduino
     try {
         // establish connection
-        connector.connect("/dev/ttyUSB0");
+        connector.connect(mDefaultTtyDevice);
 
         // loop: update the screen images and push the data to the arduino
         //for(int i = 0; i < 100; i++) {

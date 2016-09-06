@@ -135,15 +135,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="fpsLayout">
-     <item>
-      <widget class="QCheckBox" name="fpsCheckbox">
-       <property name="text">
-        <string>fps graph</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="FpsMeter" name="fpsWidget" native="true"/>
    </item>
    <item>
     <layout class="QVBoxLayout" name="histogramLayout">
@@ -200,6 +192,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FpsMeter</class>
+   <extends>QWidget</extends>
+   <header>fpsmeter.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

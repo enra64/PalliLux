@@ -32,7 +32,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::unique_ptr<ArduinoConnector> mAmbiConnector = std::unique_ptr<ArduinoConnector>(nullptr);
+    std::shared_ptr<ArduinoConnector> mAmbiConnector = std::shared_ptr<ArduinoConnector>(nullptr);
     void refreshLedCount();
     std::shared_ptr<BorderProvider> getSingleScreenBorderProvider(std::shared_ptr<Screenshot> screener);
     std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider();

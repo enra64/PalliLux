@@ -12,6 +12,14 @@
 #include <screenshot.h>
 #include <rgblineprovider.h>
 
+#ifdef __linux__
+    #include <xlibscreenshot.h>
+#elif _WIN32_WINNT
+    #include <winscreenshot.h>
+#else
+    #error Platform not recognized
+#endif
+
 namespace Ui {
 class SingleScreenConfigPage;
 }
