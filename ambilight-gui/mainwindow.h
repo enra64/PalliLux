@@ -33,10 +33,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     void refreshLedCount();
-    std::shared_ptr<BorderProvider> getSingleScreenBorderProvider(std::shared_ptr<Screenshot> screener);
-    std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider();
     const IScreenConfigPage* getCurrentPage();
-    QString getInfoText();
     void showNoSerialWarning();
     bool enteredSerialOk();
 };

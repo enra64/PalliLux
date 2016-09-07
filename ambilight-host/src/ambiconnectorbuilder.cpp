@@ -5,33 +5,32 @@
 using namespace std;
 
 
-AmbiConnectorBuilder& AmbiConnectorBuilder::setBorderProvider(std::shared_ptr<BorderProvider> provider)
-{
+AmbiConnectorBuilder& AmbiConnectorBuilder::setBorderProvider(std::shared_ptr<BorderProvider> provider) {
     mBorderProvider = provider;
+    return *this;
 }
 
-AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_ptr<Screenshot> provider)
-{
+AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_ptr<Screenshot> provider) {
     mScreenshotProvider = provider;
+    return *this;
 }
 
-AmbiConnectorBuilder &AmbiConnectorBuilder::setAmbiRgbLineProvider(std::shared_ptr<AmbiRgbLineProvider> provider)
-{
+AmbiConnectorBuilder &AmbiConnectorBuilder::setAmbiRgbLineProvider(std::shared_ptr<AmbiRgbLineProvider> provider) {
     mAmbiRgbLineProvider = provider;
+    return *this;
 }
 
-AmbiConnectorBuilder& AmbiConnectorBuilder::setPort(const string &port)
-{
+AmbiConnectorBuilder& AmbiConnectorBuilder::setPort(const string &port) {
     mPort = port;
+    return *this;
 }
 
-AmbiConnectorBuilder& AmbiConnectorBuilder::addDataFilter(const std::string name, std::unique_ptr<DataFilter> filter)
-{
+AmbiConnectorBuilder& AmbiConnectorBuilder::addDataFilter(const std::string name, std::unique_ptr<DataFilter> filter) {
     mFilterMap.emplace(make_pair(name, move(filter)));
+    return *this;
 }
 
-std::shared_ptr<ArduinoConnector> AmbiConnectorBuilder::build()
-{
+std::shared_ptr<ArduinoConnector> AmbiConnectorBuilder::build() {
     // create an ArduinoConnector
     std::shared_ptr<ArduinoConnector> connector = make_shared<ArduinoConnector>();
 
