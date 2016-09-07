@@ -2,6 +2,7 @@
 #include "ui_controldialog.h"
 
 #include <QDateTime>
+#include <QDir>
 
 #include "assert.h"
 #include <string>
@@ -101,9 +102,9 @@ void ControlDialog::on_runButton_clicked() {
             // update histogram chart
             if(mEnableHistogram) {
                 // temporarily save our line picture, must be crossplatformed
-                //todo:crossplatformify;
-                lastLine->write("histogram:/tmp/line.png");
-                QPixmap histogram("/tmp/line.png");
+                QString histogramPath = "histogram:" + QDir::tempPath() + "/line.png";
+                lastLine->write(histogramPath.toStdString());
+                QPixmap histogram(QDir::tempPath() + "/line.png");
                 mHistogramView->setMinimumSize(histogram.width(), histogram.height());
                 mHistogramView->setPixmap(histogram);
             }

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QLabel>
+#include <QTemporaryFile>
 
 #include <memory>
 
