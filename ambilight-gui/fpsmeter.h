@@ -7,6 +7,7 @@
 #ifdef QT_CHARTS_FOUND
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
+#include <QtCharts/QValueAxis>
 QT_CHARTS_USE_NAMESPACE // using namespace qtcharts
 #endif // QT_CHARTS_FOUND
 
@@ -50,7 +51,7 @@ private: // normal member variables
 private: // qt charts members
     QLineSeries* mFpsLineSeries = new QLineSeries();///!< the fps line series (fps data)
     QChart* mFpsChart = new QChart();///!< the fps chart displayed by the chart view
-    QChartView mFpsChartView;///!< our fps chart view
+    QChartView* mFpsChartView;///!< our fps chart view
 #else
 private:  // alternative members
     QLabel* mFpsLabel;

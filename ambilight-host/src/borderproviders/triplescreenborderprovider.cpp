@@ -3,17 +3,21 @@
 #include <Magick++.h>
 
 #include <vector>
+#include <assert.h>
 
 using namespace Magick;
 using namespace std;
 
-TripleScreenBorderProvider::TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener, size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(screener), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3)
+TripleScreenBorderProvider::TripleScreenBorderProvider(size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3)
 {
 	TripleScreenBorderProvider::updateGeometry();
 }
 
 void TripleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image& left, Image& bottom)
 {
+    //check whether we have a ScreenshotProvider
+    assert(mScreenshot);
+
 	// take the screenshot (if the screenshot class overrides it)
 	mScreenshot->takeScreenshot();
 

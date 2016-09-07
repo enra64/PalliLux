@@ -6,6 +6,7 @@
 
 #include <rgblineprovider.h>
 #include <screenshot.h>
+#include <ambiconnectorbuilder.h>
 
 #ifdef __linux__
     #include <xlibscreenshot.h>
@@ -19,7 +20,7 @@ class IScreenConfigPage {
 public:
     virtual QString pageLabel() const = 0;
     virtual QString infoText() const = 0;
-    virtual std::shared_ptr<RgbLineProvider> rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const = 0;
+    virtual void parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const = 0;
 
     // super ugly function to get win/xlibscreenshot
     static std::shared_ptr<Screenshot> getPlatformAppropriateScreenshot(){

@@ -1,6 +1,6 @@
 project(host)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -21,6 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # get qt creator to show these headers
 SET(BASE_HEADERS
     "include/arduinoconnector.h"
+    "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
     "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
@@ -40,6 +41,7 @@ SET(BASE_HEADERS
 # relevant source files
 SET(BASE_SOURCES
     "src/arduinoconnector.cpp"
+    "src/ambiconnectorbuilder.cpp"
     "src/letterboxometer.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
     "src/borderproviders/triplescreenborderprovider.cpp"

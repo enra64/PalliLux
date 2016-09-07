@@ -2,6 +2,7 @@
 #define LEDCONNECTOR_H
 
 #include <string>
+#include <assert.h>
 
 #include "ambirgblineprovider.h"
 #include "serial.h"
@@ -91,6 +92,7 @@ public:
 	 */
 	size_t getRequiredBufferLength() const
 	{
+        assert(mRgbLineProvider);
 		return mRgbLineProvider->getRequiredBufferLength();
 	}
 
@@ -125,6 +127,9 @@ public:
 		return mRgbLineProvider;
 	}
 
+    /**
+     * @brief Retrieve the current serial class
+     */
 	const Serial* getSerial() const
 	{
 		return mSerial;

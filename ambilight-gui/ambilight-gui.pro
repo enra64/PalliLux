@@ -75,7 +75,7 @@ unix {
     LIBS += $(shell Magick++-config --ldflags --libs)
 
     # static ambilight lib
-    LIBS += $${AMBILIGHT_LIB_PATH}/libhost.a
+    LIBS += "/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-host-Desktop-Default/libhost.a"
 }
 
 INCLUDEPATH += $${AMBILIGHT_LIB_PATH}/include \

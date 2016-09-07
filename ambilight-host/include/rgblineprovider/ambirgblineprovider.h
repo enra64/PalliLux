@@ -22,7 +22,7 @@ public:
 	 * @param verticalLedCount how many leds are on each vertical border
 	 * @param horizontalLedCount how many leds are on each horizontal border
 	 */
-	AmbiRgbLineProvider(std::shared_ptr<BorderProvider> provider, unsigned int horizontalLedCount, unsigned int verticalLedCount);
+    AmbiRgbLineProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount);
 
 	/**
 	 * @brief Retrieves border images and provides rgb output data
@@ -34,6 +34,10 @@ public:
 	{
 		return move(mLastLineImage);
 	}
+
+    void setBorderProvider(std::shared_ptr<BorderProvider> provider) {
+        mBorderProvider = provider;
+    }
 
 	std::shared_ptr<BorderProvider> getBorderProvider() const
 	{

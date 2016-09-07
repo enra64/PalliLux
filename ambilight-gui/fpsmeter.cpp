@@ -4,7 +4,7 @@
 #include "ui_fpsmeter.h"
 
 
-FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter){
+FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter) {
     // set up ui
     ui->setupUi(this);
 
@@ -12,16 +12,16 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter){
     setupChart();
 }
 
-FpsMeter::~FpsMeter(){
+FpsMeter::~FpsMeter() {
+    delete mFpsChartView;
     delete ui;
 }
 
 #ifdef QT_CHARTS_FOUND
-void FpsMeter::setupChart()
-{
+void FpsMeter::setupChart() {
     // set up axes
     QValueAxis* xAxis = new QValueAxis();
-    xAxis->setMax(mFpsPointCount);
+    xAxis->setMax(CONCURRENT_FPS_VALUES);
     xAxis->setVisible(false);
     QValueAxis* yAxis = new QValueAxis();
     yAxis->setMax(100);
@@ -36,35 +36,27 @@ void FpsMeter::setupChart()
     mFpsChartView = new QChartView(mFpsChart);
     mFpsChartView->setRenderHint(QPainter::Antialiasing);
 
+    // fill line series with "valid" data that can be replaced during the first run
+    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++)
+        mFpsLineSeries->append(i, 0);
 }
 
-void FpsMeter::update(float fpsValue){
+void FpsMeter::update(float fpsValue) {
     // avoid calculations if possible
     if(!mEnable)
         return;
 
-    // add new data point to series
-    mFpsLineSeries->append(mFpsTickCount++, fpsValue);
+    // wrap around at the end of the chart
+    int currentIndex = mFpsTickCount++ % CONCURRENT_FPS_VALUES;
 
-    todo:maybe_we_could_just_set_the_oldest_value_instead_of_scrolling;
-    // remove data points until we reach our limit
-    while(mFpsLineSeries->count() > CONCURRENT_FPS_VALUES) {
-        // calculate how much we will need to scroll to still show all points
-        qreal xDelta = mFpsChart->mapToPosition(
-                           mFpsLineSeries->at(1)).rx() - mFpsChart->mapToPosition(mFpsLineSeries->at(0)).rx();
-
-        // remove oldest point
-        mFpsLineSeries->removePoints(0, 1);
-
-        // scroll to show all points
-        mFpsChart->scroll(xDelta, 0);
-    }
+    // replace the oldest point with the new fps value
+    mFpsLineSeries->replace(currentIndex, currentIndex, fpsValue);
 
     // refresh chart
     mFpsChartView->repaint();
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
+void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
     mEnable = checked;
 
     // en/disable display
@@ -74,18 +66,18 @@ void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
         ui->fpsMeterLayout->removeWidget(mFpsChartView);
 }
 #else
-void FpsMeter::setupChart(){
+void FpsMeter::setupChart() {
     ui->fpsMeterCheckbox->setEnabled(false);
     mFpsLabel = new QLabel(this);
     mFpsLabel->setText("-");
 }
 
 // if we do not have the QtCharts, we dont need to do anything here
-void FpsMeter::update(float fpsValue){
+void FpsMeter::update(float fpsValue) {
     mFpsLabel->setText(QString::number(fpsValue));
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
+void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
     mEnable = checked;
 
     // en/disable display

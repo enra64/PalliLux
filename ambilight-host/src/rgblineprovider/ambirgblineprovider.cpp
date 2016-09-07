@@ -8,12 +8,9 @@ using namespace std;
 #include <iostream>
 #include <assert.h>
 
-AmbiRgbLineProvider::AmbiRgbLineProvider(std::shared_ptr<BorderProvider> provider, unsigned int horizontalLedCount, unsigned int verticalLedCount)
-	: RgbLineProvider(horizontalLedCount, verticalLedCount), mBorderProvider(provider)
+AmbiRgbLineProvider::AmbiRgbLineProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount)
+    : RgbLineProvider(horizontalLedCount, verticalLedCount)
 {
-	// we really need a borderProvider, so check for nullptr
-	assert(provider.get());
-
 	// set geometries, ignoring aspect ratio
 	mVerticalLedGeometry = Magick::Geometry(1, VERTICAL_LED_COUNT);
 	mVerticalLedGeometry.aspect(true);
@@ -24,6 +21,9 @@ AmbiRgbLineProvider::AmbiRgbLineProvider(std::shared_ptr<BorderProvider> provide
 
 float AmbiRgbLineProvider::getData(uint8_t* resultBuffer)
 {
+    //check whether we have a BorderProvider
+    assert(mBorderProvider);
+
 	clock_t start = clock();
 
 	// take the border screenshot

@@ -13,15 +13,6 @@
 class BorderProvider
 {
 public:
-	/**
-	 * @brief Saves the screenshot system
-	 * @param screener screenshot system to use
-	 */
-	BorderProvider(std::shared_ptr<Screenshot> screener)
-	{
-		mScreenshot = screener;
-	}
-
 	virtual ~BorderProvider()
 	{
 	}
@@ -35,6 +26,14 @@ public:
 	{
 		return mBorderWidth;
 	}
+
+    void setScreenshotProvider(std::shared_ptr<Screenshot> provider){
+        mScreenshot = provider;
+    }
+
+    std::shared_ptr<Screenshot> getScreenshotProvider() {
+        return mScreenshot;
+    }
 
 	virtual void setBorderWidth(size_t width)
 	{

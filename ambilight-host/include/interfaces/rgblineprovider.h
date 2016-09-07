@@ -110,11 +110,11 @@ protected:
 		}
 	}
 
-        const size_t HORIZONTAL_LED_COUNT;///!< amount of leds on each horizontal border
+    const size_t HORIZONTAL_LED_COUNT;///!< amount of leds on each horizontal border
 
-        const size_t VERTICAL_LED_COUNT;///!< amount of leds on each vertical border
+    const size_t VERTICAL_LED_COUNT;///!< amount of leds on each vertical border
 
-        const size_t LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2; ///!< aggregated count
+    const size_t LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2; ///!< aggregated count
 
 	std::unordered_map<std::string, std::unique_ptr<DataFilter>> mDataFilters;///!< List of DataFilter objects that will be applied to the rgb data
 };
