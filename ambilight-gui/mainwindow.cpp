@@ -6,15 +6,15 @@
 
 #include <memory>
 
-#include <ambirgblineprovider.h>
-#include <rgblineprovider.h>
-#include <screenshot.h>
+#include <ambicolordataprovider.h>
+#include <colordataprovider.h>
+#include <screenshotprovider.h>
 
 #include <singlescreenborderprovider.h>
 #include <triplescreenborderprovider.h>
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
     #include <linuxserial.h>
 #elif _WIN32_WINNT
     #include <winscreenshot.h>

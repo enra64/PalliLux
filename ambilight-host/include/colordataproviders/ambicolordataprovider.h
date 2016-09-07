@@ -7,13 +7,13 @@
 #include <memory>
 
 #include "borderprovider.h"
-#include "rgblineprovider.h"
+#include "colordataprovider.h"
 
 /**
  * @brief The AmbiRgbLineProvider provides a rgb array derived from screenshots of the borders.
  * It implements the interface defined by RgbLineProvider
  */
-class AmbiRgbLineProvider : public RgbLineProvider
+class AmbiRgbLineProvider : public ColorDataProvider
 {
 public:
 	/**

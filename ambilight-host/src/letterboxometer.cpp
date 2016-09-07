@@ -63,7 +63,7 @@ void LetterboxOMeter::measure()
 }
 
 LetterboxOMeter::LetterboxOMeter(
-	std::shared_ptr<Screenshot> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold) :
+	std::shared_ptr<ScreenshotProvider> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold) :
 	mScreenshot(screener), mScreenWidth(w), mScreenHeight(h),
 	mScreenXOffset(xOff), mScreenYOffset(yOff), mBlackThreshold(blackThreshold)
 {

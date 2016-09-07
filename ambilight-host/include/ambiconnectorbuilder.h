@@ -40,7 +40,7 @@ public:// setters for providers
      * Example:
      * `builder.setScreenshotProvider(new XlibScreenshot());`
      */
-    AmbiConnectorBuilder& setScreenshotProvider(std::shared_ptr<Screenshot> provider);
+    AmbiConnectorBuilder& setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider);
 
     /**
      * @brief setAmbiRgbLineProvider Set the AmbiRgbLineProvider the ArduinoConnector shall use.
@@ -75,7 +75,7 @@ public:// result function
 private:
     std::string mPort = "CONNECTOR_BUILDER_DEFAULT_PORT";///!< the tty port to use. the default is invalid, and will not be set.
     std::shared_ptr<BorderProvider> mBorderProvider;///!< the BorderProvider set
-    std::shared_ptr<Screenshot> mScreenshotProvider;///!< the ScreenshotProvider set
+    std::shared_ptr<ScreenshotProvider> mScreenshotProvider;///!< the ScreenshotProvider set
     std::shared_ptr<AmbiRgbLineProvider> mAmbiRgbLineProvider;///!< the AmbiRgbLineProvider set
     std::unordered_map<std::string, std::unique_ptr<DataFilter>>  mFilterMap;///!< A map of given DataFilter instances
 };

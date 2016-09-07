@@ -1,7 +1,7 @@
 #ifndef SPECTROMETERRGBLINEPROVIDER_H
 #define SPECTROMETERRGBLINEPROVIDER_H
 
-#include "rgblineprovider.h"
+#include "colordataprovider.h"
 
 #include "fftw3.h"
 
@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-class SpectrometerRgbLineProvider : public RgbLineProvider
+class SpectrometerRgbLineProvider : public ColorDataProvider
 {
 public:
     SpectrometerRgbLineProvider(size_t xLeds, size_t yLeds, int fps = 30, float gain = 1.f);

@@ -1,7 +1,7 @@
 #include "ui_triplescreenconfigpage.h"
 #include "triplescreenconfigpage.h"
 
-#include <ambirgblineprovider.h>
+#include <ambicolordataprovider.h>
 #include <triplescreenborderprovider.h>
 
 using namespace std;

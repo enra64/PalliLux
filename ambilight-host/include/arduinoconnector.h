@@ -4,7 +4,7 @@
 #include <string>
 #include <assert.h>
 
-#include "ambirgblineprovider.h"
+#include "ambicolordataprovider.h"
 #include "serial.h"
 
 /**
@@ -120,9 +120,9 @@ public:
 		mTtyDevice = port;
 	}
 	
-	void setRgbLineProvider(std::shared_ptr<RgbLineProvider> lineProvider);
+    void setRgbLineProvider(std::shared_ptr<ColorDataProvider> lineProvider);
 
-	std::shared_ptr<RgbLineProvider> getRgbLineProvider() const
+    std::shared_ptr<ColorDataProvider> getRgbLineProvider() const
 	{
 		return mRgbLineProvider;
 	}
@@ -150,7 +150,7 @@ private:
 	 */
 	void updateFps();
 
-	std::shared_ptr<RgbLineProvider> mRgbLineProvider;//!< the object that provides the RGB led data as a uint8_t array
+    std::shared_ptr<ColorDataProvider> mRgbLineProvider;//!< the object that provides the RGB led data as a uint8_t array
 
 	uint8_t* mRgbBuffer = nullptr;//!< our very own bufferspace for led data
 

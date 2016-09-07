@@ -174,7 +174,7 @@ ArduinoConnector::~ArduinoConnector()
 	delete mSerial;
 }
 
-void ArduinoConnector::setRgbLineProvider(std::shared_ptr<RgbLineProvider> lineProvider) {
+void ArduinoConnector::setRgbLineProvider(std::shared_ptr<ColorDataProvider> lineProvider) {
 	mRgbLineProvider = lineProvider;
 
 	delete[] mRgbBuffer;

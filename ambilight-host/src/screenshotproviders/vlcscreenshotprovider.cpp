@@ -1,8 +1,8 @@
-#include "vlcscreenshot.h"
+#include "vlcscreenshotprovider.h"
 
 #include <ctime>
 
-float VlcScreenshot::getScreenCrop(Magick::Image& result, const Magick::Geometry& d)
+float VlcScreenshotProvider::getScreenCrop(Magick::Image& result, const Magick::Geometry& d)
 {
 	// benchmarking start
 	clock_t start = clock();
@@ -20,7 +20,7 @@ float VlcScreenshot::getScreenCrop(Magick::Image& result, const Magick::Geometry
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }
 
-void VlcScreenshot::takeScreenshot()
+void VlcScreenshotProvider::takeScreenshot()
 {
 	//TODO: probably should somehow start vlc here if it is not running...
 

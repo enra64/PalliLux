@@ -5,17 +5,17 @@
 
 #include <Magick++.h>
 
-#include "screenshot.h"
+#include "screenshotprovider.h"
 
 class LetterboxOMeter
 {
 public:
-	LetterboxOMeter(std::shared_ptr<Screenshot> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold);
+    LetterboxOMeter(std::shared_ptr<ScreenshotProvider> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold);
 	void measure();
 	size_t getLetterboxHeight() const;
 	size_t getLetterboxWidth() const;
 private:// constant or input members
-	const std::shared_ptr<Screenshot> mScreenshot;
+    const std::shared_ptr<ScreenshotProvider> mScreenshot;
 	const size_t mScreenWidth;
 	const size_t mScreenHeight;
 	const size_t mScreenXOffset;

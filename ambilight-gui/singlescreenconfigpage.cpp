@@ -5,7 +5,7 @@
 
 #include "letterboxingautoconfigdialog.h"
 
-#include <ambirgblineprovider.h>
+#include <ambicolordataprovider.h>
 #include <letterboxometer.h>
 #include <singlescreenborderprovider.h>
 

@@ -1,4 +1,4 @@
-#include "spectrometerrgblineprovider.h"
+#include "spectrometercolordataprovider.h"
 
 #include <string>
 
@@ -49,7 +49,7 @@ void SpectrometerRgbLineProvider::calculateAmplitude(
     }
 }
 
-SpectrometerRgbLineProvider::SpectrometerRgbLineProvider(size_t xLeds, size_t yLeds, int fps, float gain) : RgbLineProvider(xLeds, yLeds), mFramesPerSecond(fps), mGain(gain)
+SpectrometerRgbLineProvider::SpectrometerRgbLineProvider(size_t xLeds, size_t yLeds, int fps, float gain) : ColorDataProvider(xLeds, yLeds), mFramesPerSecond(fps), mGain(gain)
 {
     // set sample specs
     mSampleSpecifications.channels = 2;

@@ -1,7 +1,7 @@
 #ifndef XLIBSCREENSHOT_H
 #define XLIBSCREENSHOT_H
 
-#include "screenshot.h"
+#include "screenshotprovider.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -9,10 +9,10 @@
 /**
  * @brief An implementation of the Screenshot interface; uses xlib.
  */
-class XlibScreenshot : public Screenshot {
+class XlibScreenshotProvider : public ScreenshotProvider {
 public:
-    XlibScreenshot();
-    ~XlibScreenshot();
+    XlibScreenshotProvider();
+    ~XlibScreenshotProvider();
 
     /**
      * @brief takeScreenshot Take a screenshot, converting it to a Magick++ image

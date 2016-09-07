@@ -10,7 +10,7 @@ AmbiConnectorBuilder& AmbiConnectorBuilder::setBorderProvider(std::shared_ptr<Bo
     return *this;
 }
 
-AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_ptr<Screenshot> provider) {
+AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider) {
     mScreenshotProvider = provider;
     return *this;
 }

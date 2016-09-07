@@ -1,4 +1,4 @@
-#include "ambirgblineprovider.h"
+#include "ambicolordataprovider.h"
 
 using namespace Magick;
 using namespace std;
@@ -9,7 +9,7 @@ using namespace std;
 #include <assert.h>
 
 AmbiRgbLineProvider::AmbiRgbLineProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount)
-    : RgbLineProvider(horizontalLedCount, verticalLedCount)
+    : ColorDataProvider(horizontalLedCount, verticalLedCount)
 {
 	// set geometries, ignoring aspect ratio
 	mVerticalLedGeometry = Magick::Geometry(1, VERTICAL_LED_COUNT);

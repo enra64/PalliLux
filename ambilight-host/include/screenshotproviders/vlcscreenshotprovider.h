@@ -1,12 +1,12 @@
 #ifndef VLCSCREENSHOT_H
 #define VLCSCREENSHOT_H
 
-#include "screenshot.h"
+#include "screenshotprovider.h"
 
 /**
  * @brief An implementation of the Screenshot interface; it reads from a video stream provided by vlc. Not finished!
  */
-class VlcScreenshot : public Screenshot
+class VlcScreenshotProvider : public ScreenshotProvider
 {
 public:
 	/**

@@ -9,13 +9,13 @@
 #include "iconfigpage.h"
 
 #include <borderprovider.h>
-#include <screenshot.h>
-#include <rgblineprovider.h>
+#include <screenshotprovider.h>
+#include <colordataprovider.h>
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif

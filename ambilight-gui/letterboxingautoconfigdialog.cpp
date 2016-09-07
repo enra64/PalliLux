@@ -5,15 +5,15 @@
 
 #include <memory>
 
-#include <screenshot.h>
+#include <screenshotprovider.h>
 #include <letterboxometer.h>
 
 #include "iconfigpage.h"
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
@@ -49,7 +49,7 @@ void LetterboxingAutoConfigDialog::on_countdownStartButton_clicked() {
     mCountdownRunning = true;
 
     // instantiate screener and meter
-    shared_ptr<Screenshot> screener = IScreenConfigPage::getPlatformAppropriateScreenshot();
+    shared_ptr<ScreenshotProvider> screener = IScreenConfigPage::getPlatformAppropriateScreenshot();
     LetterboxOMeter meter(screener, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_XOFF, SCREEN_YOFF, ui->thresholdSpinbox->value());
 
     // wait for user to activate the video player, counting down

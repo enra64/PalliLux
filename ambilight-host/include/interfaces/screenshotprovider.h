@@ -6,10 +6,10 @@
 /**
  * @brief Interface for capturing screen areas
  */
-class Screenshot
+class ScreenshotProvider
 {
 public:
-	virtual ~Screenshot()
+	virtual ~ScreenshotProvider()
 	{
 	}
 

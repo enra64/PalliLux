@@ -3,7 +3,7 @@
 
 #include "Magick++.h"
 
-#include "screenshot.h"
+#include "screenshotprovider.h"
 
 #include <memory>
 
@@ -27,11 +27,11 @@ public:
 		return mBorderWidth;
 	}
 
-    void setScreenshotProvider(std::shared_ptr<Screenshot> provider){
+    void setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider){
         mScreenshot = provider;
     }
 
-    std::shared_ptr<Screenshot> getScreenshotProvider() {
+    std::shared_ptr<ScreenshotProvider> getScreenshotProvider() {
         return mScreenshot;
     }
 
@@ -43,7 +43,7 @@ public:
 
 protected:
 	virtual void updateGeometry() = 0;
-	std::shared_ptr<Screenshot> mScreenshot;
+    std::shared_ptr<ScreenshotProvider> mScreenshot;
 	size_t mBorderWidth = 100;///!< how wide should the borders be
 };
 

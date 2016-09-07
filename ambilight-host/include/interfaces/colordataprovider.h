@@ -10,7 +10,7 @@
  * @brief An interface to provide an array of rgb data.
  * It also provides "::"<applyFilters>, which applies all DataFilter objects set with "::"<addFilter> to the provided buffer.
  */
-class RgbLineProvider
+class ColorDataProvider
 {
 public:
 	/**
@@ -18,13 +18,13 @@ public:
 	 * @param horizontalLedCount
 	 * @param verticalLedCount
 	 */
-	RgbLineProvider(size_t horizontalLedCount, size_t verticalLedCount) :
+    ColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) :
 		HORIZONTAL_LED_COUNT(horizontalLedCount),
 		VERTICAL_LED_COUNT(verticalLedCount)
 	{
 	}
 
-	virtual ~RgbLineProvider(){}
+    virtual ~ColorDataProvider(){}
 
 	/**
 	 * @brief Retrieve a line of rgb data

@@ -25,8 +25,8 @@ The host code in ambilight-host is a powered by cmake. By default, the [CMakeLis
     ArduinoConnector connector = builder.build();
 ```
 
-### Instantiation (other RgbLineProviders)
-You may also use ```ArduinoConnector::setRgbLineProvider(shared_ptr<RgbLinProvider> p)``` directly to use other RgbLineProviders, for example ```SpectrometerRgbLineProvider```
+### Instantiation (other ColorDataProviders)
+You may also use ```ArduinoConnector::setRgbLineProvider(shared_ptr<RgbLinProvider> p)``` directly to use other RgbLineProviders, for example ```SpectrometerRgbLineProvider```.
 
 
 ### Running
