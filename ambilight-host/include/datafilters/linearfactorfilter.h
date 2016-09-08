@@ -2,6 +2,7 @@
 
 class LinearFactorFilter : public DataFilter
 {
+    // uhh this is kinda unfinished
 	float getFactor(uint8_t point) const;
 
 public:

@@ -29,16 +29,33 @@ void FpsMeter::setupChart() {
     // set up chart
     mFpsChart->legend()->hide();
     mFpsChart->addSeries(mFpsLineSeries);
+    mFpsChart->addSeries(mAverageFpsLineSeries);
+
     mFpsChart->setAxisX(xAxis, mFpsLineSeries);
     mFpsChart->setAxisY(yAxis, mFpsLineSeries);
+    mFpsChart->setAxisX(xAxis, mAverageFpsLineSeries);
+    mFpsChart->setAxisY(yAxis, mAverageFpsLineSeries);
 
     // set up chart view
     mFpsChartView = new QChartView(mFpsChart);
     mFpsChartView->setRenderHint(QPainter::Antialiasing);
 
-    // fill line series with "valid" data that can be replaced during the first run
-    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++)
+    // zero out history and line series to create "valid" starting data
+    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++) {
+        mFpsHistory[i] = 0;
         mFpsLineSeries->append(i, 0);
+    }
+
+    // create two points in the average fps line series to draw a straight line
+    mAverageFpsLineSeries->append(0, 0);
+    mAverageFpsLineSeries->append(CONCURRENT_FPS_VALUES, 0);
+}
+
+float FpsMeter::getHistoryAverage() {
+    float sum = 0;
+    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++)
+        sum += mFpsHistory[i];
+    return sum / CONCURRENT_FPS_VALUES;
 }
 
 void FpsMeter::update(float fpsValue) {
@@ -51,6 +68,14 @@ void FpsMeter::update(float fpsValue) {
 
     // replace the oldest point with the new fps value
     mFpsLineSeries->replace(currentIndex, currentIndex, fpsValue);
+
+    // update the history
+    mFpsHistory[currentIndex] = fpsValue;
+
+    // move the average line to the current average
+    float fpsAvg = getHistoryAverage();
+    mAverageFpsLineSeries->replace(0, 0, fpsAvg);
+    mAverageFpsLineSeries->replace(1, CONCURRENT_FPS_VALUES, fpsAvg);
 
     // refresh chart
     mFpsChartView->repaint();

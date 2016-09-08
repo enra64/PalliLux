@@ -22,8 +22,8 @@ public:
 	 */
 	void takeScreenshot() override;
 private:
-	Magick::Image mLastScreenshot;//!< last screenshot taken
-	const char* mStreamPath = "/home/arne/stream"; //!< vlc stream input file
+    Magick::Image mLastScreenshot;///< last screenshot taken
+    const char* mStreamPath = "/home/arne/stream"; ///< vlc stream input file
 };
 
 #endif // VLCSCREENSHOT_H

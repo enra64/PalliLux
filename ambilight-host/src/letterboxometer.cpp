@@ -1,70 +1,74 @@
 #include "letterboxometer.h"
 
+#include <utility>
+
 using namespace Magick;
 using namespace std;
 
-size_t LetterboxOMeter::getLetterboxWidth() const
-{
-	return mLetterboxVerticalBarWidth;
-}
-
-bool LetterboxOMeter::isBlack(Magick::Image img, Magick::Geometry imgGeometry, uint8_t threshold)
-{
-	for (size_t x = 0; x < imgGeometry.width(); x++)
-	{
-		for (size_t y = 0; y < imgGeometry.height(); y++)
-		{
-			ColorRGB data = img.pixelColor(x, y);
-			if (data.red() * 255.0 > threshold) return false;
-			if (data.green() * 255.0 > threshold) return false;
-			if (data.blue() * 255.0 > threshold) return false;
-		}
-	}
-	return true;
-}
-
-size_t LetterboxOMeter::getLetterboxHeight() const
-{
-	return mLetterboxHorizontalBarHeight;
-}
-
-Geometry LetterboxOMeter::getHorizontalBar(size_t height, size_t topOffset) const
-{
-	return Geometry(mScreenWidth, height, mScreenXOffset, mScreenYOffset + topOffset);
-}
-
-Geometry LetterboxOMeter::getVerticalBar(size_t width, size_t leftOffset) const
-{
-	return Geometry(width, mScreenHeight, mScreenXOffset + leftOffset, mScreenYOffset);
-}
-
-void LetterboxOMeter::measure()
-{
-	Geometry horizontalBarGeometry, verticalBarGeometry;
-	Image horizontalBar, verticalBar;
-
-	// move the bar as far down as is black
-	do
-	{
-		horizontalBarGeometry = getHorizontalBar(1, ++mLetterboxHorizontalBarHeight);
-		mScreenshot->takeScreenshot();
-		mScreenshot->getScreenCrop(horizontalBar, horizontalBarGeometry);
-	}
-	while (isBlack(horizontalBar, horizontalBarGeometry, mBlackThreshold));
-
-	// move the bar as far right as is black
-	do
-	{
-		verticalBarGeometry = getVerticalBar(1, ++mLetterboxVerticalBarWidth);
-		mScreenshot->takeScreenshot();
-		mScreenshot->getScreenCrop(verticalBar, verticalBarGeometry);
-	}
-	while (isBlack(verticalBar, verticalBarGeometry, mBlackThreshold));
-}
-
 LetterboxOMeter::LetterboxOMeter(
-	std::shared_ptr<ScreenshotProvider> screener, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold) :
-	mScreenshot(screener), mScreenWidth(w), mScreenHeight(h),
-	mScreenXOffset(xOff), mScreenYOffset(yOff), mBlackThreshold(blackThreshold)
-{
+    std::shared_ptr<ScreenshotProvider> screenshotProvider, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold) :
+    mScreenshotProvider(screenshotProvider), mScreenWidth(w), mScreenHeight(h),
+    mScreenXOffset(xOff), mScreenYOffset(yOff), mBlackThreshold(blackThreshold) {
 }
+
+std::pair<int, int> LetterboxOMeter::measure() {
+    Geometry horizontalBarGeometry, verticalBarGeometry;
+    Image horizontalBar, verticalBar;
+    int letterboxVerticalBarWidth = -1, letterboxHorizontalBarHeight = -1;
+
+    // move the bar as far down as is the screen is black
+    do {
+        // move the bar
+        horizontalBarGeometry = getHorizontalBar(1, ++letterboxHorizontalBarHeight);
+
+        // refresh screenshot data
+        mScreenshotProvider->takeScreenshot();
+        mScreenshotProvider->getScreenCrop(horizontalBar, horizontalBarGeometry);
+
+    // only continue if the bar is still completely black
+    } while (isBlack(horizontalBar));
+
+
+    // move the bar as far right as is the screen is black
+    do {
+        // move the bar
+        verticalBarGeometry = getVerticalBar(1, ++letterboxVerticalBarWidth);
+
+        // refresh screenshot data
+        mScreenshotProvider->takeScreenshot();
+        mScreenshotProvider->getScreenCrop(verticalBar, verticalBarGeometry);
+
+    // only continue if the bar is still completely black
+    } while (isBlack(verticalBar));
+
+    return make_pair(letterboxHorizontalBarHeight, letterboxVerticalBarWidth);
+}
+
+bool LetterboxOMeter::isBlack(Magick::Image img) {
+    for (size_t x = 0; x < img.geometry().width(); x++) {
+        for (size_t y = 0; y < img.geometry().height(); y++) {
+            ColorRGB data = img.pixelColor(x, y);
+            if (data.red() * 255.0 > mBlackThreshold) return false;
+            if (data.green() * 255.0 > mBlackThreshold) return false;
+            if (data.blue() * 255.0 > mBlackThreshold) return false;
+        }
+    }
+    return true;
+}
+
+Geometry LetterboxOMeter::getHorizontalBar(size_t height, size_t topOffset) const {
+    return Geometry(mScreenWidth, height, mScreenXOffset, mScreenYOffset + topOffset);
+}
+
+Geometry LetterboxOMeter::getVerticalBar(size_t width, size_t leftOffset) const {
+    return Geometry(width, mScreenHeight, mScreenXOffset + leftOffset, mScreenYOffset);
+}
+
+
+
+
+
+
+
+
+

@@ -6,27 +6,30 @@
 /**
  * @brief Interface for capturing screen areas
  */
-class ScreenshotProvider
-{
+class ScreenshotProvider {
 public:
-	virtual ~ScreenshotProvider()
-	{
-	}
+    /**
+     * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
+     */
+    virtual ~ScreenshotProvider() {
+    }
 
-	/**
-	 * @brief Provide a crop of the requested geometry
-	 * @param[out] result the resulting image
-	 * @param d the geometry saved in the result, relative to the complete screen
-	 * @return the time in seconds required
-	 */
-	virtual float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) = 0;
+    /**
+     * @brief Provide a crop of the requested geometry
+     * @param[out] result the resulting image
+     * @param d the geometry saved in the result, relative to the complete screen
+     * @return the time in seconds required
+     */
+    virtual float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) = 0;
 
-	/**
-	 * @brief Take a screenshot; this is for implementations where it is faster to only capture the screen once.
-	 */
-	virtual void takeScreenshot()
-	{
-	}
+    /**
+     * @brief Take a screenshot.
+     *
+     * This should be called once per frame by any BorderProvider, to avoid taking multiple screenshots for
+     * the different borders if the screenshot implementation is faster capturing only once.
+     */
+    virtual void takeScreenshot() {
+    }
 };
 
 #endif // SCREENSHOT_H

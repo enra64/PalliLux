@@ -35,8 +35,8 @@ void LinuxSerial::send(const uint8_t *buf, size_t len) const {
     write(mFd, buf, len);
 }
 
-bool LinuxSerial::good(const std::__cxx11::string &ttyDevice) const {
-    return mFd >= 0 && deviceExists(ttyDevice);
+bool LinuxSerial::good() const {
+    return mFd >= 0;
 }
 
 size_t LinuxSerial::receive(uint8_t *buf, size_t len) const {

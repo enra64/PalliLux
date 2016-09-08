@@ -41,17 +41,21 @@ private slots:
 
 private: // member functions
     void setupChart();
+    float getHistoryAverage();
 
 private: // normal member variables
     Ui::FpsMeter *ui;
-    bool mEnable = false;///!< whether this display is currently displayed and updated
-    unsigned int mFpsTickCount = 0;///!< how many fps ticks have been displayed
-    const int CONCURRENT_FPS_VALUES = 200; ///!< how many fps values may be in the graph at a time
+    bool mEnable = false;///< whether this display is currently displayed and updated
+    unsigned int mFpsTickCount = 0;///< how many fps ticks have been displayed
+    const static int CONCURRENT_FPS_VALUES = 200; ///< how many fps values may be in the graph at a time
+    float mFpsHistory[CONCURRENT_FPS_VALUES];///< a history of the values to calc. a moving average
+
 #ifdef QT_CHARTS_FOUND
 private: // qt charts members
-    QLineSeries* mFpsLineSeries = new QLineSeries();///!< the fps line series (fps data)
-    QChart* mFpsChart = new QChart();///!< the fps chart displayed by the chart view
-    QChartView* mFpsChartView;///!< our fps chart view
+    QLineSeries* mFpsLineSeries = new QLineSeries();///< the fps line series (fps data)
+    QLineSeries* mAverageFpsLineSeries = new QLineSeries();///< the average fps line series
+    QChart* mFpsChart = new QChart();///< the fps chart displayed by the chart view
+    QChartView* mFpsChartView;///< our fps chart view
 #else
 private:  // alternative members
     QLabel* mFpsLabel;

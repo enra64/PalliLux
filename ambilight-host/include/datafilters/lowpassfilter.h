@@ -2,8 +2,6 @@
 
 class LowPassFilter : public DataFilter
 {
-	uint8_t* mBuffer;///!< rgb data buffer
-	float mNewDataFactor;///!< amount that the new data will take in filter application
 	// DataFilter interface
 public:
 	/**
@@ -30,4 +28,8 @@ public:
 	 * @param factor new factor
 	 */
 	void setNewDataFactor(float factor);
+
+private:
+    uint8_t* mBuffer;///< rgb data buffer
+    float mNewDataFactor;///< amount that the new data will take in filter application
 };

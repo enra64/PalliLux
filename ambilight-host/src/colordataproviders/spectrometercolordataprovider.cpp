@@ -11,7 +11,7 @@ float windowFunction(int n, int N)
     return 0.5f * (1.0f - cosf(2.0f * M_PI * n / (N - 1.0f)));
 }
 
-void SpectrometerRgbLineProvider::calculateAmplitude(
+void SpectrometerColorDataProvider::calculateAmplitude(
         fftw_complex *fft,
         int fftSize,
         double *amplitudes,
@@ -49,7 +49,7 @@ void SpectrometerRgbLineProvider::calculateAmplitude(
     }
 }
 
-SpectrometerRgbLineProvider::SpectrometerRgbLineProvider(size_t xLeds, size_t yLeds, int fps, float gain) : ColorDataProvider(xLeds, yLeds), mFramesPerSecond(fps), mGain(gain)
+SpectrometerColorDataProvider::SpectrometerColorDataProvider(size_t xLeds, size_t yLeds, int fps, float gain) : ColorDataProvider(xLeds, yLeds), mFramesPerSecond(fps), mGain(gain)
 {
     // set sample specs
     mSampleSpecifications.channels = 2;
@@ -88,7 +88,7 @@ SpectrometerRgbLineProvider::SpectrometerRgbLineProvider(size_t xLeds, size_t yL
     mFftwPlan = fftw_plan_dft_r2c_1d(mSize, mFftwIn, mFftwOut, FFTW_MEASURE);
 }
 
-float SpectrometerRgbLineProvider::getData(uint8_t *data) {
+float SpectrometerColorDataProvider::getData(uint8_t *data) {
     // benchmarking
     clock_t start = clock();
 
@@ -123,7 +123,7 @@ float SpectrometerRgbLineProvider::getData(uint8_t *data) {
     return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }
 
-SpectrometerRgbLineProvider::~SpectrometerRgbLineProvider() {
+SpectrometerColorDataProvider::~SpectrometerColorDataProvider() {
     // free buffers
     delete[] mPulseAudioBuffer;
     delete[] mWindow;

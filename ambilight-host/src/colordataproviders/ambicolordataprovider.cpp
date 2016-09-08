@@ -8,7 +8,7 @@ using namespace std;
 #include <iostream>
 #include <assert.h>
 
-AmbiRgbLineProvider::AmbiRgbLineProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount)
+AmbiColorDataProvider::AmbiColorDataProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount)
     : ColorDataProvider(horizontalLedCount, verticalLedCount)
 {
 	// set geometries, ignoring aspect ratio
@@ -19,7 +19,7 @@ AmbiRgbLineProvider::AmbiRgbLineProvider(unsigned int horizontalLedCount, unsign
 	mHorizontalLedGeometry.aspect(true);
 }
 
-float AmbiRgbLineProvider::getData(uint8_t* resultBuffer)
+float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 {
     //check whether we have a BorderProvider
     assert(mBorderProvider);
@@ -49,7 +49,7 @@ float AmbiRgbLineProvider::getData(uint8_t* resultBuffer)
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }
 
-std::unique_ptr<Image> AmbiRgbLineProvider::alignBorders()
+std::unique_ptr<Image> AmbiColorDataProvider::alignBorders()
 {
 	// rotate so the border ends align
 	mRightImage.rotate(90);
@@ -72,7 +72,7 @@ std::unique_ptr<Image> AmbiRgbLineProvider::alignBorders()
 	return std::unique_ptr<Image>(result);
 }
 
-void AmbiRgbLineProvider::flattenBorders()
+void AmbiColorDataProvider::flattenBorders()
 {
 	// scale the vertical border images to a line
 	mRightImage.scale(mVerticalLedGeometry);
@@ -83,7 +83,7 @@ void AmbiRgbLineProvider::flattenBorders()
 	mBottomImage.scale(mHorizontalLedGeometry);
 }
 
-void AmbiRgbLineProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)
+void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)
 {
 	// for each led
 	for (unsigned int i = 0; i < LED_COUNT; i++)
@@ -100,7 +100,7 @@ void AmbiRgbLineProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t*
 	mLastLineImage = move(lineBorder);
 }
 
-void AmbiRgbLineProvider::debugSaveBorders()
+void AmbiColorDataProvider::debugSaveBorders()
 {
 	mRightImage.write("test/r.jpg");
 	mLeftImage.write("test/l.jpg");

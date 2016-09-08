@@ -8,43 +8,59 @@
 #include <memory>
 
 /**
- * @brief Implementations encapsulate all screen information, providing only border images.
+ * @brief Implementations encapsulate all knowledge about the screen configuration, providing only screen captures
+ *        of the right, top, left and bottom screen borders.
  */
-class BorderProvider
-{
+class BorderProvider {
 public:
-	virtual ~BorderProvider()
-	{
-	}
-
-	/**
-	 * @brief This function must capture each screen border into a Magick++ image
-	 */
-	virtual void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) = 0;
-
-	size_t getBorderWidth() const
-	{
-		return mBorderWidth;
-	}
-
-    void setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider){
-        mScreenshot = provider;
+    /**
+     * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
+     */
+    virtual ~BorderProvider() {
     }
 
+    /**
+     * @brief This function captures each screen border into a Magick++ image. The size of the returned images does not matter
+     */
+    virtual void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) = 0;
+
+    /**
+     * @brief Retrieve the current border width in pixels
+     */
+    size_t getBorderWidth() const {
+        return mBorderWidth;
+    }
+
+    /**
+     * @brief Set the ScreenshotProvider used for capturing the screen.
+     */
+    void setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider) {
+        mScreenshotProvider = provider;
+    }
+
+    /**
+     * @brief Retrieve the currently used ScreenshotProvider
+     */
     std::shared_ptr<ScreenshotProvider> getScreenshotProvider() {
-        return mScreenshot;
+        return mScreenshotProvider;
     }
 
-	virtual void setBorderWidth(size_t width)
-	{
-		mBorderWidth = width;
-		updateGeometry();
-	}
+    /**
+     * @brief Handles border width updates
+     * @param width new width in pixels
+     */
+    virtual void setBorderWidth(size_t width) {
+        mBorderWidth = width;
+        updateGeometry();
+    }
 
 protected:
-	virtual void updateGeometry() = 0;
-    std::shared_ptr<ScreenshotProvider> mScreenshot;
-	size_t mBorderWidth = 100;///!< how wide should the borders be
+    /**
+     * @brief This function updates the screenshot geometry when a parameter (for example the border width) has changed
+     */
+    virtual void updateGeometry() = 0;
+    std::shared_ptr<ScreenshotProvider> mScreenshotProvider;///< the ScreenshotProvider to be used
+    size_t mBorderWidth = 100;///< how wide should the borders be
 };
 
 #endif // BORDERPROVIDER_H

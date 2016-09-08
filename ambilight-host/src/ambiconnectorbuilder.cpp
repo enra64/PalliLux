@@ -15,8 +15,8 @@ AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_pt
     return *this;
 }
 
-AmbiConnectorBuilder &AmbiConnectorBuilder::setAmbiRgbLineProvider(std::shared_ptr<AmbiRgbLineProvider> provider) {
-    mAmbiRgbLineProvider = provider;
+AmbiConnectorBuilder &AmbiConnectorBuilder::setAmbiColorDataProvider(std::shared_ptr<AmbiColorDataProvider> provider) {
+    mAmbiColorDataProvider = provider;
     return *this;
 }
 
@@ -37,24 +37,24 @@ std::shared_ptr<ArduinoConnector> AmbiConnectorBuilder::build() {
     // check whether all necessary components have been set
     if(!mScreenshotProvider) throw new AmbiConnectorBuilderException("No ScreenshotProvider set!");
     if(!mBorderProvider) throw new AmbiConnectorBuilderException("No BorderProvider set!");
-    if(!mAmbiRgbLineProvider) throw new AmbiConnectorBuilderException("No RgbLineProvider set!");
+    if(!mAmbiColorDataProvider) throw new AmbiConnectorBuilderException("No ColorDataProvider set!");
 
     // set screenshot provider for our borderprovider
     mBorderProvider->setScreenshotProvider(mScreenshotProvider);
 
-    // give our rgblineProvider the borderprovider
-    mAmbiRgbLineProvider->setBorderProvider(mBorderProvider);
+    // give our ColorDataProvider the borderprovider
+    mAmbiColorDataProvider->setBorderProvider(mBorderProvider);
 
     // add all set filters
     for(auto it = mFilterMap.begin(); it != mFilterMap.end(); it++)
-        mAmbiRgbLineProvider->addFilter(it->first, move(it->second));
+        mAmbiColorDataProvider->addFilter(it->first, move(it->second));
 
     // if the port value was changed, we apply it to the connector
     if(mPort != "CONNECTOR_BUILDER_DEFAULT_PORT")
         connector->setPort(mPort);
 
     // set the rgb line provider for the connector
-    connector->setRgbLineProvider(mAmbiRgbLineProvider);
+    connector->setColorDataProvider(mAmbiColorDataProvider);
 
     return connector;
 }

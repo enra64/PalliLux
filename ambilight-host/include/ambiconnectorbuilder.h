@@ -23,6 +23,13 @@ public:
 
 /**
  * @brief A Builder class to simplify the creation of an ArduinoConnector with Ambilight-like functionality.
+ *
+ * The following three components must be set:\n
+ * 1) ScreenshotProvider \n
+ * 2) BorderProvider \n
+ * 3) AmbiColorDataProvider \n
+ * The ArduinoConnector may then be created using the build() function. Additionally, the Arduino port can be set, and
+ * DataFilter instances can be added to the AmbiColorDataProvider.
  */
 class AmbiConnectorBuilder {
 public:// setters for providers
@@ -43,12 +50,12 @@ public:// setters for providers
     AmbiConnectorBuilder& setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider);
 
     /**
-     * @brief setAmbiRgbLineProvider Set the AmbiRgbLineProvider the ArduinoConnector shall use.
+     * @brief Set the AmbiColorDataProvider the ArduinoConnector shall use.
      *
      * Example:
-     * `builder.setAmbiRgbLineProvider(shared_ptr<AmbiRgbLineProvider>(new AmbiRgbLineProvider(horizontalBorderLedCount, verticalBorderLedCount)));`
+     * `builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));`
      */
-    AmbiConnectorBuilder& setAmbiRgbLineProvider(std::shared_ptr<AmbiRgbLineProvider> provider);
+    AmbiConnectorBuilder& setAmbiColorDataProvider(std::shared_ptr<AmbiColorDataProvider> provider);
 
     /**
      * @brief Set the port the ArduinoConnector shall use
@@ -64,7 +71,7 @@ public:// setters for providers
 
 public:// result function
     /**
-     * @brief Builds a valid ArduinoConnector with an AmbiRgbLineProvider.
+     * @brief Builds a valid ArduinoConnector with an AmbiColorDataProvider.
      *
      * Check whether all requirements for a valid ArduinoConnector are filled, and if so, return one.
      * If a requirement is not fulfilled, an AmbiConnectorBuilderException will be thrown with information as to what is missing.
@@ -73,11 +80,11 @@ public:// result function
     std::shared_ptr<ArduinoConnector> build();
 
 private:
-    std::string mPort = "CONNECTOR_BUILDER_DEFAULT_PORT";///!< the tty port to use. the default is invalid, and will not be set.
-    std::shared_ptr<BorderProvider> mBorderProvider;///!< the BorderProvider set
-    std::shared_ptr<ScreenshotProvider> mScreenshotProvider;///!< the ScreenshotProvider set
-    std::shared_ptr<AmbiRgbLineProvider> mAmbiRgbLineProvider;///!< the AmbiRgbLineProvider set
-    std::unordered_map<std::string, std::unique_ptr<DataFilter>>  mFilterMap;///!< A map of given DataFilter instances
+    std::string mPort = "CONNECTOR_BUILDER_DEFAULT_PORT";///< the tty port to use. the default is invalid, and will not be set.
+    std::shared_ptr<BorderProvider> mBorderProvider;///< the BorderProvider set
+    std::shared_ptr<ScreenshotProvider> mScreenshotProvider;///< the ScreenshotProvider set
+    std::shared_ptr<AmbiColorDataProvider> mAmbiColorDataProvider;///< the AmbiColorDataProvider set
+    std::unordered_map<std::string, std::unique_ptr<DataFilter>>  mFilterMap;///< A map of given DataFilter instances
 };
 
 #endif // AMBICONNECTORBUILDER_H

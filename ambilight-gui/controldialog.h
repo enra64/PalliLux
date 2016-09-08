@@ -56,7 +56,7 @@ private:// histogram
 
 private:// fps chart stuff
     std::shared_ptr<BorderProvider> getBorderProvider();
-    std::shared_ptr<AmbiRgbLineProvider> getRgbLineProvider();
+    std::shared_ptr<AmbiColorDataProvider> getColorDataProvider();
     bool mStopClicked = false;
 };
 

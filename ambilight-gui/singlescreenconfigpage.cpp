@@ -50,13 +50,13 @@ QString SingleScreenConfigPage::infoText() const {
 void SingleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const
 {
     // instantiate and set the desired screenshot class
-    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshot());
+    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshotProvider());
 
     // instantiate and set a single screen BorderProvider
     builder.setBorderProvider(getSingleScreenBorderProvider());
 
-    // instantiate and set an AmbiRgbLineProvider
-    builder.setAmbiRgbLineProvider(shared_ptr<AmbiRgbLineProvider>(new AmbiRgbLineProvider(horizontalBorderLedCount, verticalBorderLedCount)));
+    // instantiate and set an AmbiColorDataProvider
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));
 }
 
 void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {

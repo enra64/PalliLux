@@ -5,44 +5,78 @@
 
 #include <stdexcept>
 
-class SerialException : public std::runtime_error
-{
+class SerialException : public std::runtime_error {
 public:
-	/**
-	 * @brief std::string constructor
-	 * @param message the error message
-	 */
-	SerialException(const std::string& message) : runtime_error(message)
-	{
-	}
+    /**
+     * @brief std::string constructor
+     * @param message the error message
+     */
+    SerialException(const std::string& message) : runtime_error(message) {
+    }
 };
 
 /**
  * @brief An interface for serial communication with arduino
  */
-class Serial
-{
+class Serial {
 public:
-	virtual ~Serial(){}
+    /**
+     * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
+     */
+    virtual ~Serial() {}
 
-	virtual void waitForData() const = 0;
-	virtual void send(const uint8_t* buf, size_t len) const = 0;
-	virtual size_t receive(uint8_t* buf, size_t len) const = 0;
-	virtual void open(const std::string& port) = 0;
-	virtual void close() = 0;
-	virtual bool deviceExists(const std::string& port) const = 0;
-	virtual bool good(const std::string& ttyDevice) const = 0;
+    /**
+     * @brief Block until data arrives
+     */
+    virtual void waitForData() const = 0;
+
+    /**
+     * @brief Transmit the data to the serial device
+     * @param buf data to send
+     * @param len length of the data
+     */
+    virtual void send(const uint8_t* buf, size_t len) const = 0;
+
+    /**
+     * @brief Receive incoming serial data
+     * @param buf buffer for incoming data
+     * @param len maximum read length
+     * @return amount of bytes read
+     */
+    virtual size_t receive(uint8_t* buf, size_t len) const = 0;
+
+    /**
+     * @brief Create a serial connection
+     * @param port the port to use (like "/dev/ttyUSB0")
+     */
+    virtual void open(const std::string& port) = 0;
+
+    /**
+     * @brief Close the serial connection.
+     */
+    virtual void close() = 0;
+
+    /**
+     * @brief Check whether a serial device exists at the given port
+     * @param port port to check, like "/dev/ttyUSB0" or "COM10"
+     * @return true if the device exists
+     */
+    virtual bool deviceExists(const std::string& port) const = 0;
+
+    /**
+     * @brief Check whether this connection is alive
+     * @return true if the connection seems to be alive
+     */
+    virtual bool good() const = 0;
 
 public:// send and receive overloads because c++ likes to whine
-	virtual size_t receive(char* buf, size_t len) const
-	{
-		return this->receive(reinterpret_cast<uint8_t*>(buf), len);
-	}
+    virtual size_t receive(char* buf, size_t len) const {
+        return this->receive(reinterpret_cast<uint8_t*>(buf), len);
+    }
 
-	virtual void send(const char* buf, size_t len) const
-	{
-		this->send(reinterpret_cast<const uint8_t*>(buf), len);
-	}
+    virtual void send(const char* buf, size_t len) const {
+        this->send(reinterpret_cast<const uint8_t*>(buf), len);
+    }
 };
 
 #endif // SERIAL_H

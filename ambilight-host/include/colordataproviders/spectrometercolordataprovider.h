@@ -1,5 +1,5 @@
-#ifndef SPECTROMETERRGBLINEPROVIDER_H
-#define SPECTROMETERRGBLINEPROVIDER_H
+#ifndef SPECTROMETERCOLORDATAPROVIDER_H
+#define SPECTROMETERCOLORDATAPROVIDER_H
 
 #include "colordataprovider.h"
 
@@ -11,17 +11,17 @@
 
 #include <cmath>
 
-class SpectrometerRgbLineProvider : public ColorDataProvider
+class SpectrometerColorDataProvider : public ColorDataProvider
 {
 public:
-    SpectrometerRgbLineProvider(size_t xLeds, size_t yLeds, int fps = 30, float gain = 1.f);
+    SpectrometerColorDataProvider(size_t xLeds, size_t yLeds, int fps = 30, float gain = 1.f);
 
-    ~SpectrometerRgbLineProvider();
+    ~SpectrometerColorDataProvider();
 private:
-    const int mFramesPerSecond;///
-    const double UPPER_FREQUENCY = 3520;
-    pa_sample_spec mSampleSpecifications; ///!< pulseaudio sampling specifcations
-    float* mPulseAudioBuffer = nullptr; ///!< pulseaudio output buffer
+    const int mFramesPerSecond;///< FPS of the spectrogram.
+    const double UPPER_FREQUENCY = 3520;///< highest displayed frequency
+    pa_sample_spec mSampleSpecifications; ///< pulseaudio sampling specifcations
+    float* mPulseAudioBuffer = nullptr; ///< pulseaudio output buffer
     float* mWindow = nullptr;
     int mSize;
     float mGain;
@@ -36,9 +36,9 @@ private:
 
     void calculateAmplitude(fftw_complex* fft, int fftSize, double *bars, int numLeds);
 
-    // RgbLineProvider interface
+    // ColorDataProvider interface
 public:
     float getData(uint8_t *data);
 };
 
-#endif // SPECTROMETERRGBLINEPROVIDER_H
+#endif // SPECTROMETERCOLORDATAPROVIDER_H
