@@ -34,7 +34,7 @@ private slots:
 
     void on_backlightControlColorPickerButton_clicked();
 
-    void on_backlightControlAmplitudeSlider_sliderMoved(int position);
+    void on_backlightControlAmplitudeSpinbox_valueChanged(double arg1);
 
 private:
     uint8_t mFrequency;

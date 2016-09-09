@@ -13,7 +13,7 @@ public:
      * @param cycleLength how long a full cycle is, measured in ticks
      * @param maximumAmplitude the maximum derivation from the normal value
      */
-    PulsingFilter(unsigned int cycleLength, uint8_t maximumAmplitude);
+    PulsingFilter(unsigned int cycleLength, double maximumFactor);
 
     void operator ()(uint8_t* rgbData, size_t dataLength) override;
 
@@ -23,12 +23,19 @@ public:
         mCycleLength = length;
     }
 
-    void setMaximumAmplitude(uint8_t amplitude){
-        mMaximumAmplitude = amplitude;
+    /**
+     * @brief Set the maximum amplitude.
+     *
+     * The best factor values are between 0 and 1. When factor is 0,
+     * the filter will not change the data; the larger the factor is
+     * above 1, the more the leds will be all black or all white.
+     */
+    void setMaximumAmplitude(double factor){
+        mMaximumFactor = factor;
     }
 
 private:
     unsigned int mCycleLength; ///< how long a full cycle is, measured in ticks
     unsigned int mTickCount = 0;///< how many times the operator has been applied
-    uint8_t mMaximumAmplitude;///< the maximum derivation from the normal value
+    double mMaximumFactor;///< the maximum derivation from the normal value
 };

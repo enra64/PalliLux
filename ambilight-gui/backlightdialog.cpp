@@ -60,11 +60,6 @@ void BacklightDialog::on_backlightControlFrequencySlider_sliderMoved(int positio
     filter->setCycleLength(position);
 }
 
-void BacklightDialog::on_backlightControlAmplitudeSlider_sliderMoved(int position) {
-    PulsingFilter* filter = dynamic_cast<PulsingFilter*>(mArduinoConnector->getFilter("pulse").get());
-    filter->setMaximumAmplitude(position);
-}
-
 void BacklightDialog::on_runButton_clicked() {
     // disable the stop button
     setButtonState(true);
@@ -150,4 +145,9 @@ void BacklightDialog::on_backlightControlColorPickerButton_clicked() {
     ui->backlightControlRedSlider->setValue(result.red());
     ui->backlightControlGreenSlider->setValue(result.green());
     ui->backlightControlBlueSlider->setValue(result.blue());
+}
+
+void BacklightDialog::on_backlightControlAmplitudeSpinbox_valueChanged(double arg1) {
+    PulsingFilter* filter = dynamic_cast<PulsingFilter*>(mArduinoConnector->getFilter("pulse").get());
+    filter->setMaximumAmplitude(arg1);
 }
