@@ -5,15 +5,15 @@
 
 #include <memory>
 
-#include <screenshot.h>
+#include <screenshotprovider.h>
 #include <letterboxometer.h>
 
 #include "iconfigpage.h"
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
@@ -49,7 +49,7 @@ void LetterboxingAutoConfigDialog::on_countdownStartButton_clicked() {
     mCountdownRunning = true;
 
     // instantiate screener and meter
-    shared_ptr<Screenshot> screener = IScreenConfigPage::getPlatformAppropriateScreenshot();
+    shared_ptr<ScreenshotProvider> screener = IScreenConfigPage::getPlatformAppropriateScreenshotProvider();
     LetterboxOMeter meter(screener, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_XOFF, SCREEN_YOFF, ui->thresholdSpinbox->value());
 
     // wait for user to activate the video player, counting down
@@ -69,21 +69,21 @@ void LetterboxingAutoConfigDialog::on_countdownStartButton_clicked() {
     ui->countdownStartButton->setText("calculating now");
 
     // measure
-    meter.measure();
-
-    // ui update
-    ui->countdownStartButton->setText("Start countdown");
+    pair<int, int> letterboxDimensions = meter.measure();
 
     // save auto values
-    mResultWidth = meter.getLetterboxWidth();
-    mResultHeight = meter.getLetterboxHeight();
+    mResultHeight = letterboxDimensions.first;
+    mResultWidth = letterboxDimensions.second;
 
     // show auto values
-    ui->verticalWidthLabel->setText(QString::number(mResultWidth));
     ui->horizontalHeightLabel->setText(QString::number(mResultHeight));
+    ui->verticalWidthLabel->setText(QString::number(mResultWidth));
 
     // set running state
     mCountdownRunning = false;
+
+    // reset ui
+    ui->countdownStartButton->setText("Start countdown");
 }
 
 void LetterboxingAutoConfigDialog::on_letterboxConfigDialogButtons_accepted() {

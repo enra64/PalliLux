@@ -75,13 +75,13 @@ unix {
     LIBS += $(shell Magick++-config --ldflags --libs)
 
     # static ambilight lib
-    LIBS += $${AMBILIGHT_LIB_PATH}/build/libhost.a
+    LIBS += "/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-host-Desktop-Default/libhost.a"
 }
 
 INCLUDEPATH += $${AMBILIGHT_LIB_PATH}/include \
     $${AMBILIGHT_LIB_PATH}/include/borderproviders \
     $${AMBILIGHT_LIB_PATH}/include/interfaces \
-    $${AMBILIGHT_LIB_PATH}/include/rgblineprovider \
+    $${AMBILIGHT_LIB_PATH}/include/colordataproviders \
     $${AMBILIGHT_LIB_PATH}/include/datafilters \
     $${AMBILIGHT_LIB_PATH}/include/serial \
-    $${AMBILIGHT_LIB_PATH}/include/screenshot
+    $${AMBILIGHT_LIB_PATH}/include/screenshotproviders

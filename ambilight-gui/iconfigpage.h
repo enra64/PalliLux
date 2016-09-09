@@ -4,13 +4,14 @@
 #include <QString>
 #include <memory>
 
-#include <rgblineprovider.h>
-#include <screenshot.h>
+#include <colordataprovider.h>
+#include <screenshotprovider.h>
+#include <ambiconnectorbuilder.h>
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
@@ -19,14 +20,16 @@ class IScreenConfigPage {
 public:
     virtual QString pageLabel() const = 0;
     virtual QString infoText() const = 0;
-    virtual std::shared_ptr<RgbLineProvider> rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const = 0;
+    virtual void parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const = 0;
 
-    // super ugly function to get win/xlibscreenshot
-    static std::shared_ptr<Screenshot> getPlatformAppropriateScreenshot(){
+    /**
+     * @brief Super ugly function to get win/xlibscreenshotprovider in one line of code
+     */
+    static std::shared_ptr<ScreenshotProvider> getPlatformAppropriateScreenshotProvider(){
         #ifdef __linux__
-            return std::shared_ptr<Screenshot>(new XlibScreenshot());
+            return std::shared_ptr<ScreenshotProvider>(new XlibScreenshotProvider());
         #elif _WIN32_WINNT
-            return std::shared_ptr<Screenshot>(new WinScreenshot());
+            return std::shared_ptr<Screenshot>(new WinScreenshotProvider());
         #else
             #error Platform not recognized
         #endif

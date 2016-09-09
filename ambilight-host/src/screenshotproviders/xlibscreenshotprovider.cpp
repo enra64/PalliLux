@@ -1,4 +1,4 @@
-#include "xlibscreenshot.h"
+#include "xlibscreenshotprovider.h"
 
 #include <cstdint>
 #include <cstring>
@@ -10,7 +10,7 @@
 
 using namespace Magick;
 
-XlibScreenshot::XlibScreenshot() {
+XlibScreenshotProvider::XlibScreenshotProvider() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
@@ -20,11 +20,11 @@ XlibScreenshot::XlibScreenshot() {
     mRootWindow = RootWindow(mDisplay, DefaultScreen(mDisplay));
 }
 
-XlibScreenshot::~XlibScreenshot() {
+XlibScreenshotProvider::~XlibScreenshotProvider() {
     XCloseDisplay(mDisplay);
 }
 
-float XlibScreenshot::getScreenCrop(Image &result, const Geometry& d) {
+float XlibScreenshotProvider::getScreenCrop(Image &result, const Geometry& d) {
     // benchmarking start
     clock_t start = clock();
 

@@ -11,7 +11,7 @@
 class TripleScreenBorderProvider : public BorderProvider
 {
 public:
-	TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener, size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3);
+    TripleScreenBorderProvider(size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3);
 
 	/**
 	 * @brief This function creates a shot of each border; the rgb constructor can then use it to create the LED data

@@ -22,9 +22,9 @@ private:
 
     // IScreenConfigPage interface
 public:
-    std::shared_ptr<RgbLineProvider> rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const override;
     QString infoText() const override;
     QString pageLabel() const override;
+    void parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const override;
 };
 
 

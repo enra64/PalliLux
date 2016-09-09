@@ -9,13 +9,13 @@
 #include "iconfigpage.h"
 
 #include <borderprovider.h>
-#include <screenshot.h>
-#include <rgblineprovider.h>
+#include <screenshotprovider.h>
+#include <colordataprovider.h>
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
@@ -33,15 +33,17 @@ public:
 
 private:
     Ui::SingleScreenConfigPage *ui;
-    std::shared_ptr<BorderProvider> getSingleScreenBorderProvider(std::shared_ptr<Screenshot> screener) const;
+    std::shared_ptr<BorderProvider> getSingleScreenBorderProvider() const;
 
     // IScreenConfigPage interface
 public:
     QString infoText() const override;
-    std::shared_ptr<RgbLineProvider> rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const override;
+    void parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const override;
     QString pageLabel() const override;
 private slots:
     void on_letterboxAutoConfigButton_clicked();
 };
+
+
 
 #endif // SINGLESCREENCONFIGPAGE_H

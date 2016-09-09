@@ -3,24 +3,28 @@
 #include <Magick++.h>
 
 #include <vector>
+#include <assert.h>
 
 using namespace Magick;
 using namespace std;
 
-TripleScreenBorderProvider::TripleScreenBorderProvider(std::shared_ptr<Screenshot> screener, size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(screener), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3)
+TripleScreenBorderProvider::TripleScreenBorderProvider(size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3)
 {
 	TripleScreenBorderProvider::updateGeometry();
 }
 
 void TripleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image& left, Image& bottom)
 {
+    //check whether we have a ScreenshotProvider
+    assert(mScreenshotProvider);
+
 	// take the screenshot (if the screenshot class overrides it)
-	mScreenshot->takeScreenshot();
+    mScreenshotProvider->takeScreenshot();
 
 	// take shots of all but the bottom border
-	mScreenshot->getScreenCrop(left, mLeftBorderDimensions);
-	mScreenshot->getScreenCrop(top, mTopBorderDimensions);
-	mScreenshot->getScreenCrop(right, mRightBorderDimensions);
+    mScreenshotProvider->getScreenCrop(left, mLeftBorderDimensions);
+    mScreenshotProvider->getScreenCrop(top, mTopBorderDimensions);
+    mScreenshotProvider->getScreenCrop(right, mRightBorderDimensions);
 
 	// the bottom bar is located over several positions, so a different approach is required:
 	// we take single shots of each screen bottom, and then append those.
@@ -28,9 +32,9 @@ void TripleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image
 	// list of images
 	vector<Image> bottomBorderVector = vector<Image>(3);
 
-	mScreenshot->getScreenCrop(bottomBorderVector[0], mBottomLeftBorderDimensions);
-	mScreenshot->getScreenCrop(bottomBorderVector[1], mBottomCenterBorderDimensions);
-	mScreenshot->getScreenCrop(bottomBorderVector[2], mBottomRightBorderDimensions);
+    mScreenshotProvider->getScreenCrop(bottomBorderVector[0], mBottomLeftBorderDimensions);
+    mScreenshotProvider->getScreenCrop(bottomBorderVector[1], mBottomCenterBorderDimensions);
+    mScreenshotProvider->getScreenCrop(bottomBorderVector[2], mBottomRightBorderDimensions);
 
 	appendImages(&bottom, bottomBorderVector.begin(), bottomBorderVector.end());
 }

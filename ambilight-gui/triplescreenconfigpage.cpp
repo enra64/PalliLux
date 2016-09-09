@@ -1,7 +1,7 @@
 #include "ui_triplescreenconfigpage.h"
 #include "triplescreenconfigpage.h"
 
-#include <ambirgblineprovider.h>
+#include <ambicolordataprovider.h>
 #include <triplescreenborderprovider.h>
 
 using namespace std;
@@ -31,20 +31,19 @@ QString TripleScreenConfigPage::pageLabel() const {
     return QString("Triple Screen");
 }
 
-std::shared_ptr<RgbLineProvider> TripleScreenConfigPage::rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const {
-    // first, we need a screenshot implementation
-    shared_ptr<Screenshot> screenshotProvider = IScreenConfigPage::getPlatformAppropriateScreenshot();
+void TripleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const {
+    // instantiate and set the desired screenshot class
+    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshotProvider());
 
-    // second, we need a triplescreen borderprovider
-    shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new TripleScreenBorderProvider(
-                                                                               screenshotProvider,
-                                                                               ui->x1->value(),
-                                                                               ui->y1->value(),
-                                                                               ui->x2->value(),
-                                                                               ui->y2->value(),
-                                                                               ui->x3->value(),
-                                                                               ui->y3->value()));
+    // instantiate and set a single screen BorderProvider
+    builder.setBorderProvider(shared_ptr<BorderProvider>(new TripleScreenBorderProvider(
+                                                             ui->x1->value(),
+                                                             ui->y1->value(),
+                                                             ui->x2->value(),
+                                                             ui->y2->value(),
+                                                             ui->x3->value(),
+                                                             ui->y3->value())));
 
-    // third, we need an rgb line provider
-    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, horizontalBorderLedCount, verticalBorderLedCount));
+    // instantiate and set an AmbiColorDataProvider
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));
 }

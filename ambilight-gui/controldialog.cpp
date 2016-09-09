@@ -2,6 +2,7 @@
 #include "ui_controldialog.h"
 
 #include <QDateTime>
+#include <QDir>
 
 #include "assert.h"
 #include <string>
@@ -56,7 +57,7 @@ void ControlDialog::on_runButton_clicked() {
         mArduinoConnector->connect();
         // ui update
         updateStatus("connection ok");
-    } catch(AmbiConnectorException e) {
+    } catch(ArduinoConnectorException e) {
         // ui update
         updateStatus(string("catastrophic failure: ") + e.what(), true);
         setButtonState(false);
@@ -87,7 +88,7 @@ void ControlDialog::on_runButton_clicked() {
             updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
 
             // get last border line
-            std::unique_ptr<Magick::Image> lastLine = getRgbLineProvider()->getLastLineImage();
+            std::unique_ptr<Magick::Image> lastLine = getColorDataProvider()->getLastLineImage();
 
             // show last border line
             if(mEnableLastLineView) {
@@ -101,16 +102,16 @@ void ControlDialog::on_runButton_clicked() {
             // update histogram chart
             if(mEnableHistogram) {
                 // temporarily save our line picture, must be crossplatformed
-                //todo:crossplatformify;
-                lastLine->write("histogram:/tmp/line.png");
-                QPixmap histogram("/tmp/line.png");
+                QString histogramPath = "histogram:" + QDir::tempPath() + "/line.png";
+                lastLine->write(histogramPath.toStdString());
+                QPixmap histogram(QDir::tempPath() + "/line.png");
                 mHistogramView->setMinimumSize(histogram.width(), histogram.height());
                 mHistogramView->setPixmap(histogram);
             }
 
             // process ui events
             qApp->processEvents();
-        } catch(AmbiConnectorException e) {
+        } catch(ArduinoConnectorException e) {
             // ui update
             updateStatus(string("catastrophic failure: ") + e.what(), true);
             setButtonState(false);
@@ -129,7 +130,7 @@ void ControlDialog::on_stopButton_clicked() {
         mArduinoConnector->disconnect(true);
         updateStatus("ambilight shut down");
     }
-    catch (AmbiConnectorException e){
+    catch (ArduinoConnectorException e){
         updateStatus(string("disconnect failed: ") + e.what(), true);
     }
 }
@@ -165,12 +166,12 @@ void ControlDialog::on_brightnessFactorSpinbox_valueChanged(double arg1) {
     filter->setFactor((float) arg1);
 }
 
-shared_ptr<AmbiRgbLineProvider> ControlDialog::getRgbLineProvider() {
-    return dynamic_pointer_cast<AmbiRgbLineProvider>(mArduinoConnector->getRgbLineProvider());
+shared_ptr<AmbiColorDataProvider> ControlDialog::getColorDataProvider() {
+    return dynamic_pointer_cast<AmbiColorDataProvider>(mArduinoConnector->getColorDataProvider());
 }
 
 shared_ptr<BorderProvider> ControlDialog::getBorderProvider() {
-    return dynamic_pointer_cast<BorderProvider>(getRgbLineProvider()->getBorderProvider());
+    return dynamic_pointer_cast<BorderProvider>(getColorDataProvider()->getBorderProvider());
 }
 
 void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {

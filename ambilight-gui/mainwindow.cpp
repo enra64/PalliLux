@@ -6,15 +6,15 @@
 
 #include <memory>
 
-#include <ambirgblineprovider.h>
-#include <rgblineprovider.h>
-#include <screenshot.h>
+#include <ambicolordataprovider.h>
+#include <colordataprovider.h>
+#include <screenshotprovider.h>
 
 #include <singlescreenborderprovider.h>
 #include <triplescreenborderprovider.h>
 
 #ifdef __linux__
-    #include <xlibscreenshot.h>
+    #include <xlibscreenshotprovider.h>
     #include <linuxserial.h>
 #elif _WIN32_WINNT
     #include <winscreenshot.h>
@@ -36,9 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // check whether the default tty device exists
     on_ttyState_textChanged(ui->ttyState->text());
-
-    // initialise our ambiconnector so we can later set the rgb provider
-    mAmbiConnector = shared_ptr<ArduinoConnector>(new ArduinoConnector());
 }
 
 MainWindow::~MainWindow() {
@@ -82,22 +79,26 @@ void MainWindow::on_startControlDialogButton_clicked() {
     // get the currently displayed configuration page to retrieve a rgbProvider
     const IScreenConfigPage* currentPage = getCurrentPage();
 
-    // ambilight rgb provider
-    shared_ptr<RgbLineProvider> rgbProvider = currentPage->rgbProvider(ui->xLedSpin->value(), ui->yLedSpin->value());
+    AmbiConnectorBuilder builder;
 
-    // parametrize the ArduinoConnector
-    mAmbiConnector->setRgbLineProvider(rgbProvider);
-    mAmbiConnector->setPort(ui->ttyState->text().toStdString());
+    // let the current page parametrise the builder appropriately
+    currentPage->parametriseBuilder(builder, ui->xLedSpin->value(), ui->yLedSpin->value());
+
+    // set the port
+    builder.setPort(ui->ttyState->text().toStdString());
+
+    // get the connector from the builder
+    std::shared_ptr<ArduinoConnector> connector = builder.build();
 
     // add low pass filter
-    unique_ptr<DataFilter> lpFilter(new LowPassFilter(mAmbiConnector->getRequiredBufferLength(), .6f));
-    mAmbiConnector->addFilter("lowpass", std::move(lpFilter));
+    unique_ptr<DataFilter> lpFilter(new LowPassFilter(connector->getRequiredBufferLength(), .6f));
+    connector->addFilter("lowpass", std::move(lpFilter));
 
     // add brightness filter
     unique_ptr<DataFilter> brFilter(new BrightnessFilter(1.f));
-    mAmbiConnector->addFilter("brightness", std::move(brFilter));
+    connector->addFilter("brightness", std::move(brFilter));
 
-    ControlDialog c(mAmbiConnector, this, currentPage->infoText());
+    ControlDialog c(connector, this, currentPage->infoText());
     c.exec();
 }
 

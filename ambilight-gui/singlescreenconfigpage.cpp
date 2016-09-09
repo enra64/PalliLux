@@ -5,7 +5,7 @@
 
 #include "letterboxingautoconfigdialog.h"
 
-#include <ambirgblineprovider.h>
+#include <ambicolordataprovider.h>
 #include <letterboxometer.h>
 #include <singlescreenborderprovider.h>
 
@@ -21,7 +21,7 @@ SingleScreenConfigPage::~SingleScreenConfigPage() {
     delete ui;
 }
 
-shared_ptr<BorderProvider> SingleScreenConfigPage::getSingleScreenBorderProvider(shared_ptr<Screenshot> screener) const {
+shared_ptr<BorderProvider> SingleScreenConfigPage::getSingleScreenBorderProvider() const {
     int w = ui->resolutionWidthSpinbox->value();
     int h = ui->resolutionHeightSpinbox->value();
     int xOff = ui->xOffsetSpinbox->value();
@@ -29,7 +29,7 @@ shared_ptr<BorderProvider> SingleScreenConfigPage::getSingleScreenBorderProvider
     int xLetterbox = ui->letterboxingWidthSpinBox->value();
     int yLetterbox = ui->letterboxingHeightSpinBox->value();
 
-    return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, screener, xOff, yOff, xLetterbox, yLetterbox));
+    return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, xOff, yOff, xLetterbox, yLetterbox));
 }
 
 QString SingleScreenConfigPage::pageLabel() const {
@@ -47,17 +47,16 @@ QString SingleScreenConfigPage::infoText() const {
     return QString("Single screen, %1x%2+%3+%4, letterboxing %5x%6").arg(w, h, xOff, yOff, xLetterbox, yLetterbox);
 }
 
-std::shared_ptr<RgbLineProvider> SingleScreenConfigPage::rgbProvider(int horizontalBorderLedCount, int verticalBorderLedCount) const {
-    // instantiate the desired screenshot class
-    shared_ptr<Screenshot> screener = IScreenConfigPage::getPlatformAppropriateScreenshot();
+void SingleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const
+{
+    // instantiate and set the desired screenshot class
+    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshotProvider());
 
-    // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
-    // to get screenshots from the system
-    shared_ptr<BorderProvider> borderProvider = getSingleScreenBorderProvider(screener);
+    // instantiate and set a single screen BorderProvider
+    builder.setBorderProvider(getSingleScreenBorderProvider());
 
-    // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
-    // BorderProvider to get images of the borders and convert them to RGB arrays
-    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, horizontalBorderLedCount, verticalBorderLedCount));
+    // instantiate and set an AmbiColorDataProvider
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));
 }
 
 void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {

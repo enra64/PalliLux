@@ -10,6 +10,9 @@
 class DataFilter
 {
 public:
+    /**
+     * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
+     */
 	virtual ~DataFilter()
 	{
 	}

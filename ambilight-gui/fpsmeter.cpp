@@ -4,7 +4,7 @@
 #include "ui_fpsmeter.h"
 
 
-FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter){
+FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter) {
     // set up ui
     ui->setupUi(this);
 
@@ -12,16 +12,16 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter){
     setupChart();
 }
 
-FpsMeter::~FpsMeter(){
+FpsMeter::~FpsMeter() {
+    delete mFpsChartView;
     delete ui;
 }
 
 #ifdef QT_CHARTS_FOUND
-void FpsMeter::setupChart()
-{
+void FpsMeter::setupChart() {
     // set up axes
     QValueAxis* xAxis = new QValueAxis();
-    xAxis->setMax(mFpsPointCount);
+    xAxis->setMax(CONCURRENT_FPS_VALUES);
     xAxis->setVisible(false);
     QValueAxis* yAxis = new QValueAxis();
     yAxis->setMax(100);
@@ -29,42 +29,59 @@ void FpsMeter::setupChart()
     // set up chart
     mFpsChart->legend()->hide();
     mFpsChart->addSeries(mFpsLineSeries);
+    mFpsChart->addSeries(mAverageFpsLineSeries);
+
     mFpsChart->setAxisX(xAxis, mFpsLineSeries);
     mFpsChart->setAxisY(yAxis, mFpsLineSeries);
+    mFpsChart->setAxisX(xAxis, mAverageFpsLineSeries);
+    mFpsChart->setAxisY(yAxis, mAverageFpsLineSeries);
 
     // set up chart view
     mFpsChartView = new QChartView(mFpsChart);
     mFpsChartView->setRenderHint(QPainter::Antialiasing);
 
+    // zero out history and line series to create "valid" starting data
+    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++) {
+        mFpsHistory[i] = 0;
+        mFpsLineSeries->append(i, 0);
+    }
+
+    // create two points in the average fps line series to draw a straight line
+    mAverageFpsLineSeries->append(0, 0);
+    mAverageFpsLineSeries->append(CONCURRENT_FPS_VALUES, 0);
 }
 
-void FpsMeter::update(float fpsValue){
+float FpsMeter::getHistoryAverage() {
+    float sum = 0;
+    for(int i = 0; i < CONCURRENT_FPS_VALUES; i++)
+        sum += mFpsHistory[i];
+    return sum / CONCURRENT_FPS_VALUES;
+}
+
+void FpsMeter::update(float fpsValue) {
     // avoid calculations if possible
     if(!mEnable)
         return;
 
-    // add new data point to series
-    mFpsLineSeries->append(mFpsTickCount++, fpsValue);
+    // wrap around at the end of the chart
+    int currentIndex = mFpsTickCount++ % CONCURRENT_FPS_VALUES;
 
-    todo:maybe_we_could_just_set_the_oldest_value_instead_of_scrolling;
-    // remove data points until we reach our limit
-    while(mFpsLineSeries->count() > CONCURRENT_FPS_VALUES) {
-        // calculate how much we will need to scroll to still show all points
-        qreal xDelta = mFpsChart->mapToPosition(
-                           mFpsLineSeries->at(1)).rx() - mFpsChart->mapToPosition(mFpsLineSeries->at(0)).rx();
+    // replace the oldest point with the new fps value
+    mFpsLineSeries->replace(currentIndex, currentIndex, fpsValue);
 
-        // remove oldest point
-        mFpsLineSeries->removePoints(0, 1);
+    // update the history
+    mFpsHistory[currentIndex] = fpsValue;
 
-        // scroll to show all points
-        mFpsChart->scroll(xDelta, 0);
-    }
+    // move the average line to the current average
+    float fpsAvg = getHistoryAverage();
+    mAverageFpsLineSeries->replace(0, 0, fpsAvg);
+    mAverageFpsLineSeries->replace(1, CONCURRENT_FPS_VALUES, fpsAvg);
 
     // refresh chart
     mFpsChartView->repaint();
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
+void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
     mEnable = checked;
 
     // en/disable display
@@ -74,18 +91,18 @@ void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
         ui->fpsMeterLayout->removeWidget(mFpsChartView);
 }
 #else
-void FpsMeter::setupChart(){
+void FpsMeter::setupChart() {
     ui->fpsMeterCheckbox->setEnabled(false);
     mFpsLabel = new QLabel(this);
     mFpsLabel->setText("-");
 }
 
 // if we do not have the QtCharts, we dont need to do anything here
-void FpsMeter::update(float fpsValue){
+void FpsMeter::update(float fpsValue) {
     mFpsLabel->setText(QString::number(fpsValue));
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked){
+void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
     mEnable = checked;
 
     // en/disable display

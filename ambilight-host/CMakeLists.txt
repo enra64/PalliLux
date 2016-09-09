@@ -1,6 +1,6 @@
 project(host)
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -21,6 +21,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # get qt creator to show these headers
 SET(BASE_HEADERS
     "include/arduinoconnector.h"
+    "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
     "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
@@ -28,26 +29,27 @@ SET(BASE_HEADERS
     "include/datafilters/brightnessfilter.h"
     "include/datafilters/linearfactorfilter.h"
     "include/datafilters/lowpassfilter.h"
-    "include/rgblineprovider/ambirgblineprovider.h"
-    "include/screenshot/vlcscreenshot.h"
+    "include/colordataproviders/ambicolordataprovider.h"
+    "include/screenshotproviders/vlcscreenshotprovider.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
-    "include/interfaces/rgblineprovider.h"
-    "include/interfaces/screenshot.h"
+    "include/interfaces/colordataprovider.h"
+    "include/interfaces/screenshotprovider.h"
     "include/interfaces/serial.h")
 
 
 # relevant source files
 SET(BASE_SOURCES
     "src/arduinoconnector.cpp"
+    "src/ambiconnectorbuilder.cpp"
     "src/letterboxometer.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
     "src/borderproviders/triplescreenborderprovider.cpp"
     "src/datafilters/brightnessfilter.cpp"
     "src/datafilters/linearfactorfilter.cpp"
     "src/datafilters/lowpassfilter.cpp"
-    "src/rgblineprovider/ambirgblineprovider.cpp"
-    "src/screenshot/vlcscreenshot.cpp")
+    "src/colordataproviders/ambicolordataprovider.cpp"
+    "src/screenshotproviders/vlcscreenshotprovider.cpp")
 
 
 #include subdirectories
@@ -56,9 +58,9 @@ include_directories(
     "include/serial"
     "include/interfaces"
     "include/borderproviders"
-    "include/screenshot"
+    "include/screenshotproviders"
     "include/datafilters"
-    "include/rgblineprovider")
+    "include/colordataproviders")
     
 
 
@@ -84,11 +86,11 @@ endif(UNIX)
 ######################################################################################################################################################
 SET(WIN_ONLY_HEADERS
     "include/serial/windowsserial.h"
-    "include/screenshot/winscreenshot.h")
+    "include/screenshotproviders/winscreenshot.h")
     
 SET(WIN_ONLY_SOURCES
     "src/serial/windowsserial.cpp"
-    "src/screenshot/winscreenshot.cpp")
+    "src/screenshotproviders/winscreenshot.cpp")
     
 if(WIN32)
     SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
@@ -159,7 +161,7 @@ if(UNIX)
 # X11 OPTION - needed for xlibscreenshot - LINUX ONLY
 ######################################################################################################################################################
     if(X11)
-        target_sources(${PROJECT_NAME} PUBLIC "src/screenshot/xlibscreenshot.cpp" "include/screenshot/xlibscreenshot.h")
+        target_sources(${PROJECT_NAME} PUBLIC "src/screenshotproviders/xlibscreenshotprovider.cpp" "include/screenshotproviders/xlibscreenshotprovider.h")
         find_package(X11 REQUIRED)
         INCLUDE_DIRECTORIES ( ${X11_INCLUDE_DIR} )
         TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${X11_LIBRARIES})
@@ -171,7 +173,7 @@ if(UNIX)
 ######################################################################################################################################################
     if(SPECTROMETER)
         # add spectrometer files to target
-        target_sources(${PROJECT_NAME} PUBLIC "include/rgblineprovider/spectrometerrgblineprovider.h" "src/rgblineprovider/spectrometerrgblineprovider.cpp")
+        target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
         
         # pulseaudio libs
         TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")

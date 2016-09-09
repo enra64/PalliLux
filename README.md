@@ -7,22 +7,30 @@ It is, however, also possible to supply any other RGB data.
 Just flash the sketch contained in ambilight-arduino to an arduino, but don't forget to adjust the number of LEDs.
 
 ## Host
-The host code in ambilight-host is a powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an executable file in debug mode, so to compile your version you just need to ```cmake CMakeLists.txt && make```. If you are compiling for linux, and do not want to include X11 or spectrometer (pulseaudio+fftw3) libraries, you can use ```cmake (-DX11=OFF) (-DSPECTROMETER=OFF) CMakeLists.txt``` respectively to disable including and linking them.
+The host code in ambilight-host is powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an static library in debug mode. If you are compiling for linux, and do not want to include X11 or spectrometer (pulseaudio+fftw3) libraries, you can use ```cmake (-DX11=OFF) (-DSPECTROMETER=OFF) CMakeLists.txt``` respectively to disable including and linking them.
 
-### Instantiation
+### Instantiation (using AmbiConnectorBuilder for Ambilight mode)
 ```c++
-// instantiate a Screenshot implementation, providing the means to make screenshots
-shared_ptr<Screenshot> screener = shared_ptr<Screenshot>(new XlibScreenshot());
+    AmbiConnectorBuilder builder;
 
-// instantiate a BorderProvider implementation so the AmbiRgbLineProvider can easily retrieve screen border samples
-shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768, screener));
-
-// instantiate an AmbiRgbLineProvider, which will convert the border data to rgb data for the arduino
-unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 12));
-
-// instantiate ArduinoConnector to send our rgbProvider data to the arduino
-ArduinoConnector connector(move(rgbProvider));
+    // WinScreenshot is the windows pendant
+    builder.setScreenshotProvider(shared_ptr<Screenshot>(new XlibScreenshot()));
+    
+    // SingleScreenBorderProvider(xRes, yRes)
+    builder.setBorderProvider(shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768)));
+    
+    // AmbiRgbLineProvider(horizontalBorderLedCount, verticalBorderLedCount)
+    builder.setAmbiRgbLineProvider(shared_ptr<AmbiRgbLineProvider>(new AmbiRgbLineProvider(60, 12)));
+    
+    // set the port
+    builder.setPort("/dev/ttyUSB0");
+    
+    // get the connector from the instance
+    ArduinoConnector connector = builder.build();
 ```
+
+### Instantiation (other ColorDataProviders)
+You may also use ```ArduinoConnector::setRgbLineProvider(shared_ptr<RgbLinProvider> p)``` directly to use other RgbLineProviders, for example ```SpectrometerRgbLineProvider```.
 
 
 ### Running
