@@ -79,6 +79,21 @@ void MainWindow::on_startControlDialogButton_clicked() {
     // get the currently displayed configuration page to retrieve a rgbProvider
     const IScreenConfigPage* currentPage = getCurrentPage();
 
+    // check whether this is a ICustomDialogConfigPage, those have to be handled differently
+    // im sorry
+    const ICustomDialogConfigPage* customDialogPage = dynamic_cast<const ICustomDialogConfigPage*>(currentPage);
+    if(customDialogPage){
+        QDialog* dialog = customDialogPage->getDialog(
+                    this,
+                    ui->xLedSpin->value(),
+                    ui->yLedSpin->value(),
+                    ui->ttyState->text().toStdString());
+        dialog->exec();
+        delete dialog;
+        return;
+    }
+
+    // get a builder
     AmbiConnectorBuilder builder;
 
     // let the current page parametrise the builder appropriately

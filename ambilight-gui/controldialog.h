@@ -58,6 +58,10 @@ private:// fps chart stuff
     std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiColorDataProvider> getColorDataProvider();
     bool mStopClicked = false;
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *) override;
 };
 
 #endif // CONTROLDIALOG_H

@@ -29,7 +29,9 @@ SET(BASE_HEADERS
     "include/datafilters/brightnessfilter.h"
     "include/datafilters/linearfactorfilter.h"
     "include/datafilters/lowpassfilter.h"
+    "include/datafilters/pulsingfilter.h"
     "include/colordataproviders/ambicolordataprovider.h"
+    "include/colordataproviders/constantcolordataprovider.h"
     "include/screenshotproviders/vlcscreenshotprovider.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
@@ -48,7 +50,9 @@ SET(BASE_SOURCES
     "src/datafilters/brightnessfilter.cpp"
     "src/datafilters/linearfactorfilter.cpp"
     "src/datafilters/lowpassfilter.cpp"
+    "src/datafilters/pulsingfilter.cpp"
     "src/colordataproviders/ambicolordataprovider.cpp"
+    "src/colordataproviders/constantcolordataprovider.cpp"
     "src/screenshotproviders/vlcscreenshotprovider.cpp")
 
 

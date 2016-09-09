@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     singlescreenconfigpage.cpp \
     triplescreenconfigpage.cpp \
     letterboxingautoconfigdialog.cpp \
-    fpsmeter.cpp
+    fpsmeter.cpp \
+    backlightconfigpage.cpp \
+    backlightdialog.cpp
 
 HEADERS  += mainwindow.h \
     controldialog.h \
@@ -28,14 +30,18 @@ HEADERS  += mainwindow.h \
     iconfigpage.h \
     triplescreenconfigpage.h \
     letterboxingautoconfigdialog.h \
-    fpsmeter.h
+    fpsmeter.h \
+    backlightconfigpage.h \
+    backlightdialog.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui \
     singlescreenconfigpage.ui \
     triplescreenconfigpage.ui \
     letterboxingautoconfigdialog.ui \
-    fpsmeter.ui
+    fpsmeter.ui \
+    backlightconfigpage.ui \
+    backlightdialog.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){

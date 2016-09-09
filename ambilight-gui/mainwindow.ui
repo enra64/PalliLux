@@ -121,7 +121,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Single screen</string>
+            <string>Backlight</string>
            </property>
           </widget>
          </item>
@@ -156,10 +156,11 @@
        <item>
         <widget class="QStackedWidget" name="configStack">
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="SingleScreenConfigPage" name="page"/>
          <widget class="TripleScreenConfigPage" name="page_2"/>
+         <widget class="BacklightConfigPage" name="page_3"/>
         </widget>
        </item>
       </layout>
@@ -191,6 +192,12 @@
    <class>TripleScreenConfigPage</class>
    <extends>QWidget</extends>
    <header>triplescreenconfigpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BacklightConfigPage</class>
+   <extends>QWidget</extends>
+   <header>backlightconfigpage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

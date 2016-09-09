@@ -62,7 +62,7 @@ void ControlDialog::on_runButton_clicked() {
         updateStatus(string("catastrophic failure: ") + e.what(), true);
         setButtonState(false);
         return;
-    } catch(SerialException e){
+    } catch(SerialException e) {
         // ui update
         updateStatus(string("serial failure: ") + e.what(), true);
         setButtonState(false);
@@ -129,8 +129,7 @@ void ControlDialog::on_stopButton_clicked() {
     try {
         mArduinoConnector->disconnect(true);
         updateStatus("ambilight shut down");
-    }
-    catch (ArduinoConnectorException e){
+    } catch (ArduinoConnectorException e) {
         updateStatus(string("disconnect failed: ") + e.what(), true);
     }
 }
@@ -181,21 +180,24 @@ void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
 void ControlDialog::on_histogramCheckbox_clicked(bool checked) {
     mEnableHistogram = checked;
     mHistogramView->setVisible(checked);
-    if(checked){
+    if(checked) {
         ui->histogramLayout->addWidget(mHistogramView);
-    }
-    else{
+    } else {
         ui->histogramLayout->removeWidget(mHistogramView);
     }
 }
 
-void ControlDialog::on_lineCheckbox_clicked(bool checked){
+void ControlDialog::on_lineCheckbox_clicked(bool checked) {
     mEnableLastLineView = checked;
     mLastLineView->setVisible(checked);
-    if(checked){
+    if(checked) {
         ui->lineLayout->addWidget(mLastLineView);
-    }
-    else{
+    } else {
         ui->lineLayout->removeWidget(mLastLineView);
     }
+}
+
+
+void ControlDialog::closeEvent(QCloseEvent *) {
+    on_stopButton_clicked();
 }
