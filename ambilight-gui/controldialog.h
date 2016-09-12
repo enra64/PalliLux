@@ -10,6 +10,10 @@
 #include <arduinoconnector.h>
 #include <singlescreenborderprovider.h>
 
+class FpsMeter;
+class HistogramWidget;
+class PixelLineWidget;
+
 namespace Ui {
 class ControlDialog;
 }
@@ -34,10 +38,6 @@ private slots:
 
     void on_borderWidthSpinbox_valueChanged(int arg1);
 
-    void on_histogramCheckbox_clicked(bool checked);
-
-    void on_lineCheckbox_clicked(bool checked);
-
 private:
     void setButtonState(bool currentlyRunning);
     void updateStatus(const std::string &msg, bool isFailure = false);
@@ -46,15 +46,14 @@ private:
 
 private:
     bool mEnableHistogram = false;
-    bool mEnableLastLineView = false;
 
-private:// last line view
-    QLabel* mLastLineView;
+private:// info widgets
+    HistogramWidget* mHistogramWidget;
+    PixelLineWidget* mLastLineWidget;
 
-private:// histogram
-    QLabel* mHistogramView;
 
 private:// fps chart stuff
+    FpsMeter* mFpsMeter;
     std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiColorDataProvider> getColorDataProvider();
     bool mStopClicked = false;

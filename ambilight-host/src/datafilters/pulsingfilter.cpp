@@ -1,6 +1,13 @@
 #include "pulsingfilter.h"
 
+#define _USE_MATH_DEFINES
 #include <cmath>
+
+// define M_PI if _USE_MATH_DEFINES did not fix undeclared identifier error
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 
 PulsingFilter::PulsingFilter(unsigned int cycleLength, double maximumFactor) :
     mCycleLength(cycleLength), mMaximumFactor(maximumFactor){

@@ -138,7 +138,7 @@ void ArduinoConnector::connect() {
     mSerial->open(mPort);
 
     // check connection
-    mSerial->send("hello", 5);
+    mSerial->send("hello", 6);
 
     // read arduino response until we have accumulated 3 magic characters ("SAM")
     size_t receiveCount = 0;

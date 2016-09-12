@@ -12,6 +12,10 @@
 #include <brightnessfilter.h>
 #include <customexceptions.h>
 
+#include "histogramwidget.h"
+#include "pixellinewidget.h"
+#include "fpsmeter.h"
+
 #include <Magick++.h>
 
 using namespace std;
@@ -30,11 +34,17 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // update border width
     ui->borderWidthSpinbox->setValue(static_cast<int>(getBorderProvider()->getBorderWidth()));
 
-    // set up last line view
-    mLastLineView = new QLabel(this);
+    // set up fps widget
+    mFpsMeter = new FpsMeter(this);
+    ui->controlDialogMiscLayout->addWidget(mFpsMeter);
+
+    // set up last line widget
+    mLastLineWidget = new PixelLineWidget(this);
+    ui->controlDialogMiscLayout->addWidget(mLastLineWidget);
 
     // set up histogram
-    mHistogramView = new QLabel(this);
+    mHistogramWidget = new HistogramWidget(this);
+    ui->controlDialogMiscLayout->addWidget(mHistogramWidget);
 }
 
 ControlDialog::~ControlDialog() {
@@ -80,9 +90,6 @@ void ControlDialog::on_runButton_clicked() {
             mArduinoConnector->update();
             mArduinoConnector->draw();
 
-            // update fps widget
-            ui->fpsWidget->update(mArduinoConnector->getCurrentFps());
-
             // update state label with runtime information
             QTime elapsed = QTime(0, 0).addMSecs(startTime.elapsed());
             updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
@@ -90,24 +97,14 @@ void ControlDialog::on_runButton_clicked() {
             // get last border line
             std::unique_ptr<Magick::Image> lastLine = getColorDataProvider()->getLastLineImage();
 
-            // show last border line
-            if(mEnableLastLineView) {
-                Magick::Blob bob;
-                lastLine->write(&bob, "PNG");
-                QPixmap line;
-                line.loadFromData((uchar*)(bob.data()), static_cast<uint>(bob.length()));
-                mLastLineView->setPixmap(line.scaled(mLastLineView->width(), mLastLineView->height()));
-            }
+            // update fps widget
+            mFpsMeter->update(mArduinoConnector->getCurrentFps());
+
+            // update lastLine widget
+            mLastLineWidget->update(lastLine.get());
 
             // update histogram chart
-            if(mEnableHistogram) {
-                // temporarily save our line picture, must be crossplatformed
-                QString histogramPath = "histogram:" + QDir::tempPath() + "/line.png";
-                lastLine->write(histogramPath.toStdString());
-                QPixmap histogram(QDir::tempPath() + "/line.png");
-                mHistogramView->setMinimumSize(histogram.width(), histogram.height());
-                mHistogramView->setPixmap(histogram);
-            }
+            mHistogramWidget->update(lastLine.get());
 
             // process ui events
             qApp->processEvents();
@@ -175,26 +172,6 @@ shared_ptr<BorderProvider> ControlDialog::getBorderProvider() {
 
 void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
     getBorderProvider()->setBorderWidth(arg1);
-}
-
-void ControlDialog::on_histogramCheckbox_clicked(bool checked) {
-    mEnableHistogram = checked;
-    mHistogramView->setVisible(checked);
-    if(checked) {
-        ui->histogramLayout->addWidget(mHistogramView);
-    } else {
-        ui->histogramLayout->removeWidget(mHistogramView);
-    }
-}
-
-void ControlDialog::on_lineCheckbox_clicked(bool checked) {
-    mEnableLastLineView = checked;
-    mLastLineView->setVisible(checked);
-    if(checked) {
-        ui->lineLayout->addWidget(mLastLineView);
-    } else {
-        ui->lineLayout->removeWidget(mLastLineView);
-    }
 }
 
 

@@ -19,7 +19,7 @@ public:
 	void open(const std::string& port) override;
 	void close() override;
 	bool deviceExists(const std::string& port) const override;
-	bool good(const std::string& ttyDevice) const override;
+    bool good() const override;
 private:
 	HANDLE mSerialHandle = nullptr;
 };

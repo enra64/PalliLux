@@ -4,76 +4,71 @@
 #include <assert.h>
 
 #include "arduinoconnector.h"
-#include "ambirgblineprovider.h"
+#include "ambicolordataprovider.h"
 #include "customexceptions.h"
 #include "singlescreenborderprovider.h"
+#include "ambiconnectorbuilder.h"
 
 using namespace std;
 
 #ifdef __linux__
-	#include "xlibscreenshot.h"
+	#include "xlibscreenshotprovider.h"
 	string mDefaultTtyDevice("/dev/ttyUSB0");
 #elif _WIN32
-	#include "winscreenshot.h"
-	string mDefaultTtyDevice("COM0");
+	#include "winscreenshotprovider.h"
+	string mDefaultTtyDevice("COM3");
 #else
 #error Platform not recognized
 #endif
 
-shared_ptr<Screenshot> getScreenshot()
+shared_ptr<ScreenshotProvider> getScreenshot()
 {
 	#ifdef __linux__
-	return static_pointer_cast<Screenshot>(make_shared<XlibScreenshot>());
+	return static_pointer_cast<ScreenshotProvider>(make_shared<XlibScreenshotProvider>());
 	#elif _WIN32
-	return static_pointer_cast<Screenshot>(make_shared<WinScreenshot>());
+	return static_pointer_cast<ScreenshotProvider>(make_shared<WinScreenshotProvider>());
 	#else
 	#error Platform not recognized
 	#endif
 }
 
-std::shared_ptr<RgbLineProvider> createAmbilightRgbProvider(){
-    // instantiate the desired screenshot class
-    shared_ptr<Screenshot> screener = getScreenshot();
-
-    // instantiate the desired borderProvider with the screener. it will use the Screenshot instance
-    // to get screenshots from the system
-    shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1920, 1080, screener, 1024, 0));
-    //shared_ptr<BorderProvider> borderProvider = shared_ptr<BorderProvider>(new TripleScreenBorderProvider(screener));
-
-    // instantiate and return an AmbiRgbLineProvider, the RGB data source. It will use the
-    // BorderProvider to get images of the borders and convert them to RGB arrays
-    return shared_ptr<RgbLineProvider>(new AmbiRgbLineProvider(borderProvider, 60, 18));
-}
-
 int main() {
-    // audio spectrum rgb provider
-    //unique_ptr<RgbLineProvider> rgbProvider = unique_ptr<RgbLineProvider>(new SpectrometerRgbLineProvider(60, 18));
+	// get builder for connector
+	AmbiConnectorBuilder builder;
 
-    // ambilight rgb provider
-    shared_ptr<RgbLineProvider> rgbProvider = createAmbilightRgbProvider();
+	builder
+		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18))
+		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 1024, 0))
+		.setScreenshotProvider(getScreenshot());
 
-    // supply our AmbiConnector with its chosen RgbLineProvider
-    ArduinoConnector connector(rgbProvider);
+	/*
+	// Example for using a non-Ambi ColorDataProvider
+	shared_ptr<ColorDataProvider> colorDataProvider = make_shared<SpectrometerColorDataProvider>(60, 18);
+	ArduinoConnector connector;
+	connector.setColorDataProvider(colorDataProvider);
+	*/
 
-    // add the filters we want
-    //connector.addFilter("lowPassFilter", unique_ptr<DataFilter>(new LowPassFilter(connector.getRequiredBufferLength())));
+	shared_ptr<ArduinoConnector> connector = builder.build();
 
     // try sending to the arduino
     try {
         // establish connection
-        connector.connect(mDefaultTtyDevice);
+        connector->connect(mDefaultTtyDevice);
 
         // loop: update the screen images and push the data to the arduino
         //for(int i = 0; i < 100; i++) {
         while(1) {
-            connector.update();
-            connector.draw();
+            connector->update();
+            connector->draw();
 
-            cout << "avg draw fps:" << connector.getCurrentFps() << endl;
+            cout << "avg draw fps:" << connector->getCurrentFps() << endl;
         }
-    } catch(AmbiConnectorException e) {
+    } catch(ArduinoConnectorException e) {
         cout << "Ambiconnector experienced an exception: " << e.what() << endl;
-    }
+	}/*
+	catch (SerialException e) {
+		cout << "Ambiconnector experienced a serial communication exception: " << e.what() << endl;
+	}*/
 
     return 0;
 }

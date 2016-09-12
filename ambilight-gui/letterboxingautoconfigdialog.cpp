@@ -10,6 +10,8 @@
 
 #include "iconfigpage.h"
 
+#include "screenshotfactory.h"
+
 #ifdef __linux__
     #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
@@ -49,7 +51,7 @@ void LetterboxingAutoConfigDialog::on_countdownStartButton_clicked() {
     mCountdownRunning = true;
 
     // instantiate screener and meter
-    shared_ptr<ScreenshotProvider> screener = IScreenConfigPage::getPlatformAppropriateScreenshotProvider();
+    shared_ptr<ScreenshotProvider> screener = ScreenshotFactory::getPlatformAppropriateScreenshotProvider();
     LetterboxOMeter meter(screener, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_XOFF, SCREEN_YOFF, ui->thresholdSpinbox->value());
 
     // wait for user to activate the video player, counting down

@@ -1,7 +1,7 @@
-#ifndef RGBCONSTRUCTOR_H
-#define RGBCONSTRUCTOR_H
+#ifndef AMBICOLORDATAPROVIDER_H
+#define AMBICOLORDATAPROVIDER_H
 
-#include "Magick++.h"
+#include <Magick++.h>
 
 #include <cstdint>
 #include <memory>
@@ -94,4 +94,4 @@ private:
     std::shared_ptr<BorderProvider> mBorderProvider; ///< class instance used to create the images of each border
 };
 
-#endif // RGBCONSTRUCTOR_H
+#endif // AMBICOLORDATAPROVIDER_H

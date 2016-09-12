@@ -12,7 +12,7 @@ TARGET = ambilight-gui
 TEMPLATE = app
 
 # amblight host library folder location
-AMBILIGHT_LIB_PATH = ../ambilight-host/
+AMBILIGHT_LIB_FOLDER = ../ambilight-host/
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     letterboxingautoconfigdialog.cpp \
     fpsmeter.cpp \
     backlightconfigpage.cpp \
-    backlightdialog.cpp
+    backlightdialog.cpp \
+    pixellinewidget.cpp \
+    histogramwidget.cpp
 
 HEADERS  += mainwindow.h \
     controldialog.h \
@@ -32,7 +34,10 @@ HEADERS  += mainwindow.h \
     letterboxingautoconfigdialog.h \
     fpsmeter.h \
     backlightconfigpage.h \
-    backlightdialog.h
+    backlightdialog.h \
+    pixellinewidget.h \
+    histogramwidget.h \
+    screenshotfactory.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui \
@@ -41,7 +46,9 @@ FORMS    += mainwindow.ui \
     letterboxingautoconfigdialog.ui \
     fpsmeter.ui \
     backlightconfigpage.ui \
-    backlightdialog.ui
+    backlightdialog.ui \
+    pixellinewidget.ui \
+    histogramwidget.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){
@@ -55,12 +62,15 @@ win32 {
     LIBS += -luser32 -lgdi32
 
     # windows imagemagick - sadly hardcoded, as i could not find a way to do this properly
-    LIBS += "C:\Program Files\ImageMagick-7.0.2-Q16\lib\CORE_RL_Magick++_.lib"
-    LIBS += "C:\Program Files\ImageMagick-7.0.2-Q16\lib\CORE_RL_MagickCore_.lib"
-    INCLUDEPATH += "C:\Program Files\ImageMagick-7.0.2-Q16\include"
+    LIBS += "C:\Program Files\ImageMagick-7.0.3-Q16\lib\CORE_RL_Magick++_.lib"
+    LIBS += "C:\Program Files\ImageMagick-7.0.3-Q16\lib\CORE_RL_MagickCore_.lib"
+    INCLUDEPATH += "C:\Program Files\ImageMagick-7.0.3-Q16\include"
+
+    # ignore unknown pragmas in stuff not written by me
+    #QMAKE_CXXFLAGS += -Wnounknown-pragmas
 
     # static ambilight lib
-    LIBS += $${AMBILIGHT_LIB_PATH}/build/Debug/host.lib
+    LIBS += $${AMBILIGHT_LIB_FOLDER}/build64/Debug/host.lib
 }
 
 unix {
@@ -84,10 +94,10 @@ unix {
     LIBS += "/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-host-Desktop-Default/libhost.a"
 }
 
-INCLUDEPATH += $${AMBILIGHT_LIB_PATH}/include \
-    $${AMBILIGHT_LIB_PATH}/include/borderproviders \
-    $${AMBILIGHT_LIB_PATH}/include/interfaces \
-    $${AMBILIGHT_LIB_PATH}/include/colordataproviders \
-    $${AMBILIGHT_LIB_PATH}/include/datafilters \
-    $${AMBILIGHT_LIB_PATH}/include/serial \
-    $${AMBILIGHT_LIB_PATH}/include/screenshotproviders
+INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/include \
+    $${AMBILIGHT_LIB_FOLDER}/include/borderproviders \
+    $${AMBILIGHT_LIB_FOLDER}/include/interfaces \
+    $${AMBILIGHT_LIB_FOLDER}/include/colordataproviders \
+    $${AMBILIGHT_LIB_FOLDER}/include/datafilters \
+    $${AMBILIGHT_LIB_FOLDER}/include/serial \
+    $${AMBILIGHT_LIB_FOLDER}/include/screenshotproviders

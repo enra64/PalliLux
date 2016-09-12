@@ -1,17 +1,17 @@
 #ifndef WINSCREENSHOT_H
 #define WINSCREENSHOT_H
 
-#include "screenshot.h"
+#include "screenshotprovider.h"
 
 
 /**
  * @brief An implementation of the Screenshot interface for windows
  */
-class WinScreenshot : public Screenshot
+class WinScreenshotProvider : public ScreenshotProvider
 {
 public:
-	WinScreenshot();
-	~WinScreenshot();
+    WinScreenshotProvider();
+    ~WinScreenshotProvider();
 
 	/**
 	 * @brief takeScreenshot Take a screenshot, converting it to a Magick++ image

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>452</width>
-    <height>368</height>
+    <height>403</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -124,32 +124,12 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="lineLayout">
-     <item>
-      <widget class="QCheckBox" name="lineCheckbox">
-       <property name="text">
-        <string>last data line</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="FpsMeter" name="fpsWidget" native="true"/>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="histogramLayout">
-     <item>
-      <widget class="QCheckBox" name="histogramCheckbox">
-       <property name="text">
-        <string>histogram</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QGroupBox" name="miscBox">
+     <property name="title">
+      <string>Miscanellous</string>
+     </property>
+     <layout class="QVBoxLayout" name="controlDialogMiscLayout"/>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="buttonBox">
@@ -192,14 +172,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>FpsMeter</class>
-   <extends>QWidget</extends>
-   <header>fpsmeter.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

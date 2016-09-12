@@ -12,6 +12,7 @@
 **/flataligned.jpg
 **/host.cbp
 **/host
+**/CMakeLists.txt.user.*
 
 # ignore files created by cmake
 ambilight-host/ALL_BUILD.vcxproj

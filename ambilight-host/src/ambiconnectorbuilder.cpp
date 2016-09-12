@@ -10,14 +10,32 @@ AmbiConnectorBuilder& AmbiConnectorBuilder::setBorderProvider(std::shared_ptr<Bo
     return *this;
 }
 
+AmbiConnectorBuilder & AmbiConnectorBuilder::setBorderProvider(BorderProvider * provider)
+{
+	mBorderProvider = std::shared_ptr<BorderProvider>(provider);
+	return *this;
+}
+
 AmbiConnectorBuilder &AmbiConnectorBuilder::setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider) {
     mScreenshotProvider = provider;
     return *this;
 }
 
+AmbiConnectorBuilder & AmbiConnectorBuilder::setScreenshotProvider(ScreenshotProvider * provider)
+{
+	mScreenshotProvider = std::shared_ptr<ScreenshotProvider>(provider);
+	return *this;
+}
+
 AmbiConnectorBuilder &AmbiConnectorBuilder::setAmbiColorDataProvider(std::shared_ptr<AmbiColorDataProvider> provider) {
     mAmbiColorDataProvider = provider;
     return *this;
+}
+
+AmbiConnectorBuilder & AmbiConnectorBuilder::setAmbiColorDataProvider(AmbiColorDataProvider * provider)
+{
+	mAmbiColorDataProvider = std::shared_ptr<AmbiColorDataProvider>(provider);
+	return *this;
 }
 
 AmbiConnectorBuilder& AmbiConnectorBuilder::setPort(const string &port) {

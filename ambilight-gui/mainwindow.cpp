@@ -1,10 +1,12 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
 
-#include "controldialog.h"
-#include "iconfigpage.h"
+#include <QMessageBox>
 
 #include <memory>
+
+#include "iconfigpage.h"
+#include "controldialog.h"
 
 #include <ambicolordataprovider.h>
 #include <colordataprovider.h>
@@ -13,11 +15,12 @@
 #include <singlescreenborderprovider.h>
 #include <triplescreenborderprovider.h>
 
+
 #ifdef __linux__
     #include <xlibscreenshotprovider.h>
     #include <linuxserial.h>
 #elif _WIN32_WINNT
-    #include <winscreenshot.h>
+    #include <winscreenshotprovider.h>
     #include <windowsserial.h>
 #else
     #error Platform not recognized
@@ -25,7 +28,6 @@
 
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
-#include <QMessageBox>
 
 using namespace std;
 

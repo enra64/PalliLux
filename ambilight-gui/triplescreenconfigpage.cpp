@@ -4,6 +4,8 @@
 #include <ambicolordataprovider.h>
 #include <triplescreenborderprovider.h>
 
+#include "screenshotfactory.h"
+
 using namespace std;
 
 TripleScreenConfigPage::TripleScreenConfigPage(QWidget *parent) :
@@ -33,7 +35,7 @@ QString TripleScreenConfigPage::pageLabel() const {
 
 void TripleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const {
     // instantiate and set the desired screenshot class
-    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshotProvider());
+    builder.setScreenshotProvider(ScreenshotFactory::getPlatformAppropriateScreenshotProvider());
 
     // instantiate and set a single screen BorderProvider
     builder.setBorderProvider(shared_ptr<BorderProvider>(new TripleScreenBorderProvider(

@@ -37,25 +37,49 @@ public:// setters for providers
      * @brief setBorderProvider set the BorderProvider that should be used by the ArduinoConnector.
      *
      * Example:
-     * `builder.setBorderProvider(new MyBorderProvider());`
+     * `builder.setBorderProvider(shared_ptr<BorderProvider>(new MyBorderProvider()));`
      */
-    AmbiConnectorBuilder& setBorderProvider(std::shared_ptr<BorderProvider> provider);
+	AmbiConnectorBuilder& setBorderProvider(std::shared_ptr<BorderProvider> provider);
 
-    /**
-     * @brief Set the ScreenshotProvider that should be used by the ArduinoConnector.
-     *
-     * Example:
-     * `builder.setScreenshotProvider(new XlibScreenshot());`
-     */
-    AmbiConnectorBuilder& setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider);
+	/**
+	* @brief setBorderProvider set the BorderProvider that should be used by the ArduinoConnector.
+	*
+	* Example:
+	* `builder.setBorderProvider(new MyBorderProvider());`
+	*/
+	AmbiConnectorBuilder& setBorderProvider(BorderProvider* provider);
 
-    /**
-     * @brief Set the AmbiColorDataProvider the ArduinoConnector shall use.
-     *
-     * Example:
-     * `builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));`
-     */
-    AmbiConnectorBuilder& setAmbiColorDataProvider(std::shared_ptr<AmbiColorDataProvider> provider);
+	/**
+	* @brief Set the ScreenshotProvider that should be used by the ArduinoConnector.
+	*
+	* Example:
+	* `builder.setScreenshotProvider(shared_ptr<ScreenshotProvider>(new XlibScreenshot()));`
+	*/
+	AmbiConnectorBuilder& setScreenshotProvider(std::shared_ptr<ScreenshotProvider> provider);
+
+	/**
+	* @brief Set the ScreenshotProvider that should be used by the ArduinoConnector.
+	*
+	* Example:
+	* `builder.setScreenshotProvider(new XlibScreenshot());`
+	*/
+	AmbiConnectorBuilder& setScreenshotProvider(ScreenshotProvider* provider);
+
+	/**
+	* @brief Set the AmbiColorDataProvider the ArduinoConnector shall use.
+	*
+	* Example:
+	* `builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));`
+	*/
+	AmbiConnectorBuilder& setAmbiColorDataProvider(std::shared_ptr<AmbiColorDataProvider> provider);
+
+	/**
+	* @brief Set the AmbiColorDataProvider the ArduinoConnector shall use.
+	*
+	* Example:
+	* `builder.setAmbiColorDataProvider(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount));`
+	*/
+	AmbiConnectorBuilder& setAmbiColorDataProvider(AmbiColorDataProvider* provider);
 
     /**
      * @brief Set the port the ArduinoConnector shall use

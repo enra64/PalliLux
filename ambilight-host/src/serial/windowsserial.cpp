@@ -1,11 +1,25 @@
 #include "windowsserial.h"
 
+#include <string>
+
+using namespace std;
+
 void WindowsSerial::waitForData() const
 {
+	// do busy-waiting as long as i cant fix WaitCommEvent never returning :/
+	return;
 	DWORD dwEventMask;
+	
+	// set the comm mask to wait for data-set-ready state change
+	if (!SetCommMask(mSerialHandle, EV_RXCHAR))
+		throw SerialException("SetCommMask failed: error code " + to_string(GetLastError()));
+
 	// wait for any character
-	if (!WaitCommEvent(mSerialHandle, &dwEventMask, nullptr))
-		throw SerialException("failure while waiting for serial event");
+	if (!WaitCommEvent(mSerialHandle, &dwEventMask, nullptr)) {
+		DWORD lastError = GetLastError();
+		throw SerialException("error " + to_string(lastError) + " while waiting for serial event");
+	}
+		
 }
 
 void WindowsSerial::send(const uint8_t* buf, size_t len) const
@@ -63,7 +77,7 @@ void WindowsSerial::open(const std::string& port)
 		if (GetLastError() == ERROR_FILE_NOT_FOUND)
 			throw SerialException(std::string(port + std::string(" is not available")));
 		else
-			throw SerialException("unknown error occured during serial open");
+			throw SerialException("unknown error " + to_string(GetLastError()) + " occured during serial open");
 	}
 
 	// If connected we try to set the comm parameters
@@ -89,7 +103,8 @@ void WindowsSerial::open(const std::string& port)
 
 	// Flush any remaining characters in the buffers
 	PurgeComm(mSerialHandle, PURGE_RXCLEAR | PURGE_TXCLEAR);
-	// We wait 2s as the arduino board will be reseting
+
+	// We wait 2s as the arduino board will be resetting
 	Sleep(2000);
 }
 
@@ -117,7 +132,7 @@ bool WindowsSerial::deviceExists(const std::string& port) const
 	return serialHandle != INVALID_HANDLE_VALUE;
 }
 
-bool WindowsSerial::good(const std::string& ttyDevice) const
+bool WindowsSerial::good() const
 {
 	throw std::runtime_error("not implemented");
 }

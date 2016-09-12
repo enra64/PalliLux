@@ -5,6 +5,8 @@
 
 #include "letterboxingautoconfigdialog.h"
 
+#include "screenshotfactory.h"
+
 #include <ambicolordataprovider.h>
 #include <letterboxometer.h>
 #include <singlescreenborderprovider.h>
@@ -50,7 +52,7 @@ QString SingleScreenConfigPage::infoText() const {
 void SingleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const
 {
     // instantiate and set the desired screenshot class
-    builder.setScreenshotProvider(IScreenConfigPage::getPlatformAppropriateScreenshotProvider());
+    builder.setScreenshotProvider(ScreenshotFactory::getPlatformAppropriateScreenshotProvider());
 
     // instantiate and set a single screen BorderProvider
     builder.setBorderProvider(getSingleScreenBorderProvider());
