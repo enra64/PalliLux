@@ -181,7 +181,7 @@ if(UNIX)
         # add spectrometer files to target
         target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
         
-        # pulseaudio libs
+        #  pulseaudio libs
         TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
         TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
         
