@@ -51,7 +51,7 @@ int main() {
 	shared_ptr<ArduinoConnector> connector = builder.build();
 
     // try sending to the arduino
-    try {
+    //try {
         // establish connection
         connector->connect(mDefaultTtyDevice);
 
@@ -63,9 +63,9 @@ int main() {
 
             cout << "avg draw fps:" << connector->getCurrentFps() << endl;
         }
-    } catch(ArduinoConnectorException e) {
+    /*} catch(ArduinoConnectorException e) {
         cout << "Ambiconnector experienced an exception: " << e.what() << endl;
-	}/*
+	}
 	catch (SerialException e) {
 		cout << "Ambiconnector experienced a serial communication exception: " << e.what() << endl;
 	}*/

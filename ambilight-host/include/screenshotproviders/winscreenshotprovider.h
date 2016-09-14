@@ -3,7 +3,6 @@
 
 #include "screenshotprovider.h"
 
-
 /**
  * @brief An implementation of the Screenshot interface for windows
  */
@@ -20,6 +19,8 @@ public:
 	 * @return the time in seconds required
 	 */
 	float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) override;
+private:
+	uint8_t* mPixelBuffer;
 };
 
 #endif // WINSCREENSHOT_H
