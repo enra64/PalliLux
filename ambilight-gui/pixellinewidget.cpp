@@ -6,22 +6,30 @@
 using namespace Magick;
 using namespace std;
 
-PixelLineWidget::PixelLineWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::PixelLineWidget) {
-    ui->setupUi(this);
+PixelLineWidget::PixelLineWidget(QWidget *parent) : QWidget(parent) {
+    // add a root layout for our widgets
+    setLayout(new QVBoxLayout(this));
+
+    // create & add checkbox for enabling the widget
+    mEnableCheckBox = new QCheckBox("Show last pixel line", this);
+    //layout()->addWidget(new QCheckBox(this));
+    layout()->addWidget(mEnableCheckBox);
+
+    connect(mEnableCheckBox, SIGNAL(clicked(bool)), this, SLOT(toggled(bool)));
 
     // create label
     mPixelLine = new QLabel(this);
-}
 
-PixelLineWidget::~PixelLineWidget() {
-    delete ui;
+    // add pixel line label-image to layout
+    layout()->addWidget(mPixelLine);
+
+    // conform visibility to initial checkbox state
+    mPixelLine->setVisible(mEnableCheckBox->isChecked());
 }
 
 void PixelLineWidget::update(Image *pixelLine) {
     // only calculate if necessary
-    if(!mEnable)
+    if(!mEnableCheckBox->isChecked())
         return;
 
     // save the image into a blob
@@ -36,12 +44,8 @@ void PixelLineWidget::update(Image *pixelLine) {
     mPixelLine->setPixmap(mLinePixmap.scaled(mPixelLine->width(), mPixelLine->height()));
 }
 
-void PixelLineWidget::on_fpsMeterCheckbox_clicked(bool checked) {
-    mEnable = checked;
-
+void PixelLineWidget::toggled(bool checked)
+{
     // en/disable display
-    if(mEnable)
-        ui->pixelLineWidgetLayout->addWidget(mPixelLine);
-    else
-        ui->pixelLineWidgetLayout->removeWidget(mPixelLine);
+    mPixelLine->setVisible(checked);
 }

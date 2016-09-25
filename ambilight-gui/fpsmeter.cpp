@@ -4,9 +4,15 @@
 #include "ui_fpsmeter.h"
 
 
-FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter) {
-    // set up ui
-    ui->setupUi(this);
+FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
+    // add a root layout for our widgets
+    setLayout(new QVBoxLayout(this));
+
+    // create & add checkbox for enabling the widget
+    mEnableCheckBox = new QCheckBox("Show FPS graph", this);
+    layout()->addWidget(mEnableCheckBox);
+
+    connect(mEnableCheckBox, SIGNAL(clicked(bool)), this, SLOT(toggled(bool)));
 
     // set up chart
     setupChart();
@@ -14,7 +20,6 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent), ui(new Ui::FpsMeter) {
 
 FpsMeter::~FpsMeter() {
     delete mFpsChartView;
-    delete ui;
 }
 
 #ifdef QT_CHARTS_FOUND
@@ -49,6 +54,12 @@ void FpsMeter::setupChart() {
     // create two points in the average fps line series to draw a straight line
     mAverageFpsLineSeries->append(0, 0);
     mAverageFpsLineSeries->append(CONCURRENT_FPS_VALUES, 0);
+
+    // add the chart widget to the layout
+    layout()->addWidget(mFpsChartView);
+
+    // and finally, conform visibility to initial checkbox state
+    mFpsChartView->setVisible(mEnableCheckBox->isChecked());
 }
 
 float FpsMeter::getHistoryAverage() {
@@ -60,7 +71,7 @@ float FpsMeter::getHistoryAverage() {
 
 void FpsMeter::update(float fpsValue) {
     // avoid calculations if possible
-    if(!mEnable)
+    if(!mEnableCheckBox->isChecked())
         return;
 
     // wrap around at the end of the chart
@@ -81,18 +92,12 @@ void FpsMeter::update(float fpsValue) {
     mFpsChartView->repaint();
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
-    mEnable = checked;
-
+void FpsMeter::toggled(bool checked){
     // en/disable display
-    if(mEnable)
-        ui->fpsMeterLayout->addWidget(mFpsChartView);
-    else
-        ui->fpsMeterLayout->removeWidget(mFpsChartView);
+    mFpsChartView->setVisible(checked);
 }
 #else
 void FpsMeter::setupChart() {
-    ui->fpsMeterCheckbox->setEnabled(false);
     mFpsLabel = new QLabel(this);
     mFpsLabel->setText("-");
 }
@@ -103,12 +108,6 @@ void FpsMeter::update(float fpsValue) {
 }
 
 void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
-    mEnable = checked;
-
-    // en/disable display
-    if(mEnable)
-        ui->fpsMeterLayout->addWidget(mFpsLabel);
-    else
-        ui->fpsMeterLayout->removeWidget(mFpsLabel);
+    mFpsLabel->setVisible(checked);
 }
 #endif //QT_CHARTS_FOUND

@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include "customexceptions.h"
+
 #include <Magick++.h>
 
 using namespace Magick;
@@ -14,7 +16,8 @@ XlibScreenshotProvider::XlibScreenshotProvider() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
-    if(!mDisplay) throw "Cannot connect to X server";
+    if(!mDisplay)
+        throw ScreenshotException("Cannot connect to X server");
 
     // get the root window
     mRootWindow = RootWindow(mDisplay, DefaultScreen(mDisplay));
@@ -33,7 +36,7 @@ float XlibScreenshotProvider::getScreenCrop(Image &result, const Geometry& d) {
 
     // check output
     if(!xImage)
-        throw "Could not create XImage";
+        throw ScreenshotException("XImage could not be created, perhaps invalid screen boundaries");
 
     // create a magick++ image from the screenshot
     result.read(xImage->width, xImage->height, "BGRA", Magick::CharPixel, xImage->data);

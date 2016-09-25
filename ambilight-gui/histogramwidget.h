@@ -1,14 +1,11 @@
 #ifndef HISTOGRAMWIDGET_H
 #define HISTOGRAMWIDGET_H
 
+#include <QCheckBox>
 #include <QLabel>
 #include <QWidget>
 
 #include <Magick++.h>
-
-namespace Ui {
-class HistogramWidget;
-}
 
 class HistogramWidget : public QWidget
 {
@@ -16,21 +13,17 @@ class HistogramWidget : public QWidget
 
 public:
     explicit HistogramWidget(QWidget *parent = 0);
-    ~HistogramWidget();
 
     void update(Magick::Image *lineImg);
 
 private slots:
-    void on_fpsMeterCheckbox_clicked(bool checked);
+    void toggled(bool checked);
 
 private:
-    Ui::HistogramWidget *ui;
-
-private:
-    bool mEnable;///< true if the histogram should be shown
+    QCheckBox* mEnableCheckBox;///< checkbox used to dis/enable widget display
     QString mHistogramLocation;///< the location of the temporary histogram file
     QPixmap mHistogram;///< a pixmap of our histogram
-    QLabel* mHistogramView;///< the label used to display our histogram
+    QLabel* mHistogramView = nullptr;///< the label used to display our histogram
 
 };
 

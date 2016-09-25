@@ -44,11 +44,8 @@ FORMS    += mainwindow.ui \
     singlescreenconfigpage.ui \
     triplescreenconfigpage.ui \
     letterboxingautoconfigdialog.ui \
-    fpsmeter.ui \
     backlightconfigpage.ui \
-    backlightdialog.ui \
-    pixellinewidget.ui \
-    histogramwidget.ui
+    backlightdialog.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){

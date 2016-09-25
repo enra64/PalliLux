@@ -34,17 +34,20 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
     // update border width
     ui->borderWidthSpinbox->setValue(static_cast<int>(getBorderProvider()->getBorderWidth()));
 
-    // set up fps widget
-    mFpsMeter = new FpsMeter(this);
-    ui->controlDialogMiscLayout->addWidget(mFpsMeter);
-
     // set up last line widget
     mLastLineWidget = new PixelLineWidget(this);
     ui->controlDialogMiscLayout->addWidget(mLastLineWidget);
 
+    // set up fps widget
+    mFpsMeter = new FpsMeter(this);
+    ui->controlDialogMiscLayout->addWidget(mFpsMeter);
+
     // set up histogram
     mHistogramWidget = new HistogramWidget(this);
     ui->controlDialogMiscLayout->addWidget(mHistogramWidget);
+
+    // nudge the dialog to stay at the smallest possible size
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 ControlDialog::~ControlDialog() {
@@ -110,6 +113,10 @@ void ControlDialog::on_runButton_clicked() {
             qApp->processEvents();
         } catch(ArduinoConnectorException e) {
             // ui update
+            updateStatus(string("catastrophic failure: ") + e.what(), true);
+            setButtonState(false);
+            break;
+        } catch (ScreenshotException e){
             updateStatus(string("catastrophic failure: ") + e.what(), true);
             setButtonState(false);
             break;

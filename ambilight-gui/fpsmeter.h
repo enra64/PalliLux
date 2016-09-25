@@ -1,6 +1,7 @@
 #ifndef FPSMETER_H
 #define FPSMETER_H
 
+#include <QCheckBox>
 #include <QLabel>
 #include <QWidget>
 
@@ -10,10 +11,6 @@
 #include <QtCharts/QValueAxis>
 QT_CHARTS_USE_NAMESPACE // using namespace qtcharts
 #endif // QT_CHARTS_FOUND
-
-namespace Ui {
-class FpsMeter;
-}
 
 class FpsMeter : public QWidget
 {
@@ -37,15 +34,14 @@ public:// interface
     void setEnabled(bool enable = true);
 
 private slots:
-    void on_fpsMeterCheckbox_clicked(bool checked);
+    void toggled(bool checked);
 
 private: // member functions
     void setupChart();
     float getHistoryAverage();
 
 private: // normal member variables
-    Ui::FpsMeter *ui;
-    bool mEnable = false;///< whether this display is currently displayed and updated
+    QCheckBox* mEnableCheckBox;///< checkbox used to dis/enable widget display
     unsigned int mFpsTickCount = 0;///< how many fps ticks have been displayed
     const static int CONCURRENT_FPS_VALUES = 200; ///< how many fps values may be in the graph at a time
     float mFpsHistory[CONCURRENT_FPS_VALUES];///< a history of the values to calc. a moving average
@@ -55,7 +51,7 @@ private: // qt charts members
     QLineSeries* mFpsLineSeries = new QLineSeries();///< the fps line series (fps data)
     QLineSeries* mAverageFpsLineSeries = new QLineSeries();///< the average fps line series
     QChart* mFpsChart = new QChart();///< the fps chart displayed by the chart view
-    QChartView* mFpsChartView;///< our fps chart view
+    QChartView* mFpsChartView = nullptr;///< our fps chart view
 #else
 private:  // alternative members
     QLabel* mFpsLabel;

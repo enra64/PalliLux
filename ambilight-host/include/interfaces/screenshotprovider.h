@@ -4,6 +4,21 @@
 #include <Magick++.h>
 
 /**
+ * @brief Exceptions occuring in the Screenshot code
+ */
+class ScreenshotException : public std::runtime_error
+{
+public:
+    /**
+     * @brief std::string constructor
+     * @param message the error message
+     */
+    ScreenshotException(const std::string& message) : runtime_error(message)
+    {
+    }
+};
+
+/**
  * @brief Interface for capturing screen areas
  */
 class ScreenshotProvider {

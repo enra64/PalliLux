@@ -108,8 +108,8 @@ endif(WIN32)
 # LIBRARY OR EXECUTABLE ?
 ######################################################################################################################################################
 ######################################################################################################################################################
-add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
-#add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+#add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
+add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
 
 
 ######################################################################################################################################################
@@ -155,7 +155,7 @@ endif(WIN32)
 
 include_directories(${ImageMagick_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
-#target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
+target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
 
 ######################################################################################################################################################
 # LINUX ONLY LIBRARIES
