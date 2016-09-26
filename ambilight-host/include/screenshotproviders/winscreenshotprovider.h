@@ -12,7 +12,6 @@
 // Modified to supply a DIB section to allow for direct pixel access
 class CScreenImage : public CImage {
 public:
-
 	// initialise the screen dc 
 	void createScreenDeviceContext() {
 		hDCScreen = ::CreateDC(_T("DISPLAY"), NULL, NULL, NULL);
@@ -93,6 +92,7 @@ public:
 private:
 	// storage space for the image
 	Image mImage;
+	CScreenImage mScreenshotImage;
 };
 
 #endif // WINSCREENSHOT_H

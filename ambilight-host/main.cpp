@@ -16,7 +16,7 @@ using namespace std;
 	string mDefaultTtyDevice("/dev/ttyUSB0");
 #elif _WIN32
 	#include "winscreenshotprovider.h"
-	string mDefaultTtyDevice("COM3");
+	string mDefaultTtyDevice("COM4");
 #else
 #error Platform not recognized
 #endif
@@ -38,7 +38,7 @@ int main() {
 
 	builder
 		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18, 60, 18))
-		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 1024, 0))
+		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 0, 0))
 		.setScreenshotProvider(getScreenshot());
 
 	/*

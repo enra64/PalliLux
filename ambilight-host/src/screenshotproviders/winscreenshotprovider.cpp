@@ -8,31 +8,32 @@ using namespace cimg_library;
 using namespace std;
 
 WinScreenshotProvider::WinScreenshotProvider() {
+	mScreenshotImage.createScreenDeviceContext();
 }
 
 WinScreenshotProvider::~WinScreenshotProvider() {
+	mScreenshotImage.releaseScreenDeviceContext();
 }
 
 void WinScreenshotProvider::takeScreenshot() {
 	// capture screen
-	CScreenImage img;
-	img.CaptureScreen();
+	mScreenshotImage.CaptureScreen();
 
 	// the code can only handle BGR -> 3 bytes
-	assert(img.GetBPP() / 8 == 3);
+	assert(mScreenshotImage.GetBPP() / 8 == 3);
 
 	// create result image with own bufferspace
-	mImage = Image(img.GetWidth(), img.GetHeight(), CIMG_2D_Z_LEVEL_COUNT, CHANNEL_COUNT);
+	mImage = Image(mScreenshotImage.GetWidth(), mScreenshotImage.GetHeight(), CIMG_2D_Z_LEVEL_COUNT, CHANNEL_COUNT);
 
 	// get image data from DIB
-	uint8_t* bits = static_cast<uint8_t*>(img.GetBits());
+	uint8_t* bits = static_cast<uint8_t*>(mScreenshotImage.GetBits());
 
 	int imageWidth = mImage.width();
 
-	for (int row = 0; row < img.GetHeight(); row++) {
+	for (int row = 0; row < mScreenshotImage.GetHeight(); row++) {
 		// get a pointer to the DIB section row start
 		// pitch -> how many bytes are used per line (not necessarily equal to the amount of RGB bytes due to padding)
-		uint8_t* rowStart = bits + img.GetPitch() * row;
+		uint8_t* rowStart = bits + mScreenshotImage.GetPitch() * row;
 
 		// get pointers to the CImg color locations
 		uint8_t* redStart = mImage.data(0, row, 0, CIMG_RED_CHANNEL);
@@ -52,7 +53,8 @@ float WinScreenshotProvider::getScreenCrop(Image& result, const Geometry& d) {
 	// benchmarking
 	clock_t start = clock();
 
-	result = mImage.crop(d.xOffset, d.yOffset, d.right(), d.bottom());
+	// TODO: this is somewhat fucked up if you have more than one monitor, as currently only the center one will be captured
+	result = mImage.get_crop(d.left(), d.top(), d.right(), d.bottom());
 
 	// benchmarking end
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;

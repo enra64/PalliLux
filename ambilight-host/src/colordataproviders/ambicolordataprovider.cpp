@@ -35,16 +35,20 @@ float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 	// take the border screenshot
 	mBorderProvider->retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
 
+	// save all borders
+	//debugSaveBorders();
+
 	// scale the images down first to minimize processing time
 	flattenBorders();
 
-	// debug save
+	// save all borders
 	//debugSaveBorders();
+	
 	// second, align the borders so they form a line
 	unique_ptr<Image> pixelLine = alignBorders();
 
 	// debug print
-	//pixelLine->write("flataligned.jpg");
+	//pixelLine->save("flataligned.bmp");
 
 	// last, convert the line to rgb data
 	imageToRgb(move(pixelLine), resultBuffer);
@@ -71,13 +75,12 @@ std::unique_ptr<Image> AmbiColorDataProvider::alignBorders()
 	return std::unique_ptr<Image>(result);
 }
 
-void AmbiColorDataProvider::flattenBorders()
-{
+void AmbiColorDataProvider::flattenBorders() {
 	// scale all border images to a line one pixel high
-	mBottomImage.resize(mBottomLedGeometry.width, mBottomLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 1);
-	mRightImage.resize(mRightLedGeometry.width, mRightLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 1);
-	mTopImage.resize(mTopLedGeometry.width, mTopLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 1);
-	mLeftImage.resize(mLeftLedGeometry.width, mLeftLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 1);
+	mBottomImage.resize(mBottomLedGeometry.width, mBottomLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mRightImage.resize(mRightLedGeometry.width, mRightLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mTopImage.resize(mTopLedGeometry.width, mTopLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mLeftImage.resize(mLeftLedGeometry.width, mLeftLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
 }
 
 void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)
@@ -97,8 +100,8 @@ void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_
 
 void AmbiColorDataProvider::debugSaveBorders()
 {
-	mRightImage.save("test/r.jpg");
-	mLeftImage.save("test/l.jpg");
-	mTopImage.save("test/t.jpg");
-	mBottomImage.save("test/b.jpg");
+	mRightImage.save("r.bmp");
+	mLeftImage.save("l.bmp");
+	mTopImage.save("t.bmp");
+	mBottomImage.save("b.bmp");
 }

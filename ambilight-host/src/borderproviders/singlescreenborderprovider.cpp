@@ -40,7 +40,7 @@ void SingleScreenBorderProvider::updateGeometry()
 
 void SingleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image& left, Image& bottom)
 {
-    //check whether we have a ScreenshotProvider
+    // check for a ScreenshotProvider
     assert(mScreenshotProvider);
 
 	// call takeScreenshot in case the screenshot provider needs it

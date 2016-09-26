@@ -13,6 +13,14 @@ struct Dimensions {
 	T xOffset = 0;///< object horizontal offset
 	T yOffset = 0;///< object vertical offset
 
+	T top() const {
+		return yOffset;
+	}
+
+	T left() const {
+		return xOffset;
+	}
+
 	T right() const {
 		return xOffset + width;
 	}
