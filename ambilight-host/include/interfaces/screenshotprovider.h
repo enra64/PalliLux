@@ -9,7 +9,8 @@ namespace cimg_library {
 	// avoid magic numbers
 	const uint8_t CIMG_RED_CHANNEL = 0, CIMG_GREEN_CHANNEL = 1, CIMG_BLUE_CHANNEL = 2;
 	const uint8_t CIMG_2D_Z_LEVEL = 0, CIMG_2D_Z_LEVEL_COUNT = 1;
-	const uint8_t CHANNEL_COUNT = 3;
+	const uint8_t CIMG_CHANNEL_COUNT = 3;
+	const bool CIMG_SHARED_MEMORY = true, CIMG_NO_SHARED_MEMORY = false;
 }
 
 /**

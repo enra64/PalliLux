@@ -65,7 +65,7 @@ public:
 	}
 
 	bool CaptureScreen() throw() {
-		CRect rect(0, 0, ::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
+		CRect rect(0, 0, 1920, 1080);// ::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
 		return CaptureRect(rect);
 	}
 private:
@@ -93,6 +93,7 @@ private:
 	// storage space for the image
 	Image mImage;
 	CScreenImage mScreenshotImage;
+	uint8_t* mImageBuffer = nullptr;
 };
 
 #endif // WINSCREENSHOT_H

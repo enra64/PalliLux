@@ -13,6 +13,7 @@ WinScreenshotProvider::WinScreenshotProvider() {
 
 WinScreenshotProvider::~WinScreenshotProvider() {
 	mScreenshotImage.releaseScreenDeviceContext();
+	delete[] mImageBuffer;
 }
 
 void WinScreenshotProvider::takeScreenshot() {
@@ -22,8 +23,12 @@ void WinScreenshotProvider::takeScreenshot() {
 	// the code can only handle BGR -> 3 bytes
 	assert(mScreenshotImage.GetBPP() / 8 == 3);
 
+	// if we have never allocated memory for the image, do it now, but otherwise, we just keep reusing the memory to avoid allocation
+	if (mImageBuffer == nullptr)
+		mImageBuffer = new uint8_t[CIMG_CHANNEL_COUNT * mScreenshotImage.GetHeight() * mScreenshotImage.GetWidth()];
+
 	// create result image with own bufferspace
-	mImage = Image(mScreenshotImage.GetWidth(), mScreenshotImage.GetHeight(), CIMG_2D_Z_LEVEL_COUNT, CHANNEL_COUNT);
+	mImage = Image(mImageBuffer, mScreenshotImage.GetWidth(), mScreenshotImage.GetHeight(), CIMG_2D_Z_LEVEL_COUNT, CIMG_CHANNEL_COUNT, CIMG_SHARED_MEMORY);
 
 	// get image data from DIB
 	uint8_t* bits = static_cast<uint8_t*>(mScreenshotImage.GetBits());
