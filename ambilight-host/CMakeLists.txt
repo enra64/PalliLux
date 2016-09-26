@@ -103,7 +103,6 @@ if(WIN32)
 endif(WIN32)
 
 
-
 ######################################################################################################################################################
 ######################################################################################################################################################
 # LIBRARY OR EXECUTABLE ?
@@ -130,17 +129,67 @@ if(DEBUG_MODE)
 endif(DEBUG_MODE)
 
 
+
 ######################################################################################################################################################
-# OPTIONS
+# direct x screenshot support
+# Thanks to the people of h3dapi for the find-direct-x-snippet:
+# https://www.h3dapi.org:8090/HAPI/trunk/build/modules/FindDirectX.cmake
 ######################################################################################################################################################
-option(X11 "find and include x11 lib" ON)
-option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
+if(WIN32)
+	option(DIRECTX "include direct x screenshot provider" ON)
+
+	if(DIRECTX)
+		# Look for the header file.
+		FIND_PATH( DirectX_INCLUDE_DIR 
+					NAMES 
+						d3d9.h
+					PATHS 
+					   "$ENV{DXSDK_DIR}Include"
+				    DOC "Path in which d3dx9.h and d3d9.h are located." )
+		
+		# Look for the library.
+		FIND_LIBRARY( DirectX_d3d9_LIBRARY 
+					NAMES d3d9.lib
+					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
+					DOC "Path to d3d9.lib" )
+					
+		FIND_LIBRARY( DirectX_d3dx9_LIBRARY 
+					NAMES d3dx9.lib
+					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
+					DOC "Path to d3dx9.lib" )
+
+		# Copy the results to the output variables.
+		IF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
+			SET(DirectX_FOUND 1)
+			SET(DirectX_LIBRARIES ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY} )
+			SET(DirectX_INCLUDE_DIR ${DirectX_INCLUDE_DIR})
+		ELSE(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )		  
+			# report that this just wont work
+			MESSAGE(FATAL_ERROR "DirectX was not found!")
+		ENDIF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
+		
+		target_sources(${PROJECT_NAME} 
+			PUBLIC 
+				"src/screenshotproviders/d3dscreenshotprovider.cpp"
+				"include/screenshotproviders/d3dscreenshotprovider.h")
+	
+		INCLUDE_DIRECTORIES ( ${DirectX_INCLUDE_DIR} )
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY})
+	
+	endif(DIRECTX)
+endif(WIN32)
 
 
 ######################################################################################################################################################
 # LINUX ONLY LIBRARIES
 ######################################################################################################################################################
 if(UNIX)
+
+	######################################################################################################################################################
+	# OPTIONS
+	######################################################################################################################################################
+	option(X11 "find and include x11 lib" ON)
+	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 
 
 ######################################################################################################################################################
