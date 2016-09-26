@@ -26,7 +26,7 @@ public:
 		// detach and destroy the old bitmap if any attached
 		CImage::Destroy();
 
-		// create a screen and a memory device context
+		// create a memory device context
 		HDC hDCMem = ::CreateCompatibleDC(hDCScreen);
 
 		// configure bitmapinfo
@@ -34,7 +34,7 @@ public:
 		memset(&bmi, 0, sizeof(BITMAPINFO));
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 		bmi.bmiHeader.biWidth = rect.Width();
-		bmi.bmiHeader.biHeight = rect.Height(); // top-down
+		bmi.bmiHeader.biHeight = rect.Height();
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 24;
 		bmi.bmiHeader.biCompression = BI_RGB;
@@ -47,7 +47,8 @@ public:
 		// bit-blit from screen to memory device context
 		// note: CAPTUREBLT flag is required to capture layered windows
 		DWORD dwRop = SRCCOPY | CAPTUREBLT;
-		bool bRet = ::BitBlt(hDCMem, 0, 0, rect.Width(), rect.Height(),
+		bool bRet = ::BitBlt(hDCMem, 0, 0, 
+			rect.Width(), rect.Height(),
 			hDCScreen,
 			rect.left, rect.top, dwRop);
 
@@ -65,7 +66,7 @@ public:
 	}
 
 	bool CaptureScreen() throw() {
-		CRect rect(0, 0, 1920, 1080);// ::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
+		CRect rect(0, 0, ::GetSystemMetrics(SM_CXSCREEN), ::GetSystemMetrics(SM_CYSCREEN));
 		return CaptureRect(rect);
 	}
 private:
