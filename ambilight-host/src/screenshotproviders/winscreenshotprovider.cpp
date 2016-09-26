@@ -1,109 +1,59 @@
 #include "winscreenshotprovider.h"
 
 #include <ctime>
-#include <stdexcept>
-#include <assert.h>
 #include <iostream>
-#include <fstream>
+#include <assert.h>
 
-#include <windows.h>
-#include <gdiplus.h>
-#include <stdio.h>
-
-using namespace Magick;
+using namespace cimg_library;
 using namespace std;
 
-WinScreenshotProvider::WinScreenshotProvider()
-{
-	mPixelBuffer = new uint8_t[8294400];
+WinScreenshotProvider::WinScreenshotProvider() {
 }
 
-WinScreenshotProvider::~WinScreenshotProvider()
-{
-	delete[] mPixelBuffer;
+WinScreenshotProvider::~WinScreenshotProvider() {
 }
 
-float WinScreenshotProvider::getScreenCrop(Magick::Image& result, const Geometry& d)
-{
-	// benchmarking start
+void WinScreenshotProvider::takeScreenshot() {
+	// capture screen
+	CScreenImage img;
+	img.CaptureScreen();
+
+	// the code can only handle BGR -> 3 bytes
+	assert(img.GetBPP() / 8 == 3);
+
+	// create result image with own bufferspace
+	mImage = Image(img.GetWidth(), img.GetHeight(), CIMG_2D_Z_LEVEL_COUNT, CHANNEL_COUNT);
+
+	// get image data from DIB
+	uint8_t* bits = static_cast<uint8_t*>(img.GetBits());
+
+	int imageWidth = mImage.width();
+
+	for (int row = 0; row < img.GetHeight(); row++) {
+		// get a pointer to the DIB section row start
+		// pitch -> how many bytes are used per line (not necessarily equal to the amount of RGB bytes due to padding)
+		uint8_t* rowStart = bits + img.GetPitch() * row;
+
+		// get pointers to the CImg color locations
+		uint8_t* redStart = mImage.data(0, row, 0, CIMG_RED_CHANNEL);
+		uint8_t* greenStart = mImage.data(0, row, 0, CIMG_GREEN_CHANNEL);
+		uint8_t* blueStart = mImage.data(0, row, 0, CIMG_BLUE_CHANNEL);
+
+		// copy R, then G, then B into the result images buffer
+		for (int pixelIndex = 0; pixelIndex < imageWidth; pixelIndex++) {
+			blueStart[pixelIndex] = rowStart[3 * pixelIndex + 0];
+			greenStart[pixelIndex] = rowStart[3 * pixelIndex + 1];
+			redStart[pixelIndex] = rowStart[3 * pixelIndex + 2];
+		}
+	}
+}
+
+float WinScreenshotProvider::getScreenCrop(Image& result, const Geometry& d) {
+	// benchmarking
 	clock_t start = clock();
 
-	int nScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int nScreenHeight = GetSystemMetrics(SM_CYSCREEN);
-	HWND hDesktopWnd = GetDesktopWindow();
-	HDC hDesktopDC = GetDC(hDesktopWnd);
-	HDC hCaptureDC = CreateCompatibleDC(hDesktopDC);
-	HBITMAP hCaptureBitmap = CreateCompatibleBitmap(hDesktopDC, nScreenWidth, nScreenHeight);
-	SelectObject(hCaptureDC, hCaptureBitmap);
-	BitBlt(hCaptureDC, 0, 0, nScreenWidth, nScreenHeight,
-		hDesktopDC, 0, 0, SRCCOPY | CAPTUREBLT);
+	result = mImage.crop(d.xOffset, d.yOffset, d.right(), d.bottom());
 
-	BITMAPINFO info = { 0 };
-	info.bmiHeader.biSize = sizeof(info);
-
-	if (0 == GetDIBits(hCaptureDC, hCaptureBitmap, 0, 0, NULL, &info, DIB_RGB_COLORS))
-		throw std::runtime_error("could not get bitmapinfo");
-
-
-	//info.bmiHeader.biBitCount = 32;
-	info.bmiHeader.biCompression = BI_RGB;// uncompressed RGB
-	//info.bmiHeader.biHeight = abs(info.bmiHeader.biHeight);
-
-
-	// get the actual bitmap buffer
-	if (0 == GetDIBits(
-		hCaptureDC,
-		hCaptureBitmap,
-		0,
-		info.bmiHeader.biHeight,
-		mPixelBuffer,
-		&info,
-		DIB_RGB_COLORS))
-		throw std::runtime_error("could not get bitmap buffer");
-
-	ofstream file("terst.argb", ios::trunc | ios::binary | ios::out);
-	if (!file.good())
-		cout << "at" << endl;
-	file.write((char*) mPixelBuffer, info.bmiHeader.biSizeImage);
-	file << fflush;
-	file.close();
-
-	//result.read(info.bmiHeader.biWidth, info.bmiHeader.biHeight, "ARGB", CharPixel, mPixelBuffer);
-	result.read("terst.rgba");
-
-	//result.size(Geometry(info.bmiHeader.biWidth, info.bmiHeader.biHeight));
-	//result.modifyImage();
-
-	/*or:
-	setpixels(0, 0, w, h)
-	readpixels(8bit, pixelBuffer);
-	*/
-
-	//result.setPixels(0, 0, info.bmiHeader.biWidth, info.bmiHeader.biHeight);
-	//result.readPixels(MagickCore::QuantumType::RGBQuantum, mPixelBuffer);
-
-	/*Magick::Quantum* pixels = result.getPixels(0, 0, info.bmiHeader.biWidth, info.bmiHeader.biHeight);
-
-
-
-	for (long row = 0; row < info.bmiHeader.biHeight; row++) {
-		for (long col = 0; col < info.bmiHeader.biWidth; col++) {
-			result.pixelColor(col, row,
-				Color(double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 0]) / 255.0 * QuantumRange,
-					double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 0]) / 255.0 * QuantumRange,
-					double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 0]) / 255.0 * QuantumRange));
-				// convert our 0-255 channels to magick's 0-QuantumRange channels
-				//pixels[row * info.bmiHeader.biWidth + col + 0] = 0;//double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 0]) / 255.0 * QuantumRange;
-			//pixels[row * info.bmiHeader.biWidth + col + 1] = 0;// double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 1]) / 255.0 * QuantumRange;
-			//pixels[row * info.bmiHeader.biWidth + col + 2] = 0;// double(mPixelBuffer[row * info.bmiHeader.biHeight + info.bmiHeader.biWidth + 2]) / 255.0 * QuantumRange;
-		}
-	}*/
-	//result.syncPixels();
-
-	ReleaseDC(hDesktopWnd, hDesktopDC);
-	DeleteDC(hCaptureDC);
-	DeleteObject(hCaptureBitmap);
-
-	// return benchmarking value
+	// benchmarking end
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }

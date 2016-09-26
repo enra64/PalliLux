@@ -1,8 +1,6 @@
 #ifndef AMBICOLORDATAPROVIDER_H
 #define AMBICOLORDATAPROVIDER_H
 
-#include <Magick++.h>
-
 #include <cstdint>
 #include <memory>
 
@@ -21,7 +19,15 @@ public:
      * @param verticalLedCount how many leds are on each vertical border
      * @param horizontalLedCount how many leds are on each horizontal border
      */
-    AmbiColorDataProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount);
+    AmbiColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount);
+
+	/**
+	* @brief create a new AmbiColorDataProvider
+	* @param provider the BorderProvider that will be used to capture the screen borders
+	* @param verticalLedCount how many leds are on both vertical borders
+	* @param horizontalLedCount how many leds are on both horizontal borders
+	*/
+	AmbiColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount);
 
     /**
      * @brief Retrieves border images and provides rgb output data
@@ -30,11 +36,11 @@ public:
     float getData(uint8_t* resultSpace) override;
 
     /**
-     * @brief This function gives ownership of the last line of pixels used for color extraction as a Magick::Image.
+     * @brief This function gives ownership of the last line of pixels used for color extraction as a Image.
      *
      * This data may be used for debugging, but is also nice to look at in runtime.
      */
-    std::unique_ptr<Magick::Image> getLastLineImage() {
+    std::unique_ptr<Image> getLastLineImage() {
         return move(mLastLineImage);
     }
 
@@ -58,7 +64,7 @@ private:
      * @brief Rotate the border images to align them for fusing to a line of pixels
      * @return pointer to the new, aligned image.
      */
-    std::unique_ptr<Magick::Image> alignBorders();
+    std::unique_ptr<Image> alignBorders();
 
     /**
      * @brief Scale down the image data to a line of pixels as long as we have leds
@@ -70,7 +76,7 @@ private:
      * @param lineBorder an image with a width equal to the number of leds, and a height of 1.
      * @param result buffer space for the resulting data. size requirement may be requested with getRequiredBufferLength()
      */
-    void imageToRgb(std::unique_ptr<Magick::Image> lineBorder, uint8_t* result);
+    void imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result);
 
     /**
      * @brief save the current border images to disk
@@ -82,14 +88,15 @@ private:
      *   Magick++-images used to store the borders while processing them
      */
     ///@{
-    Magick::Image mRightImage, mTopImage, mLeftImage, mBottomImage;
+    Image mRightImage, mTopImage, mLeftImage, mBottomImage;
     ///@}
 
-    std::unique_ptr<Magick::Image> mLastLineImage;///< last complete border image, scaled down
+    std::unique_ptr<Image> mLastLineImage;///< last complete border image, scaled down
 
-    Magick::Geometry mHorizontalLedGeometry;///< horizontal scaling target geometry
-
-    Magick::Geometry mVerticalLedGeometry; ///< vertical scaling target geometry
+	Geometry mBottomLedGeometry;///< bottom led row length, basically
+	Geometry mRightLedGeometry;///< right led row length, basically
+	Geometry mTopLedGeometry;///< top led row length, basically
+	Geometry mLeftLedGeometry;///< left led row length, basically
 
     std::shared_ptr<BorderProvider> mBorderProvider; ///< class instance used to create the images of each border
 };

@@ -1,8 +1,6 @@
 #ifndef BORDERPROVIDER_H
 #define BORDERPROVIDER_H
 
-#include "Magick++.h"
-
 #include "screenshotprovider.h"
 
 #include <memory>
@@ -22,7 +20,7 @@ public:
     /**
      * @brief This function captures each screen border into a Magick++ image. The size of the returned images does not matter
      */
-    virtual void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) = 0;
+    virtual void retrieveBorders(Image& right, Image& top, Image& left, Image& bottom) = 0;
 
     /**
      * @brief Retrieve the current border width in pixels

@@ -37,7 +37,7 @@ int main() {
 	AmbiConnectorBuilder builder;
 
 	builder
-		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18))
+		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18, 60, 18))
 		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 1024, 0))
 		.setScreenshotProvider(getScreenshot());
 

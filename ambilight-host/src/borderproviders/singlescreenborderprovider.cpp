@@ -2,8 +2,6 @@
 
 #include "assert.h"
 
-using namespace Magick;
-
 SingleScreenBorderProvider::SingleScreenBorderProvider(size_t width, size_t height,
     size_t xOffset, size_t yOffset,
     size_t letterboxOffsetX, size_t letterboxOffsetY) :
@@ -40,7 +38,7 @@ void SingleScreenBorderProvider::updateGeometry()
         (-mHorizontalLetterboxBarHeight) + mYOffset + mHeight - mBorderWidth);// y offset
 }
 
-void SingleScreenBorderProvider::retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom)
+void SingleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image& left, Image& bottom)
 {
     //check whether we have a ScreenshotProvider
     assert(mScreenshotProvider);

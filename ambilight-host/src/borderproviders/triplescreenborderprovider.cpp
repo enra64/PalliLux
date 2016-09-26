@@ -1,11 +1,8 @@
 #include "triplescreenborderprovider.h"
 
-#include <Magick++.h>
-
 #include <vector>
 #include <assert.h>
 
-using namespace Magick;
 using namespace std;
 
 TripleScreenBorderProvider::TripleScreenBorderProvider(size_t w1, size_t h1, size_t w2, size_t h2, size_t w3, size_t h3) : BorderProvider(), LEFT_SCREEN_WIDTH(w1), LEFT_SCREEN_HEIGHT(h1), CENTER_SCREEN_WIDTH(w2), CENTER_SCREEN_HEIGHT(h2), RIGHT_SCREEN_WIDTH(w3), RIGHT_SCREEN_HEIGHT(h3)
@@ -29,14 +26,15 @@ void TripleScreenBorderProvider::retrieveBorders(Image& right, Image& top, Image
 	// the bottom bar is located over several positions, so a different approach is required:
 	// we take single shots of each screen bottom, and then append those.
 
-	// list of images
-	vector<Image> bottomBorderVector = vector<Image>(3);
+	Image bottomCenter, bottomRight;
 
-    mScreenshotProvider->getScreenCrop(bottomBorderVector[0], mBottomLeftBorderDimensions);
-    mScreenshotProvider->getScreenCrop(bottomBorderVector[1], mBottomCenterBorderDimensions);
-    mScreenshotProvider->getScreenCrop(bottomBorderVector[2], mBottomRightBorderDimensions);
+	// get all bottom screenshots
+    mScreenshotProvider->getScreenCrop(bottom, mBottomLeftBorderDimensions);
+    mScreenshotProvider->getScreenCrop(bottomCenter, mBottomCenterBorderDimensions);
+    mScreenshotProvider->getScreenCrop(bottomRight, mBottomRightBorderDimensions);
 
-	appendImages(&bottom, bottomBorderVector.begin(), bottomBorderVector.end());
+	// append left-center-right
+	bottom.append(bottomCenter).append(bottomRight);
 }
 
 void TripleScreenBorderProvider::updateGeometry()

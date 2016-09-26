@@ -16,7 +16,7 @@ public:
 	/**
 	 * @brief This function creates a shot of each border; the rgb constructor can then use it to create the LED data
 	 */
-	void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) override;
+	void retrieveBorders(Image& right, Image& top, Image& left, Image& bottom) override;
 
 protected:
 	void updateGeometry() override;
@@ -54,13 +54,13 @@ private: // screen config info
 
 	//@{
 	/** resulting dimensions using the constants defined for the screen sizes  */
-	Magick::Geometry mTopBorderDimensions;
-	Magick::Geometry mLeftBorderDimensions;
-	Magick::Geometry mRightBorderDimensions;
+	Geometry mTopBorderDimensions;
+	Geometry mLeftBorderDimensions;
+	Geometry mRightBorderDimensions;
 
-	Magick::Geometry mBottomLeftBorderDimensions;
-	Magick::Geometry mBottomCenterBorderDimensions;
-	Magick::Geometry mBottomRightBorderDimensions;
+	Geometry mBottomLeftBorderDimensions;
+	Geometry mBottomCenterBorderDimensions;
+	Geometry mBottomRightBorderDimensions;
 	//@}
 };
 
