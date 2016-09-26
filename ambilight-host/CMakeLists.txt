@@ -109,8 +109,13 @@ endif(WIN32)
 # LIBRARY OR EXECUTABLE ?
 ######################################################################################################################################################
 ######################################################################################################################################################
-add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
-#add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+option(MAIN_CPP_EXECUTABLE "compile the main.cpp, and create an executable file" OFF)
+
+if(MAIN_CPP_EXECUTABLE)
+	add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
+else(MAIN_CPP_EXECUTABLE)
+	add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+endif(MAIN_CPP_EXECUTABLE)
 
 
 ######################################################################################################################################################
@@ -118,8 +123,11 @@ add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
 # debug mode?
 ######################################################################################################################################################
 ######################################################################################################################################################
-set(CMAKE_BUILD_TYPE Debug)
+option(DEBUG_MODE "use cmake debug build type" ON)
 
+if(DEBUG_MODE)
+	set(CMAKE_BUILD_TYPE Debug)
+endif(DEBUG_MODE)
 
 
 ######################################################################################################################################################
