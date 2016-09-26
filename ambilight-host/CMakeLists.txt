@@ -20,9 +20,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 # get qt creator to show these headers
 SET(BASE_HEADERS
+	"cimg/CImg.h"
     "include/arduinoconnector.h"
     "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
+	"include/geometry.h"
     "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
     "include/borderproviders/triplescreenborderprovider.h"
@@ -32,7 +34,6 @@ SET(BASE_HEADERS
     "include/datafilters/pulsingfilter.h"
     "include/colordataproviders/ambicolordataprovider.h"
     "include/colordataproviders/constantcolordataprovider.h"
-    "include/screenshotproviders/vlcscreenshotprovider.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
     "include/interfaces/colordataprovider.h"
@@ -52,12 +53,12 @@ SET(BASE_SOURCES
     "src/datafilters/lowpassfilter.cpp"
     "src/datafilters/pulsingfilter.cpp"
     "src/colordataproviders/ambicolordataprovider.cpp"
-    "src/colordataproviders/constantcolordataprovider.cpp"
-    "src/screenshotproviders/vlcscreenshotprovider.cpp")
+    "src/colordataproviders/constantcolordataprovider.cpp")
 
 
 #include subdirectories
 include_directories(
+	"cimg"
     "include"
     "include/serial"
     "include/interfaces"
@@ -127,35 +128,6 @@ set(CMAKE_BUILD_TYPE Debug)
 option(X11 "find and include x11 lib" ON)
 option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 
-
-######################################################################################################################################################
-# IMAGEMAGICK - REQUIRED
-######################################################################################################################################################
-
-find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
-
-find_package(ImageMagick COMPONENTS MagickCore)
-
-# circumvent that magickcore does not seem to be found on windows systems
-if(WIN32)
-    # check whether this workaround (for missing *core) even applies
-    if(ImageMagick_Magick++_FOUND AND NOT ImageMagick_MagickCore_FOUND)
-        # this relative path *should* be correct...
-        SET(enra_ImageMagickCore ${ImageMagick_Magick++_INCLUDE_DIR}/../lib/CORE_RL_MagickCore_.lib)
-        # does it exist, though?
-        if(NOT EXISTS ${enra_ImageMagickCore})
-            message(FATAL_ERROR "Magick++, but not MagickCore was found on your system!")
-	else(NOT EXISTS ${enra_ImageMagickCore})
-            # that relative file exists, we probably have found our library
-            SET(ImageMagick_LIBRARIES ${ImageMagick_LIBRARIES} ${enra_ImageMagickCore})
-            message(STATUS "MagickCore workaround was activated; a MagickCore.lib file was found")
-	endif(NOT EXISTS ${enra_ImageMagickCore})	
-    endif(ImageMagick_Magick++_FOUND AND NOT ImageMagick_MagickCore_FOUND)
-endif(WIN32)
-
-include_directories(${ImageMagick_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
-#target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
 
 ######################################################################################################################################################
 # LINUX ONLY LIBRARIES
