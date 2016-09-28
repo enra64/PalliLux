@@ -4,8 +4,6 @@
 #include <QLabel>
 #include <QWidget>
 
-#include <Magick++.h>
-
 namespace Ui {
 class HistogramWidget;
 }
@@ -18,7 +16,7 @@ public:
     explicit HistogramWidget(QWidget *parent = 0);
     ~HistogramWidget();
 
-    void update(Magick::Image *lineImg);
+    void update(Image *lineImg);
 
 private slots:
     void on_fpsMeterCheckbox_clicked(bool checked);

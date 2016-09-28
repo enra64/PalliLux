@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QWidget>
 
-#include <Magick++.h>
+#include "include_img_lib.h"
 
 namespace Ui {
 class PixelLineWidget;
@@ -19,14 +19,13 @@ public:
     ~PixelLineWidget();
 
 public:// interaction methods
-    void update(Magick::Image *pixelLine);
+    void update(Image *pixelLine);
 
 private slots:
     void on_fpsMeterCheckbox_clicked(bool checked);
 
 private:
     QLabel* mPixelLine;///< label used to display line of pixels
-    Magick::Blob mBlob;///< data blob used to temporarily store the image data
     QPixmap mLinePixmap;///< pixmap used to load the data into a Qt format
     bool mEnable;///< whether or not the image should be displayed
 

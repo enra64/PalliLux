@@ -37,7 +37,9 @@ HEADERS  += mainwindow.h \
     backlightdialog.h \
     pixellinewidget.h \
     histogramwidget.h \
-    screenshotfactory.h
+    screenshotfactory.h \
+    cimg/CImg.h \
+    include_img_lib.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui \
