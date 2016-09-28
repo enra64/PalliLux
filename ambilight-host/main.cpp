@@ -11,12 +11,17 @@
 
 using namespace std;
 
+#define USE_DX 1
+
 #ifdef __linux__
 	#include "xlibscreenshotprovider.h"
 	string mDefaultTtyDevice("/dev/ttyUSB0");
-#elif _WIN32
+#elif _WIN32 && !USE_DX
 	#include "winscreenshotprovider.h"
-	string mDefaultTtyDevice("COM4");
+	string mDefaultTtyDevice("COM3");
+#elif _WIN32 && USE_DX
+	#include "d3dscreenshotprovider.h"
+	string mDefaultTtyDevice("COM3");
 #else
 #error Platform not recognized
 #endif
@@ -25,8 +30,10 @@ shared_ptr<ScreenshotProvider> getScreenshot()
 {
 	#ifdef __linux__
 	return static_pointer_cast<ScreenshotProvider>(make_shared<XlibScreenshotProvider>());
-	#elif _WIN32
+	#elif _WIN32 && !USE_DX
 	return static_pointer_cast<ScreenshotProvider>(make_shared<WinScreenshotProvider>());
+	#elif _WIN32 && USE_DX
+	return static_pointer_cast<ScreenshotProvider>(make_shared<D3DScreenshotProvider>());
 	#else
 	#error Platform not recognized
 	#endif

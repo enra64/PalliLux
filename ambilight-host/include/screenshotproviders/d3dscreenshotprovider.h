@@ -3,6 +3,9 @@
 
 #include "screenshotprovider.h"
 
+#include <d3d9.h>
+#include <d3dx9.h>
+
 /**
 * @brief An implementation of the Screenshot interface for windows
 */
@@ -20,6 +23,13 @@ public:
 	* @return the time in seconds required
 	*/
 	float getScreenCrop(Image& result, const Geometry& d) override;
+private:
+	Image mImage;
+	uint8_t* mImageBuffer = nullptr;
+
+	IDirect3D9*			g_pD3D = nullptr;
+	IDirect3DDevice9*	g_pd3dDevice = nullptr;
+	IDirect3DSurface9*	g_pSurface = nullptr;
 };
 
 #endif // D3DSCREENSHOTPROVIDER_H
