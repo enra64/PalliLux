@@ -61,11 +61,6 @@ win32 {
     # windows screenshot stuff
     LIBS += -luser32 -lgdi32
 
-    # windows imagemagick - sadly hardcoded, as i could not find a way to do this properly
-    LIBS += "C:\Program Files\ImageMagick-7.0.3-Q16\lib\CORE_RL_Magick++_.lib"
-    LIBS += "C:\Program Files\ImageMagick-7.0.3-Q16\lib\CORE_RL_MagickCore_.lib"
-    INCLUDEPATH += "C:\Program Files\ImageMagick-7.0.3-Q16\include"
-
     # ignore unknown pragmas in stuff not written by me
     #QMAKE_CXXFLAGS += -Wnounknown-pragmas
 
@@ -85,10 +80,6 @@ unix {
     LIBS += -lpulse-simple
     # pa_strerror is in here
     LIBS += -lpulse
-
-    # magick++
-    QMAKE_CXXFLAGS += $(shell Magick++-config --cppflags --cxxflags)
-    LIBS += $(shell Magick++-config --ldflags --libs)
 
     # static ambilight lib
     LIBS += "/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-host-Desktop-Default/libhost.a"
