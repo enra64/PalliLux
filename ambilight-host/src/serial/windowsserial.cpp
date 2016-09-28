@@ -6,6 +6,15 @@ using namespace std;
 
 void WindowsSerial::waitForData() const
 {
+	COMSTAT status;
+	do {
+		DWORD errors;
+
+		// Use the ClearCommError function to get status info on the Serial port
+		ClearCommError(mSerialHandle, nullptr, &status);
+	}
+	// Check if there is something to read
+	while (status.cbInQue <= 0);
 	// do busy-waiting as long as i cant fix WaitCommEvent never returning :/
 	return;
 	DWORD dwEventMask;
@@ -134,5 +143,6 @@ bool WindowsSerial::deviceExists(const std::string& port) const
 
 bool WindowsSerial::good() const
 {
+	return true;
 	throw std::runtime_error("not implemented");
 }

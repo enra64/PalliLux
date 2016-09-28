@@ -22,16 +22,16 @@ public:
      */
     SingleScreenBorderProvider(size_t width, size_t height, size_t xOffset = 0, size_t yOffset = 0, size_t letterboxOffsetX = 0, size_t letterboxOffsetY = 0);
 
-	void retrieveBorders(Magick::Image& right, Magick::Image& top, Magick::Image& left, Magick::Image& bottom) override;
+	void retrieveBorders(Image& right, Image& top, Image& left, Image& bottom) override;
 
 protected:
 	void updateGeometry() override;
 
 private:
-    Magick::Geometry mRightGeometry;///< right border geometry
-    Magick::Geometry mTopGeometry;///< top border geometry
-    Magick::Geometry mLeftGeometry;///< left border geometry
-    Magick::Geometry mBottomGeometry;///< bottom border geometry
+    Geometry mRightGeometry;///< right border geometry
+    Geometry mTopGeometry;///< top border geometry
+    Geometry mLeftGeometry;///< left border geometry
+    Geometry mBottomGeometry;///< bottom border geometry
 
     size_t mWidth;///< screen geometry in pixels
     size_t mHeight;///< screen geometry in pixels

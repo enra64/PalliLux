@@ -14,7 +14,7 @@ class HistogramWidget : public QWidget
 public:
     explicit HistogramWidget(QWidget *parent = 0);
 
-    void update(Magick::Image *lineImg);
+    void update(Image *lineImg);
 
 private slots:
     void toggled(bool checked);

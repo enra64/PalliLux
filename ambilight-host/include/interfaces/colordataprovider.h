@@ -14,15 +14,23 @@
  */
 class ColorDataProvider {
 public:
-    /**
-     * @brief Create a ColorDataProvider parametrized with the given led count
-     * @param horizontalLedCount
-     * @param verticalLedCount
-     */
-    ColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) :
-        HORIZONTAL_LED_COUNT(horizontalLedCount),
-        VERTICAL_LED_COUNT(verticalLedCount) {
-    }
+	/**
+	* @brief Create a ColorDataProvider parametrized with the given led count
+	* @param horizontalLedCount
+	* @param verticalLedCount
+	*/
+	ColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) :
+		BOTTOM_LED_COUNT(horizontalLedCount), RIGHT_LED_COUNT(verticalLedCount), TOP_LED_COUNT(horizontalLedCount), LEFT_LED_COUNT(verticalLedCount) {
+	}
+
+	/**
+	* @brief Create a ColorDataProvider parametrized with the given led count
+	* @param horizontalLedCount
+	* @param verticalLedCount
+	*/
+	ColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount) :
+		BOTTOM_LED_COUNT(bottomLedCount), RIGHT_LED_COUNT(rightLedCount), TOP_LED_COUNT(topLedCount), LEFT_LED_COUNT(leftLedCount) {
+	}
 
     /**
      * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
@@ -107,11 +115,12 @@ protected:
         }
     }
 
-    const size_t HORIZONTAL_LED_COUNT;///< amount of leds on each horizontal border
+	const size_t BOTTOM_LED_COUNT;///< amount of leds on bottom border
+	const size_t RIGHT_LED_COUNT;///< amount of leds on right border
+    const size_t TOP_LED_COUNT;///< amount of leds on top border
+    const size_t LEFT_LED_COUNT;///< amount of leds on left border
 
-    const size_t VERTICAL_LED_COUNT;///< amount of leds on each vertical border
-
-    const size_t LED_COUNT = VERTICAL_LED_COUNT * 2 + HORIZONTAL_LED_COUNT * 2;///< aggregated led count
+    const size_t LED_COUNT = BOTTOM_LED_COUNT + RIGHT_LED_COUNT + TOP_LED_COUNT + LEFT_LED_COUNT;///< aggregated led count
 
     std::unordered_map<std::string, std::unique_ptr<DataFilter>> mDataFilters;///< List of DataFilter objects that will be applied to the rgb data
 };

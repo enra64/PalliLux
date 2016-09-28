@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <Magick++.h>
+
 
 #include "screenshotprovider.h"
 
@@ -41,26 +41,26 @@ private:// constant or input members
 private://functions
     /**
      * @brief Check whether a bar is completely black (In accordance with LetterboxOMeter::mBlackThreshold)
-     * @param img the Magick::Image to be checked
+     * @param img the Image to be checked
      * @return true if no pixel had a channel brighter than LetterboxOMeter::mBlackThreshold.
      */
-    bool isBlack(Magick::Image img);
+    bool isBlack(Image img);
 
     /**
      * @brief Returns a horizontal bar
      * @param height how many pixels the bar is high
      * @param topOffset how many pixels the bar is removed from the top
-     * @return a Magick::Geometry specification of the bar
+     * @return a Geometry specification of the bar
      */
-	Magick::Geometry getHorizontalBar(size_t height, size_t topOffset) const;
+	Geometry getHorizontalBar(size_t height, size_t topOffset) const;
 
     /**
      * @brief Returns a vertical bar
      * @param width how many pixels the bar is wide
      * @param leftOffset how many pixels the bar is removed from the left
-     * @return a Magick::Geometry specification of the bar
+     * @return a Geometry specification of the bar
      */
-	Magick::Geometry getVerticalBar(size_t width, size_t leftOffset) const;
+	Geometry getVerticalBar(size_t width, size_t leftOffset) const;
 };
 
 #endif

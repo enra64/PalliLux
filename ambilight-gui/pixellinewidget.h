@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QWidget>
 
-#include <Magick++.h>
 
 class PixelLineWidget : public QWidget
 {
@@ -15,7 +14,7 @@ public:
     explicit PixelLineWidget(QWidget *parent = 0);
 
 public:// interaction methods
-    void update(Magick::Image *pixelLine);
+    void update(Image *pixelLine);
 
 private slots:
     void toggled(bool checked);

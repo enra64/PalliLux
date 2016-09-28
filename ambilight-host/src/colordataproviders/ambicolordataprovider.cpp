@@ -1,22 +1,28 @@
 #include "ambicolordataprovider.h"
 
-using namespace Magick;
+
 using namespace std;
+using namespace cimg_library;
 
 #include <vector>
 #include <ctime>
 #include <iostream>
 #include <assert.h>
 
-AmbiColorDataProvider::AmbiColorDataProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount)
-    : ColorDataProvider(horizontalLedCount, verticalLedCount)
+AmbiColorDataProvider::AmbiColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount)
+    : ColorDataProvider(bottomLedCount, rightLedCount, topLedCount, leftLedCount)
 {
-	// set geometries, ignoring aspect ratio
-	mVerticalLedGeometry = Magick::Geometry(1, VERTICAL_LED_COUNT);
-	mVerticalLedGeometry.aspect(true);
+	// set geometries
+	mBottomLedGeometry = Geometry(bottomLedCount, 1);
+	mTopLedGeometry = Geometry(topLedCount, 1);
 
-	mHorizontalLedGeometry = Geometry(HORIZONTAL_LED_COUNT, 1);
-	mHorizontalLedGeometry.aspect(true);
+	mLeftLedGeometry = Geometry(1, leftLedCount);
+	mRightLedGeometry = Geometry(1, rightLedCount);
+}
+
+AmbiColorDataProvider::AmbiColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) : 
+	AmbiColorDataProvider(horizontalLedCount, verticalLedCount, horizontalLedCount, verticalLedCount)
+{
 }
 
 float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
@@ -29,16 +35,20 @@ float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 	// take the border screenshot
 	mBorderProvider->retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
 
+	// save all borders
+	//debugSaveBorders();
+
 	// scale the images down first to minimize processing time
 	flattenBorders();
 
-	// debug save
+	// save all borders
 	//debugSaveBorders();
+	
 	// second, align the borders so they form a line
 	unique_ptr<Image> pixelLine = alignBorders();
 
 	// debug print
-	//pixelLine->write("flataligned.jpg");
+	//pixelLine->save("flataligned.bmp");
 
 	// last, convert the line to rgb data
 	imageToRgb(move(pixelLine), resultBuffer);
@@ -60,27 +70,17 @@ std::unique_ptr<Image> AmbiColorDataProvider::alignBorders()
 	Image* result = new Image();
 
 	// append the borders to a single image
-	vector<Image> borderList = vector<Image>();
-	borderList.push_back(mBottomImage);
-	borderList.push_back(mRightImage);
-	borderList.push_back(mTopImage);
-	borderList.push_back(mLeftImage);
-
-	// append the rotated images to a line
-	appendImages(result, borderList.begin(), borderList.end());
+	result->append(mBottomImage).append(mRightImage).append(mTopImage).append(mLeftImage);
 
 	return std::unique_ptr<Image>(result);
 }
 
-void AmbiColorDataProvider::flattenBorders()
-{
-	// scale the vertical border images to a line
-	mRightImage.scale(mVerticalLedGeometry);
-	mLeftImage.scale(mVerticalLedGeometry);
-
-	// scale the horizontal border images to a line
-	mTopImage.scale(mHorizontalLedGeometry);
-	mBottomImage.scale(mHorizontalLedGeometry);
+void AmbiColorDataProvider::flattenBorders() {
+	// scale all border images to a line one pixel high
+	mBottomImage.resize(mBottomLedGeometry.width, mBottomLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mRightImage.resize(mRightLedGeometry.width, mRightLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mTopImage.resize(mTopLedGeometry.width, mTopLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+	mLeftImage.resize(mLeftLedGeometry.width, mLeftLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
 }
 
 void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)
@@ -88,12 +88,10 @@ void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_
 	// for each led
 	for (unsigned int i = 0; i < LED_COUNT; i++)
 	{
-		// retrieve rgb data from the line
-		ColorRGB data = lineBorder->pixelColor(i, 0);
 		// convert from 0-1 to 0-255
-		result[i * 3 + 0] = (255 * data.red());
-		result[i * 3 + 1] = (255 * data.green());
-		result[i * 3 + 2] = (255 * data.blue());
+		result[i * 3 + 0] = lineBorder->atXY(i, 0, CIMG_2D_Z_LEVEL, CIMG_RED_CHANNEL);
+		result[i * 3 + 1] = lineBorder->atXY(i, 0, CIMG_2D_Z_LEVEL, CIMG_GREEN_CHANNEL);
+		result[i * 3 + 2] = lineBorder->atXY(i, 0, CIMG_2D_Z_LEVEL, CIMG_BLUE_CHANNEL);
 		//cout << "R" << to_string(result[i + 0]) << " G" << to_string(result[i + 1]) << " B" << to_string(result[i + 2]) << std::endl;
 	}
 
@@ -102,8 +100,8 @@ void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_
 
 void AmbiColorDataProvider::debugSaveBorders()
 {
-	mRightImage.write("test/r.jpg");
-	mLeftImage.write("test/l.jpg");
-	mTopImage.write("test/t.jpg");
-	mBottomImage.write("test/b.jpg");
+	mRightImage.save("r.bmp");
+	mLeftImage.save("l.bmp");
+	mTopImage.save("t.bmp");
+	mBottomImage.save("b.bmp");
 }

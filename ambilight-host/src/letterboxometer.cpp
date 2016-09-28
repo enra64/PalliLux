@@ -2,8 +2,8 @@
 
 #include <utility>
 
-using namespace Magick;
 using namespace std;
+using namespace cimg_library;
 
 LetterboxOMeter::LetterboxOMeter(
     std::shared_ptr<ScreenshotProvider> screenshotProvider, size_t w, size_t h, size_t xOff, size_t yOff, uint8_t blackThreshold) :
@@ -44,13 +44,12 @@ std::pair<int, int> LetterboxOMeter::measure() {
     return make_pair(letterboxHorizontalBarHeight, letterboxVerticalBarWidth);
 }
 
-bool LetterboxOMeter::isBlack(Magick::Image img) {
-    for (size_t x = 0; x < img.geometry().width(); x++) {
-        for (size_t y = 0; y < img.geometry().height(); y++) {
-            ColorRGB data = img.pixelColor(x, y);
-            if (data.red() * 255.0 > mBlackThreshold) return false;
-            if (data.green() * 255.0 > mBlackThreshold) return false;
-            if (data.blue() * 255.0 > mBlackThreshold) return false;
+bool LetterboxOMeter::isBlack(Image img) {
+    for (size_t x = 0; x < img.width(); x++) {
+        for (size_t y = 0; y < img.height(); y++) {
+            if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_RED_CHANNEL) > mBlackThreshold) return false;
+            if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_GREEN_CHANNEL) > mBlackThreshold) return false;
+            if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_BLUE_CHANNEL) > mBlackThreshold) return false;
         }
     }
     return true;

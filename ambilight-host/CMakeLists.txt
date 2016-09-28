@@ -32,7 +32,6 @@ SET(BASE_HEADERS
     "include/datafilters/pulsingfilter.h"
     "include/colordataproviders/ambicolordataprovider.h"
     "include/colordataproviders/constantcolordataprovider.h"
-    "include/screenshotproviders/vlcscreenshotprovider.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
     "include/interfaces/colordataprovider.h"
@@ -52,12 +51,12 @@ SET(BASE_SOURCES
     "src/datafilters/lowpassfilter.cpp"
     "src/datafilters/pulsingfilter.cpp"
     "src/colordataproviders/ambicolordataprovider.cpp"
-    "src/colordataproviders/constantcolordataprovider.cpp"
-    "src/screenshotproviders/vlcscreenshotprovider.cpp")
+    "src/colordataproviders/constantcolordataprovider.cpp")
 
 
 #include subdirectories
 include_directories(
+	"cimg"
     "include"
     "include/serial"
     "include/interfaces"
@@ -108,8 +107,13 @@ endif(WIN32)
 # LIBRARY OR EXECUTABLE ?
 ######################################################################################################################################################
 ######################################################################################################################################################
-#add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
-add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+option(MAIN_CPP_EXECUTABLE "compile the main.cpp, and create an executable file" OFF)
+
+if(MAIN_CPP_EXECUTABLE)
+	add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
+else(MAIN_CPP_EXECUTABLE)
+	add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+endif(MAIN_CPP_EXECUTABLE)
 
 
 ######################################################################################################################################################
@@ -117,50 +121,74 @@ add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
 # debug mode?
 ######################################################################################################################################################
 ######################################################################################################################################################
-set(CMAKE_BUILD_TYPE Debug)
+option(DEBUG_MODE "use cmake debug build type" ON)
+
+if(DEBUG_MODE)
+	set(CMAKE_BUILD_TYPE Debug)
+endif(DEBUG_MODE)
 
 
 
 ######################################################################################################################################################
-# OPTIONS
+# direct x screenshot support
+# Thanks to the people of h3dapi for the find-direct-x-snippet:
+# https://www.h3dapi.org:8090/HAPI/trunk/build/modules/FindDirectX.cmake
 ######################################################################################################################################################
-option(X11 "find and include x11 lib" ON)
-option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
-
-
-######################################################################################################################################################
-# IMAGEMAGICK - REQUIRED
-######################################################################################################################################################
-
-find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
-
-find_package(ImageMagick COMPONENTS MagickCore)
-
-# circumvent that magickcore does not seem to be found on windows systems
 if(WIN32)
-    # check whether this workaround (for missing *core) even applies
-    if(ImageMagick_Magick++_FOUND AND NOT ImageMagick_MagickCore_FOUND)
-        # this relative path *should* be correct...
-        SET(enra_ImageMagickCore ${ImageMagick_Magick++_INCLUDE_DIR}/../lib/CORE_RL_MagickCore_.lib)
-        # does it exist, though?
-        if(NOT EXISTS ${enra_ImageMagickCore})
-            message(FATAL_ERROR "Magick++, but not MagickCore was found on your system!")
-	else(NOT EXISTS ${enra_ImageMagickCore})
-            # that relative file exists, we probably have found our library
-            SET(ImageMagick_LIBRARIES ${ImageMagick_LIBRARIES} ${enra_ImageMagickCore})
-            message(STATUS "MagickCore workaround was activated; a MagickCore.lib file was found")
-	endif(NOT EXISTS ${enra_ImageMagickCore})	
-    endif(ImageMagick_Magick++_FOUND AND NOT ImageMagick_MagickCore_FOUND)
+	option(DIRECTX "include direct x screenshot provider" ON)
+
+	if(DIRECTX)
+		# Look for the header file.
+		FIND_PATH( DirectX_INCLUDE_DIR 
+					NAMES 
+						d3d9.h
+					PATHS 
+					   "$ENV{DXSDK_DIR}Include"
+				    DOC "Path in which d3dx9.h and d3d9.h are located." )
+		
+		# Look for the library.
+		FIND_LIBRARY( DirectX_d3d9_LIBRARY 
+					NAMES d3d9.lib
+					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
+					DOC "Path to d3d9.lib" )
+					
+		FIND_LIBRARY( DirectX_d3dx9_LIBRARY 
+					NAMES d3dx9.lib
+					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
+					DOC "Path to d3dx9.lib" )
+
+		# Copy the results to the output variables.
+		IF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
+			SET(DirectX_FOUND 1)
+			SET(DirectX_LIBRARIES ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY} )
+			SET(DirectX_INCLUDE_DIR ${DirectX_INCLUDE_DIR})
+		ELSE(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )		  
+			# report that this just wont work
+			MESSAGE(FATAL_ERROR "DirectX was not found!")
+		ENDIF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
+		
+		target_sources(${PROJECT_NAME} 
+			PUBLIC 
+				"src/screenshotproviders/d3dscreenshotprovider.cpp"
+				"include/screenshotproviders/d3dscreenshotprovider.h")
+	
+		INCLUDE_DIRECTORIES ( ${DirectX_INCLUDE_DIR} )
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY})
+	
+	endif(DIRECTX)
 endif(WIN32)
 
-include_directories(${ImageMagick_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
-target_compile_options(${PROJECT_NAME} PUBLIC "-DMAGICKCORE_HDRI_ENABLE=1" "-DMAGICKCORE_QUANTUM_DEPTH=16")
 
 ######################################################################################################################################################
 # LINUX ONLY LIBRARIES
 ######################################################################################################################################################
 if(UNIX)
+
+	######################################################################################################################################################
+	# OPTIONS
+	######################################################################################################################################################
+	option(X11 "find and include x11 lib" ON)
+	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 
 
 ######################################################################################################################################################

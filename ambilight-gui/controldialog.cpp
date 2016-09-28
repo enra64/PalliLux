@@ -16,8 +16,6 @@
 #include "pixellinewidget.h"
 #include "fpsmeter.h"
 
-#include <Magick++.h>
-
 using namespace std;
 
 ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *parent, const QString& infoString) :
@@ -98,7 +96,7 @@ void ControlDialog::on_runButton_clicked() {
             updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
 
             // get last border line
-            std::unique_ptr<Magick::Image> lastLine = getColorDataProvider()->getLastLineImage();
+            std::unique_ptr<Image> lastLine = getColorDataProvider()->getLastLineImage();
 
             // update fps widget
             mFpsMeter->update(mArduinoConnector->getCurrentFps());

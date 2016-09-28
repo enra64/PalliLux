@@ -20,7 +20,7 @@ public:
      * @param d the dimensions the image will be; these are the dimensions requested from X
      * @return the time in seconds required
      */
-    float getScreenCrop(Magick::Image& result, const Magick::Geometry &d) override;
+    float getScreenCrop(Image& result, const Geometry &d) override;
 
 private:
     /**

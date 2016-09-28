@@ -11,11 +11,16 @@
 
 using namespace std;
 
+#define USE_DX 1
+
 #ifdef __linux__
 	#include "xlibscreenshotprovider.h"
 	string mDefaultTtyDevice("/dev/ttyUSB0");
-#elif _WIN32
+#elif _WIN32 && !USE_DX
 	#include "winscreenshotprovider.h"
+	string mDefaultTtyDevice("COM3");
+#elif _WIN32 && USE_DX
+	#include "d3dscreenshotprovider.h"
 	string mDefaultTtyDevice("COM3");
 #else
 #error Platform not recognized
@@ -25,8 +30,10 @@ shared_ptr<ScreenshotProvider> getScreenshot()
 {
 	#ifdef __linux__
 	return static_pointer_cast<ScreenshotProvider>(make_shared<XlibScreenshotProvider>());
-	#elif _WIN32
+	#elif _WIN32 && !USE_DX
 	return static_pointer_cast<ScreenshotProvider>(make_shared<WinScreenshotProvider>());
+	#elif _WIN32 && USE_DX
+	return static_pointer_cast<ScreenshotProvider>(make_shared<D3DScreenshotProvider>());
 	#else
 	#error Platform not recognized
 	#endif
@@ -37,8 +44,8 @@ int main() {
 	AmbiConnectorBuilder builder;
 
 	builder
-		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18))
-		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 1024, 0))
+		.setAmbiColorDataProvider(new AmbiColorDataProvider(60, 18, 60, 18))
+		.setBorderProvider(new SingleScreenBorderProvider(1920, 1080, 0, 0))
 		.setScreenshotProvider(getScreenshot());
 
 	/*
@@ -51,7 +58,7 @@ int main() {
 	shared_ptr<ArduinoConnector> connector = builder.build();
 
     // try sending to the arduino
-    try {
+    //try {
         // establish connection
         connector->connect(mDefaultTtyDevice);
 
@@ -63,9 +70,9 @@ int main() {
 
             cout << "avg draw fps:" << connector->getCurrentFps() << endl;
         }
-    } catch(ArduinoConnectorException e) {
+    /*} catch(ArduinoConnectorException e) {
         cout << "Ambiconnector experienced an exception: " << e.what() << endl;
-	}/*
+	}
 	catch (SerialException e) {
 		cout << "Ambiconnector experienced a serial communication exception: " << e.what() << endl;
 	}*/

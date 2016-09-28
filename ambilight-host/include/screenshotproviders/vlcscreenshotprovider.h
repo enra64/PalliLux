@@ -15,14 +15,14 @@ public:
 	 * @param d the dimensions the image will be; these are the dimensions cropped from the screenshot
 	 * @return the time in seconds required
 	 */
-	float getScreenCrop(Magick::Image& result, const Magick::Geometry& d) override;
+	float getScreenCrop(Image& result, const Geometry& d) override;
 
 	/**
 	 * @brief Read the vlc stream
 	 */
 	void takeScreenshot() override;
 private:
-    Magick::Image mLastScreenshot;///< last screenshot taken
+    Image mLastScreenshot;///< last screenshot taken
     const char* mStreamPath = "/home/arne/stream"; ///< vlc stream input file
 };
 
