@@ -2,7 +2,7 @@
 
 #include <ctime>
 
-float VlcScreenshotProvider::getScreenCrop(Magick::Image& result, const Magick::Geometry& d)
+float VlcScreenshotProvider::getScreenCrop(Image& result, const Geometry& d)
 {
 	// benchmarking start
 	clock_t start = clock();
@@ -14,7 +14,7 @@ float VlcScreenshotProvider::getScreenCrop(Magick::Image& result, const Magick::
 	//TODO
 
 	// crop to the desired dimensions
-	result.crop(d);
+	result.crop(d.xOffset, d.yOffset, d.right(), d.bottom());
 
 	// return benchmarking value
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
