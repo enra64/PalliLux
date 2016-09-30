@@ -1,4 +1,4 @@
-#include "/home/arne/Documents/Development/ShittyAmbilight/ambilight-host/include/serial/linuxserial.h"
+#include "linuxserial.h"
 
 // assert
 // who would have guessed

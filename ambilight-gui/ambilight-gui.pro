@@ -81,10 +81,14 @@ unix {
     LIBS += -lpulse
 
     # static ambilight lib
-    LIBS += "/home/arne/Documents/Development/ShittyAmbilight/build-ambilight-host-Desktop-Default/libhost.a"
+    #LIBS += "/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Default/libhost.a"
+
+    # dynamic ambilight lib
+    LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Default -lhost
 }
 
-INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/include \
+INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/cimg \
+    $${AMBILIGHT_LIB_FOLDER}/include \
     $${AMBILIGHT_LIB_FOLDER}/include/borderproviders \
     $${AMBILIGHT_LIB_FOLDER}/include/interfaces \
     $${AMBILIGHT_LIB_FOLDER}/include/colordataproviders \

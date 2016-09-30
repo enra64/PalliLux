@@ -20,6 +20,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 # get qt creator to show these headers
 SET(BASE_HEADERS
+    "cimg/CImg.h"
+    "cimg/load_custom_channel_order.h"
     "include/arduinoconnector.h"
     "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
@@ -56,7 +58,7 @@ SET(BASE_SOURCES
 
 #include subdirectories
 include_directories(
-	"cimg"
+    "cimg"
     "include"
     "include/serial"
     "include/interfaces"
@@ -112,7 +114,12 @@ option(MAIN_CPP_EXECUTABLE "compile the main.cpp, and create an executable file"
 if(MAIN_CPP_EXECUTABLE)
 	add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
 else(MAIN_CPP_EXECUTABLE)
-	add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+    option(DYNAMIC_LIB "compile to a dynamic library instead of a static one" ON)
+    if(DYNAMIC_LIB)
+        add_library(${PROJECT_NAME} SHARED ${BASE_SOURCES} ${BASE_HEADERS})
+    else(DYNAMIC_LIB)
+        add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
+    endif(DYNAMIC_LIB)
 endif(MAIN_CPP_EXECUTABLE)
 
 
@@ -185,8 +192,7 @@ endif(WIN32)
 if(UNIX)
 
 	######################################################################################################################################################
-	# OPTIONS
-	######################################################################################################################################################
+	# OPTIONS	######################################################################################################################################################
 	option(X11 "find and include x11 lib" ON)
 	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 

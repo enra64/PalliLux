@@ -38,14 +38,15 @@ private slots:
 
     void on_borderWidthSpinbox_valueChanged(int arg1);
 
+    void on_interpolationTypeComboBox_currentIndexChanged(int index);
+
 private:
     void setButtonState(bool currentlyRunning);
     void updateStatus(const std::string &msg, bool isFailure = false);
     Ui::ControlDialog *ui;
     std::shared_ptr<ArduinoConnector> mArduinoConnector;
-
-private:
-    bool mEnableHistogram = false;
+    bool mStopClicked = false;
+    void setupInterpolationCombobox();
 
 private:// info widgets
     HistogramWidget* mHistogramWidget;
@@ -56,7 +57,6 @@ private:// fps chart stuff
     FpsMeter* mFpsMeter;
     std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiColorDataProvider> getColorDataProvider();
-    bool mStopClicked = false;
 
     // QWidget interface
 protected:

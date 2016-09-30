@@ -1,5 +1,5 @@
 #ifndef GEOMETRY_H
-#define GEOMETRY
+#define GEOMETRY_H
 
 template <typename T>
 struct Dimensions {

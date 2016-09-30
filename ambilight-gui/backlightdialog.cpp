@@ -44,7 +44,7 @@ BacklightDialog::~BacklightDialog() {
 }
 
 void BacklightDialog::on_backlightControlRedSlider_sliderMoved(int position) {
-    mColorProvider->setRed(ui->backlightControlRedSlider->value());
+    mColorProvider->setRed(position);
 }
 
 void BacklightDialog::on_backlightControlGreenSlider_sliderMoved(int position) {

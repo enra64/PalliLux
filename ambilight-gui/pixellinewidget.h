@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QWidget>
 
+#include "include_img_lib.h"
 
 class PixelLineWidget : public QWidget
 {
@@ -22,8 +23,8 @@ private slots:
 private:
     QLabel* mPixelLine = nullptr;///< label used to display line of pixels
     QCheckBox* mEnableCheckBox;///< checkbox used to dis/enable widget display
-    Magick::Blob mBlob;///< data blob used to temporarily store the image data
     QPixmap mLinePixmap;///< pixmap used to load the data into a Qt format
+    QString mTempLocation;
 };
 
 #endif // PIXELLINEWIDGET_H

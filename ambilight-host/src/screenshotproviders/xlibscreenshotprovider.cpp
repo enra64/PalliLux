@@ -8,9 +8,7 @@
 
 #include "customexceptions.h"
 
-#include <Magick++.h>
 
-using namespace Magick;
 
 XlibScreenshotProvider::XlibScreenshotProvider() {
     mDisplay = XOpenDisplay(getenv("DISPLAY"));
@@ -32,14 +30,15 @@ float XlibScreenshotProvider::getScreenCrop(Image &result, const Geometry& d) {
     clock_t start = clock();
 
     // get windows
-    XImage* xImage = XGetImage(mDisplay, mRootWindow, d.xOff(), d.yOff(), d.width(), d.height(), AllPlanes, ZPixmap);
+    // possibly use a plane_mask here? we dont need alpha, so 0xffffff00 would be appropriate i guess
+    XImage* xImage = XGetImage(mDisplay, mRootWindow, d.xOffset, d.yOffset, d.width, d.height, AllPlanes, ZPixmap);
 
     // check output
     if(!xImage)
         throw ScreenshotException("XImage could not be created, perhaps invalid screen boundaries");
 
-    // create a magick++ image from the screenshot
-    result.read(xImage->width, xImage->height, "BGRA", Magick::CharPixel, xImage->data);
+    // create an Image from the screenshot
+    result.read(xImage->data, "BGRA", 4, xImage->width, xImage->height, 3, nullptr, 0);
 
     // free memory
     XDestroyImage(xImage);

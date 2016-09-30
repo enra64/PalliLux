@@ -36,7 +36,7 @@ float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 	mBorderProvider->retrieveBorders(mRightImage, mTopImage, mLeftImage, mBottomImage);
 
 	// save all borders
-	//debugSaveBorders();
+    //debugSaveBorders();
 
 	// scale the images down first to minimize processing time
 	flattenBorders();
@@ -76,11 +76,14 @@ std::unique_ptr<Image> AmbiColorDataProvider::alignBorders()
 }
 
 void AmbiColorDataProvider::flattenBorders() {
-	// scale all border images to a line one pixel high
-	mBottomImage.resize(mBottomLedGeometry.width, mBottomLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
-	mRightImage.resize(mRightLedGeometry.width, mRightLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
-	mTopImage.resize(mTopLedGeometry.width, mTopLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
-	mLeftImage.resize(mLeftLedGeometry.width, mLeftLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, 4);
+    // translate the interpolation type from our enum to int
+    char interpolationType = static_cast<char>(mInterpolationType);
+
+    // scale all border images to a line one pixel high
+    mBottomImage.resize(mBottomLedGeometry.width, mBottomLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, PALLILUX_CHANNEL_COUNT, interpolationType);
+    mRightImage.resize(mRightLedGeometry.width, mRightLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, PALLILUX_CHANNEL_COUNT, interpolationType);
+    mTopImage.resize(mTopLedGeometry.width, mTopLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, PALLILUX_CHANNEL_COUNT, interpolationType);
+    mLeftImage.resize(mLeftLedGeometry.width, mLeftLedGeometry.height, CIMG_2D_Z_LEVEL_COUNT, PALLILUX_CHANNEL_COUNT, interpolationType);
 }
 
 void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)

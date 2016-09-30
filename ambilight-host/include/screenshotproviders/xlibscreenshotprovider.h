@@ -32,6 +32,11 @@ private:
      * @brief mRootWindow x window thingy
      */
     Window mRootWindow;
+
+    /**
+     * @brief mImage we need this image instance, because otherwise we cannot return a reference in getScreenCrop
+     */
+    Image mImage;
 };
 
 #endif // XLIBSCREENSHOT_H

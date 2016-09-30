@@ -58,6 +58,35 @@ public:
         return mBorderProvider;
     }
 
+    /**
+     * @brief Enum to de-magic-numberize the cimg interpolation type in use
+     */
+    enum struct CImgInterpolationType {
+        RawMemResize = -1,
+        FillUsingBoundaryConditions = 0,
+        NearestNeighbor = 1,
+        MovingAverage = 2,
+        LinearInterpolation = 3,
+        GridInterpolation = 4,
+        CubicInterpolation = 5,
+        LanczosInterpolation = 6
+    };
+
+    /**
+     * @brief Set the resize interpolation mode
+     */
+    void setResizeInterpolationMode(CImgInterpolationType mode){
+        mInterpolationType = mode;
+    }
+
+    /**
+     * @brief Get the currently used resize interpolation mode
+     */
+    CImgInterpolationType getResizeInterpolationMode(){
+        return mInterpolationType;
+    }
+
+
 private:
     // functions
     /**
@@ -84,6 +113,8 @@ private:
     void debugSaveBorders();
 
     //members
+    CImgInterpolationType mInterpolationType = CImgInterpolationType::GridInterpolation;///< the CImg interpolation type used for resizing the border images
+
     /**  @name images
      *   Magick++-images used to store the borders while processing them
      */

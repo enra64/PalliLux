@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QWidget>
 
-#include <Magick++.h>
+#include "include_img_lib.h"
 
 class HistogramWidget : public QWidget
 {
@@ -21,10 +21,11 @@ private slots:
 
 private:
     QCheckBox* mEnableCheckBox;///< checkbox used to dis/enable widget display
-    QString mHistogramLocation;///< the location of the temporary histogram file
+    QString mTempLocation;///< the location of the temporary histogram file
     QPixmap mHistogram;///< a pixmap of our histogram
     QLabel* mHistogramView = nullptr;///< the label used to display our histogram
 
+    const int NUMBER_OF_BINS = 128;///< amount of bins used in histogram
 };
 
 #endif // HISTOGRAMWIDGET_H

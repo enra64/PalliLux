@@ -45,8 +45,8 @@ std::pair<int, int> LetterboxOMeter::measure() {
 }
 
 bool LetterboxOMeter::isBlack(Image img) {
-    for (size_t x = 0; x < img.width(); x++) {
-        for (size_t y = 0; y < img.height(); y++) {
+    for (int x = 0; x < img.width(); x++) {
+        for (int y = 0; y < img.height(); y++) {
             if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_RED_CHANNEL) > mBlackThreshold) return false;
             if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_GREEN_CHANNEL) > mBlackThreshold) return false;
             if (img(x, y, CIMG_2D_Z_LEVEL, CIMG_BLUE_CHANNEL) > mBlackThreshold) return false;

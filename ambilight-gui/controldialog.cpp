@@ -6,14 +6,17 @@
 
 #include "assert.h"
 #include <string>
-
 #include <ctime>
+
+
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
-#include <customexceptions.h>
 
-#include "histogramwidget.h"
+#include <customexceptions.h>
+#include <ambicolordataprovider.h>
+
 #include "pixellinewidget.h"
+#include "histogramwidget.h"
 #include "fpsmeter.h"
 
 using namespace std;
@@ -46,7 +49,12 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
 
     // nudge the dialog to stay at the smallest possible size
     layout()->setSizeConstraint(QLayout::SetFixedSize);
+
+    // set up combobox for selecting the interpolation type
+    setupInterpolationCombobox();
 }
+
+
 
 ControlDialog::~ControlDialog() {
     delete ui;
@@ -114,7 +122,7 @@ void ControlDialog::on_runButton_clicked() {
             updateStatus(string("catastrophic failure: ") + e.what(), true);
             setButtonState(false);
             break;
-        } catch (ScreenshotException e){
+        } catch (ScreenshotException e) {
             updateStatus(string("catastrophic failure: ") + e.what(), true);
             setButtonState(false);
             break;
@@ -182,4 +190,33 @@ void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
 
 void ControlDialog::closeEvent(QCloseEvent *) {
     on_stopButton_clicked();
+}
+
+void ControlDialog::on_interpolationTypeComboBox_currentIndexChanged(int index) {
+    getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
+}
+
+void ControlDialog::setupInterpolationCombobox() {
+    // make a list of available interpolation types
+    QStringList interpolationTypes;
+    interpolationTypes <<
+                       "Raw memory resizing" <<
+                       "Fill-space-interpolation" <<
+                       "Nearest Neighbor interpolation" <<
+                       "Moving average interpolation" <<
+                       "Linear interpolation" <<
+                       "Grid interpolation" <<
+                       "Cubic interpolation" <<
+                       "Lanczos interpolation";
+
+    // insert interpolation types into selection box
+    ui->interpolationTypeComboBox->addItems(interpolationTypes);
+
+    // get the currently set interpolation mode
+    AmbiColorDataProvider::CImgInterpolationType i = getColorDataProvider()->getResizeInterpolationMode();
+
+    // enum range is -1 to 6, but our index here starts at 0 -> +1
+    ui->interpolationTypeComboBox->setCurrentIndex(
+                // convert enum to integer, offset by the difference in starting indices
+                static_cast<typename std::underlying_type<AmbiColorDataProvider::CImgInterpolationType>::type>(i) + 1);
 }

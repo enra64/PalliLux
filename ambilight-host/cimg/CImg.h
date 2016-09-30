@@ -263,8 +263,8 @@
 #ifndef cimg_display
 #if cimg_OS==0
 #define cimg_display 0
-#elif cimg_OS==1
-#define cimg_display 1
+#elif cimg_OS==1            // PalliLux: OS==1 -> unix-whatever. because Qt compilation dies when you include X11 before Qt headers, we disable
+#define cimg_display 0      // the display capabilities (eg set cimg_display to 0 from 1 here) so X11 won't be included in line #331
 #elif cimg_OS==2
 #define cimg_display 2
 #endif
