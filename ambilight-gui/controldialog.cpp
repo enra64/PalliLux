@@ -194,7 +194,6 @@ void ControlDialog::onInterpolationTypeChanged(int index) {
     getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
 }
 
-//getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
 void ControlDialog::setupInterpolationCombobox() {
     // make a list of available interpolation types
     QStringList interpolationTypes;

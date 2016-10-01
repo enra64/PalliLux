@@ -37,7 +37,9 @@ void HistogramWidget::update(Image *lineImg) {
     if(!mEnableCheckBox->isChecked()) return;
 
     // save a histogram to the temp location
-    //lineImg->get_2D_histogram(NUMBER_OF_BINS).save(mTempLocation.toStdString().c_str());
+    Image histogram = lineImg->get_2D_histogram(NUMBER_OF_BINS);
+
+    histogram.save(mTempLocation.toStdString().c_str());
 
     // read from temp save to QPixmap
     mHistogram = QPixmap(mTempLocation);

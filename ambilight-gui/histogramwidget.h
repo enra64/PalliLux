@@ -5,6 +5,8 @@
 #include <QLabel>
 #include <QWidget>
 
+#include <string>
+
 #include "include_img_lib.h"
 
 class HistogramWidget : public QWidget
