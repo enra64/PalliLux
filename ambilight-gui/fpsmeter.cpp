@@ -12,6 +12,9 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
     mEnableCheckBox = new QCheckBox("Show FPS graph", this);
     layout()->addWidget(mEnableCheckBox);
 
+    // remove free space around checkbox
+    layout()->setContentsMargins(0,0,0,0);
+
     connect(mEnableCheckBox, SIGNAL(clicked(bool)), this, SLOT(toggled(bool)));
 
     // set up chart
@@ -87,6 +90,9 @@ void FpsMeter::update(float fpsValue) {
     float fpsAvg = getHistoryAverage();
     mAverageFpsLineSeries->replace(0, 0, fpsAvg);
     mAverageFpsLineSeries->replace(1, CONCURRENT_FPS_VALUES, fpsAvg);
+
+    // set the title to the fps average
+    mFpsChart->setTitle(QString("Current average: %1fps").arg((int) fpsAvg));
 
     // refresh chart
     mFpsChartView->repaint();

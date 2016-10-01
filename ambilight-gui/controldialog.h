@@ -38,7 +38,7 @@ private slots:
 
     void on_borderWidthSpinbox_valueChanged(int arg1);
 
-    void on_interpolationTypeComboBox_currentIndexChanged(int index);
+    void onInterpolationTypeChanged(int index);
 
 private:
     void setButtonState(bool currentlyRunning);
@@ -57,10 +57,6 @@ private:// fps chart stuff
     FpsMeter* mFpsMeter;
     std::shared_ptr<BorderProvider> getBorderProvider();
     std::shared_ptr<AmbiColorDataProvider> getColorDataProvider();
-
-    // QWidget interface
-protected:
-    void closeEvent(QCloseEvent *) override;
 };
 
 #endif // CONTROLDIALOG_H

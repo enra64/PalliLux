@@ -52,6 +52,9 @@ ControlDialog::ControlDialog(shared_ptr<ArduinoConnector> connector, QWidget *pa
 
     // set up combobox for selecting the interpolation type
     setupInterpolationCombobox();
+
+    // connect to the finished() signal to gracefully stop the event loop
+    connect(this, SIGNAL(finished(int)), this, SLOT(on_stopButton_clicked()));
 }
 
 
@@ -187,15 +190,11 @@ void ControlDialog::on_borderWidthSpinbox_valueChanged(int arg1) {
     getBorderProvider()->setBorderWidth(arg1);
 }
 
-
-void ControlDialog::closeEvent(QCloseEvent *) {
-    on_stopButton_clicked();
-}
-
-void ControlDialog::on_interpolationTypeComboBox_currentIndexChanged(int index) {
+void ControlDialog::onInterpolationTypeChanged(int index) {
     getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
 }
 
+//getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
 void ControlDialog::setupInterpolationCombobox() {
     // make a list of available interpolation types
     QStringList interpolationTypes;
@@ -219,4 +218,7 @@ void ControlDialog::setupInterpolationCombobox() {
     ui->interpolationTypeComboBox->setCurrentIndex(
                 // convert enum to integer, offset by the difference in starting indices
                 static_cast<typename std::underlying_type<AmbiColorDataProvider::CImgInterpolationType>::type>(i) + 1);
+
+    // connect to currentIndexChanged after having it triggered programmatically
+    connect(ui->interpolationTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onInterpolationTypeChanged(int)));
 }

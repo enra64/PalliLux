@@ -152,7 +152,11 @@
      <property name="title">
       <string>Miscanellous</string>
      </property>
-     <layout class="QVBoxLayout" name="controlDialogMiscLayout"/>
+     <layout class="QVBoxLayout" name="controlDialogMiscLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+     </layout>
     </widget>
    </item>
    <item>

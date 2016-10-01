@@ -11,8 +11,10 @@ PixelLineWidget::PixelLineWidget(QWidget *parent) : QWidget(parent) {
 
     // create & add checkbox for enabling the widget
     mEnableCheckBox = new QCheckBox("Show last pixel line", this);
-
     layout()->addWidget(mEnableCheckBox);
+
+    // remove free space around checkbox
+    layout()->setContentsMargins(0,0,0,0);
 
     connect(mEnableCheckBox, SIGNAL(clicked(bool)), this, SLOT(toggled(bool)));
 
