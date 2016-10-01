@@ -26,7 +26,7 @@ private:
     /**
      * @brief mDisplay x display retrieved in constructor
      */
-    Display* mDisplay;
+    static Display* mDisplay;
 
     /**
      * @brief mRootWindow x window thingy

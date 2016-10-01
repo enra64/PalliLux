@@ -8,10 +8,12 @@
 
 #include "customexceptions.h"
 
-
+Display* XlibScreenshotProvider::mDisplay = nullptr;
 
 XlibScreenshotProvider::XlibScreenshotProvider() {
-    mDisplay = XOpenDisplay(getenv("DISPLAY"));
+    // initialise the static display variable _once_ to avoid the X IO errors 11 and 88
+    if(!mDisplay)
+        mDisplay = XOpenDisplay(getenv("DISPLAY"));
 
     // confirm display ok
     if(!mDisplay)
@@ -22,7 +24,8 @@ XlibScreenshotProvider::XlibScreenshotProvider() {
 }
 
 XlibScreenshotProvider::~XlibScreenshotProvider() {
-    XCloseDisplay(mDisplay);
+    //if(mDisplay)
+    //    XCloseDisplay(mDisplay);
 }
 
 float XlibScreenshotProvider::getScreenCrop(Image &result, const Geometry& d) {
