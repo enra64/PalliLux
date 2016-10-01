@@ -97,8 +97,6 @@ void read(const char *const source,
                 greenStart = this->data(0, row, 0, 1);
                 blueStart = this->data(0, row, 0, 2);
 
-                int testa = this->offset(0, row, 0, 1);
-
                 // this is only valid and relevant if the target channel count has an alpha
                 if(_spectrum == 4)
                     alphaStart = this->data(0, row, 0, 3);
