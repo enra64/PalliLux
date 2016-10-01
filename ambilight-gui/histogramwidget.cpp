@@ -11,6 +11,9 @@ HistogramWidget::HistogramWidget(QWidget *parent) : QWidget(parent) {
     mEnableCheckBox = new QCheckBox("Show histogram", this);
     layout()->addWidget(mEnableCheckBox);
 
+    // remove free space around checkbox
+    layout()->setContentsMargins(0,0,0,0);
+
     // react to checkbox toggles
     connect(mEnableCheckBox, SIGNAL(clicked(bool)), this, SLOT(toggled(bool)));
 
@@ -33,11 +36,8 @@ HistogramWidget::HistogramWidget(QWidget *parent) : QWidget(parent) {
 void HistogramWidget::update(Image *lineImg) {
     if(!mEnableCheckBox->isChecked()) return;
 
-    // create a histogram
-    Image histogram = lineImg->histogram(NUMBER_OF_BINS);
-
-    // temporarily save our histogram
-    histogram.save(mTempLocation.toStdString().c_str());
+    // save a histogram to the temp location
+    //lineImg->get_2D_histogram(NUMBER_OF_BINS).save(mTempLocation.toStdString().c_str());
 
     // read from temp save to QPixmap
     mHistogram = QPixmap(mTempLocation);

@@ -22,6 +22,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 SET(BASE_HEADERS
     "cimg/CImg.h"
     "cimg/load_custom_channel_order.h"
+    "cimg/twodimensionalhistogram.h"
     "include/arduinoconnector.h"
     "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
