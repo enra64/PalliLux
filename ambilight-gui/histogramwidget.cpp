@@ -1,6 +1,6 @@
 #include "histogramwidget.h"
-#include "ui_histogramwidget.h"
 
+#include <QVBoxLayout>
 #include <QDir>
 
 HistogramWidget::HistogramWidget(QWidget *parent) : QWidget(parent) {

@@ -1,5 +1,5 @@
+#include <QVBoxLayout>
 #include "pixellinewidget.h"
-#include "ui_pixellinewidget.h"
 
 #include <QDir>
 

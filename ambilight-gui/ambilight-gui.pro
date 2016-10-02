@@ -81,7 +81,7 @@ unix {
     LIBS += -lpulse
 
     # static ambilight lib
-    #LIBS += "/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Default/libhost.a"
+    #LIBS += "/home/arne/Documents/Development/PalliLux/ambilight-host/build/libhost.a"
 
     # dynamic ambilight lib
     LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Default -lhost

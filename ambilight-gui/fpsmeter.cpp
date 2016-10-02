@@ -1,3 +1,4 @@
+#include <QVBoxLayout>
 #include <QLabel>
 
 #include "fpsmeter.h"
