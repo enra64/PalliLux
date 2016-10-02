@@ -1,8 +1,6 @@
 #include <QLabel>
 
 #include "fpsmeter.h"
-#include "ui_fpsmeter.h"
-
 
 FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
     // add a root layout for our widgets
