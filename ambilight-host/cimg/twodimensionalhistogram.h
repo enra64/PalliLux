@@ -21,7 +21,7 @@ CImg get_2D_histogram(const unsigned int nb_levels) const {
     for(ulongT i = 0; i < size(); i++){
         // at(i) returns the intensity of the current pixel, which we scale to between 0 and nb_levels
         // i/bytesPerChannel returns the channel: either 0, 1 or 2
-        const int bin = at(i) * binValueLimitizer;
+        const unsigned int bin = at(i) * binValueLimitizer;
         bins[bin][i / bytesPerChannel]++;
 
         // save maximum bin value to enable scaling
