@@ -3,14 +3,17 @@ PalliLux's primary goal is to create an Ambilight-like experience on computers u
 It is, however, also possible to supply any other RGB data.  
 
 # Basic Usage
+Download the gui here: . After that, you only need to flash the sketch contained in ambilight-arduino to an arduino - but don't forget to adjust the number of LEDs.
+
+# Advanced Usage
 ## Arduino
 Just flash the sketch contained in ambilight-arduino to an arduino - but don't forget to adjust the number of LEDs.
 
 ## Self compiled host code
-The host code in ambilight-host is powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates a dynamic library in debug mode. [There are multiple options available.](cmake_options.md). By far the easiest way to see how to get going is to look at [main.cpp](ambilight-host/main.cpp).
+The host code in ambilight-host is powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates a dynamic library in debug mode. [There are multiple options available](cmake_options.md). By far the easiest way to see how to get going is to look at [main.cpp](ambilight-host/main.cpp).
 
 ## GUI
-There is a GUI available in [ambilight-gui](ambilight-gui/). 
+There is a GUI available in [ambilight-gui](ambilight-gui/).
 
 # Documentation
 Use the Doxyfile in [ambilight-host](ambilight-host/) to generate the full documentation. [Short info about the classes](class_info.md).

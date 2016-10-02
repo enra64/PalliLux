@@ -11,13 +11,13 @@ Switch between creating dynamic or static library files. Only available if MAIN_
 ### DEBUG_MODE
 Sets the CMAKE_BUILD_TYPE to Debug.
 
-## Options available on _windows_
+## Options available on *windows*
 ### DIRECTX
 Include DirectX 9 libraries; the DirectX SDK is required.
 
-## Options available on _linuxy-things_
+## Options available on *linuxy-things*
 ### X11
 Include Xlib and the screenshotproviders based on it. (recommended)
 
 ### SPECTROMETER
-Include fftw3, the pulseaudio libs, and the spectrometer color data provider.
+Include fftw3, the pulseaudio libs, and the spectrometer color data provider (unfinished!).
