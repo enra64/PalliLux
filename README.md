@@ -1,60 +1,19 @@
-# ShittyAmbilight
-ShittyAmbilights primary goal is to create an Ambilight-like experience on computers using an Arduino.  
+# PalliLux
+PalliLux's primary goal is to create an Ambilight-like experience on computers using an Arduino.  
 It is, however, also possible to supply any other RGB data.  
 
 # Basic Usage
-## Slave
-Just flash the sketch contained in ambilight-arduino to an arduino, but don't forget to adjust the number of LEDs.
+## Arduino
+Just flash the sketch contained in ambilight-arduino to an arduino - but don't forget to adjust the number of LEDs.
 
-## Host
-The host code in ambilight-host is powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates an static library in debug mode. If you are compiling for linux, and do not want to include X11 or spectrometer (pulseaudio+fftw3) libraries, you can use ```cmake (-DX11=OFF) (-DSPECTROMETER=OFF) CMakeLists.txt``` respectively to disable including and linking them.
+## Self compiled host code
+The host code in ambilight-host is powered by cmake. By default, the [CMakeLists.txt](ambilight-host/CMakeLists.txt) creates a dynamic library in debug mode. [There are multiple options available.](cmake_options.md). By far the easiest way to see how to get going is to look at [main.cpp](ambilight-host/main.cpp).
 
-### Instantiation (using AmbiConnectorBuilder for Ambilight mode)
-```c++
-    AmbiConnectorBuilder builder;
+## GUI
+There is a GUI available in [ambilight-gui](ambilight-gui/). 
 
-    // WinScreenshot is the windows pendant
-    builder.setScreenshotProvider(shared_ptr<Screenshot>(new XlibScreenshot()));
-    
-    // SingleScreenBorderProvider(xRes, yRes)
-    builder.setBorderProvider(shared_ptr<BorderProvider>(new SingleScreenBorderProvider(1366, 768)));
-    
-    // AmbiRgbLineProvider(horizontalBorderLedCount, verticalBorderLedCount)
-    builder.setAmbiRgbLineProvider(shared_ptr<AmbiRgbLineProvider>(new AmbiRgbLineProvider(60, 12)));
-    
-    // set the port
-    builder.setPort("/dev/ttyUSB0");
-    
-    // get the connector from the instance
-    ArduinoConnector connector = builder.build();
-```
-
-### Instantiation (other ColorDataProviders)
-You may also use ```ArduinoConnector::setRgbLineProvider(shared_ptr<RgbLinProvider> p)``` directly to use other RgbLineProviders, for example ```SpectrometerRgbLineProvider```.
-
-
-### Running
-To run an ```ArduinoConnector```, you may use the following code fragment:
-```c++
-// establish connection
-connector.connect("/dev/ttyUSB0");
-
-// loop: update the screen images and push the data to the arduino
-while(1) {
-    // update screenshot data
-    connector.update();
-    
-    // send updated data to arduino
-    connector.draw();
-
-    // show the fps
-    std::cout << "avg fps:" << connector.getCurrentFps() << std::endl;
-}
-```
-Be aware that an ```AmbiConnectorException``` will be thrown if something goes wrong.
-
-# More
-[More info about the classes](class_info.md). In [ambilight-gui](ambilight-gui/) there is a gui uising Qt for single and triple screen ambilight.
+# Documentation
+Use the Doxyfile in [ambilight-host](ambilight-host/) to generate the full documentation. [Short info about the classes](class_info.md).
 
 ## SpectrometerRgbLineProvider
 This class can create a spectrogram of your current music using the fftw3 library and pulseaudio.
@@ -71,4 +30,3 @@ connector.addFilter("myFilterId", move(myFilter));
 |BrightnessFilter|Apply a factor to all rgb channels|
 |LowPassFilter|Smooth out the color changes by mixing old and new data|
 |LinearFactorFilter|Suppress/enhance bright/dark colors|
-
