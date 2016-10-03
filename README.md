@@ -3,7 +3,7 @@ PalliLux's primary goal is to create an Ambilight-like experience on computers u
 It is, however, also possible to supply any other RGB data.  
 
 # Basic Usage
-Download the gui here: . After that, you only need to flash the sketch contained in ambilight-arduino to an arduino - but don't forget to adjust the number of LEDs.
+Download the gui here: [latest release](https://github.com/enra64/PalliLux/releases/latest). After that, you only need to flash the sketch contained in ambilight-arduino to an arduino - but don't forget to adjust the number of LEDs.
 
 # Advanced Usage
 ## Arduino
