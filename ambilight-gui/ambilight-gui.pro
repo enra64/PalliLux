@@ -16,38 +16,39 @@ AMBILIGHT_LIB_FOLDER = ../ambilight-host/
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    controldialog.cpp \
     singlescreenconfigpage.cpp \
     triplescreenconfigpage.cpp \
     letterboxingautoconfigdialog.cpp \
     fpsmeter.cpp \
     backlightconfigpage.cpp \
-    backlightdialog.cpp \
     pixellinewidget.cpp \
-    histogramwidget.cpp
+    histogramwidget.cpp \
+    controlwidget.cpp \
+    ambicontrolwidget.cpp \
+    backlightcontrolwidget.cpp
 
 HEADERS  += mainwindow.h \
-    controldialog.h \
     singlescreenconfigpage.h \
     iconfigpage.h \
     triplescreenconfigpage.h \
     letterboxingautoconfigdialog.h \
     fpsmeter.h \
     backlightconfigpage.h \
-    backlightdialog.h \
     pixellinewidget.h \
     histogramwidget.h \
     screenshotfactory.h \
     cimg/CImg.h \
-    include_img_lib.h
+    include_img_lib.h \
+    controlwidget.h \
+    ambicontrolwidget.h \
+    backlightcontrolwidget.h
 
 FORMS    += mainwindow.ui \
-    controldialog.ui \
     singlescreenconfigpage.ui \
     triplescreenconfigpage.ui \
     letterboxingautoconfigdialog.ui \
     backlightconfigpage.ui \
-    backlightdialog.ui
+    controlwidget.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){
@@ -84,7 +85,7 @@ unix {
     #LIBS += "/home/arne/Documents/Development/PalliLux/ambilight-host/build/libhost.a"
 
     # dynamic ambilight lib
-    LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Default -lhost
+    LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Debug -lhost
 }
 
 INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/cimg \

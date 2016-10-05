@@ -24,7 +24,7 @@ private:
 public:
     QString infoText() const override;
     QString pageLabel() const override;
-    void parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const override;
+    ControlWidget* getWidget(QWidget* parent, LedCount d) const override;
 };
 
 

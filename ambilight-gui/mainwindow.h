@@ -36,6 +36,8 @@ private:
     const IScreenConfigPage* getCurrentPage();
     void showNoSerialWarning();
     bool enteredSerialOk();
+    ControlWidget* mCurrentControlWidget = nullptr;
+    void loadControlWidget();
 };
 
 #endif // MAINWINDOW_H

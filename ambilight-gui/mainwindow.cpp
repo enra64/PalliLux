@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "iconfigpage.h"
-#include "controldialog.h"
 
 #include <ambicolordataprovider.h>
 #include <colordataprovider.h>
@@ -71,6 +70,35 @@ bool MainWindow::enteredSerialOk() {
     return serial.deviceExists(ui->ttyState->text().toStdString());
 }
 
+void MainWindow::loadControlWidget()
+{
+    // get the currently displayed configuration page to retrieve a rgbProvider
+    const IScreenConfigPage* currentPage = getCurrentPage();
+
+    QGridLayout* widgetContainer = static_cast<QGridLayout*>(ui->controlWidgetContainer);
+
+    // kill old widget
+    if(mCurrentControlWidget){
+        // remove from layout
+        widgetContainer->removeWidget(mCurrentControlWidget);
+
+        // disconnect signal
+        disconnect(this, &MainWindow::destroyed, mCurrentControlWidget, &ControlWidget::stop);
+
+        // delete object
+        delete mCurrentControlWidget;
+    }
+
+    // get new ControlWidget
+    mCurrentControlWidget = currentPage->getWidget(parentWidget(), LedCount(ui->xLedSpin->value(), ui->yLedSpin->value()));
+
+    // window destroyed -> stop connection
+    connect(this, &MainWindow::destroyed, mCurrentControlWidget, &ControlWidget::stop);
+
+    //display widget
+    widgetContainer->addWidget(mCurrentControlWidget);
+}
+
 void MainWindow::on_startControlDialogButton_clicked() {
     // if the serial device does not exist, the user should not be able to start the control dialog
     if(!enteredSerialOk()){
@@ -78,45 +106,7 @@ void MainWindow::on_startControlDialogButton_clicked() {
         return;
     }
 
-    // get the currently displayed configuration page to retrieve a rgbProvider
-    const IScreenConfigPage* currentPage = getCurrentPage();
-
-    // check whether this is a ICustomDialogConfigPage, those have to be handled differently
-    // im sorry
-    const ICustomDialogConfigPage* customDialogPage = dynamic_cast<const ICustomDialogConfigPage*>(currentPage);
-    if(customDialogPage){
-        QDialog* dialog = customDialogPage->getDialog(
-                    this,
-                    ui->xLedSpin->value(),
-                    ui->yLedSpin->value(),
-                    ui->ttyState->text().toStdString());
-        dialog->exec();
-        delete dialog;
-        return;
-    }
-
-    // get a builder
-    AmbiConnectorBuilder builder;
-
-    // let the current page parametrise the builder appropriately
-    currentPage->parametriseBuilder(builder, ui->xLedSpin->value(), ui->yLedSpin->value());
-
-    // set the port
-    builder.setPort(ui->ttyState->text().toStdString());
-
-    // get the connector from the builder
-    std::shared_ptr<ArduinoConnector> connector = builder.build();
-
-    // add low pass filter
-    unique_ptr<DataFilter> lpFilter(new LowPassFilter(connector->getRequiredBufferLength(), .6f));
-    connector->addFilter("lowpass", std::move(lpFilter));
-
-    // add brightness filter
-    unique_ptr<DataFilter> brFilter(new BrightnessFilter(1.f));
-    connector->addFilter("brightness", std::move(brFilter));
-
-    ControlDialog c(connector, this, currentPage->infoText());
-    c.exec();
+    mCurrentControlWidget->start(ui->ttyState->text());
 }
 
 void MainWindow::on_yLedSpin_valueChanged(int) {
@@ -139,6 +129,9 @@ void MainWindow::on_configStackPrevButton_clicked() {
 
     // update label
     ui->configStackLabel->setText(getCurrentPage()->pageLabel());
+
+    // update currently shown control widget
+    loadControlWidget();
 }
 
 void MainWindow::on_configStackNextButton_clicked() {
@@ -153,6 +146,9 @@ void MainWindow::on_configStackNextButton_clicked() {
 
     // update label
     ui->configStackLabel->setText(getCurrentPage()->pageLabel());
+
+    // update currently shown control widget
+    loadControlWidget();
 }
 
 void MainWindow::on_ttyState_textChanged(const QString &) {

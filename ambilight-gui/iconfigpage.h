@@ -1,6 +1,8 @@
 #ifndef ICONFIGPAGE_H
 #define ICONFIGPAGE_H
 
+#include "controlwidget.h"
+
 #include <QString>
 #include <QDialog>
 #include <memory>
@@ -11,19 +13,10 @@
 
 
 class IScreenConfigPage {
+    virtual QString infoText() const = 0;
 public:
     virtual QString pageLabel() const = 0;
-    virtual QString infoText() const = 0;
-    virtual void parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const = 0;
-};
-
-class ICustomDialogConfigPage : public IScreenConfigPage {
-public:
-    void parametriseBuilder(AmbiConnectorBuilder&, int, int) const {
-        throw new std::logic_error("ArduinoConnectorConfigPage instances may not use an AmbiConnectorBuilder, use getConnector() instead");
-    }
-
-    virtual QDialog* getDialog(QWidget *parent, int horizontalBorderLedCount, int verticalBorderLedCount, std::string port) const = 0;
+    virtual ControlWidget* getWidget(QWidget* parent, LedCount d) const = 0;
 };
 
 #endif // ICONFIGPAGE_H

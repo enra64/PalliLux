@@ -12,14 +12,6 @@
 #include <screenshotprovider.h>
 #include <colordataprovider.h>
 
-#ifdef __linux__
-    #include <xlibscreenshotprovider.h>
-#elif _WIN32_WINNT
-    #include <winscreenshotprovider.h>
-#else
-    #error Platform not recognized
-#endif
-
 namespace Ui {
 class SingleScreenConfigPage;
 }
@@ -38,8 +30,8 @@ private:
     // IScreenConfigPage interface
 public:
     QString infoText() const override;
-    void parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const override;
     QString pageLabel() const override;
+    ControlWidget* getWidget(QWidget* parent, LedCount d) const override;
 private slots:
     void on_letterboxAutoConfigButton_clicked();
 };

@@ -1,10 +1,11 @@
 #include <QTimer>
 
-#include "ui_singlescreenconfigpage.h"
 #include "singlescreenconfigpage.h"
+#include "ui_singlescreenconfigpage.h"
 
 #include "letterboxingautoconfigdialog.h"
 
+#include "ambicontrolwidget.h"
 #include "screenshotfactory.h"
 
 #include <ambicolordataprovider.h>
@@ -49,18 +50,6 @@ QString SingleScreenConfigPage::infoText() const {
     return QString("Single screen, %1x%2+%3+%4, letterboxing %5x%6").arg(w, h, xOff, yOff, xLetterbox, yLetterbox);
 }
 
-void SingleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder& builder, int horizontalBorderLedCount, int verticalBorderLedCount) const
-{
-    // instantiate and set the desired screenshot class
-    builder.setScreenshotProvider(ScreenshotFactory::getPlatformAppropriateScreenshotProvider());
-
-    // instantiate and set a single screen BorderProvider
-    builder.setBorderProvider(getSingleScreenBorderProvider());
-
-    // instantiate and set an AmbiColorDataProvider
-    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));
-}
-
 void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
     // get relevant sizes
     int w = ui->resolutionWidthSpinbox->value();
@@ -71,8 +60,27 @@ void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
     LetterboxingAutoConfigDialog dialog(w, h, xOff, yOff, this);
     dialog.exec();
 
-    if(!dialog.wasCanceled()){
+    if(!dialog.wasCanceled()) {
         ui->letterboxingHeightSpinBox->setValue(static_cast<int>(dialog.getLetterboxHeight()));
         ui->letterboxingWidthSpinBox->setValue(static_cast<int>(dialog.getLetterboxWidth()));
     }
+}
+
+ControlWidget* SingleScreenConfigPage::getWidget(QWidget* parent, LedCount d) const {
+    // get a builder
+    AmbiConnectorBuilder builder;
+
+    // instantiate and set the desired screenshot class
+    builder.setScreenshotProvider(ScreenshotFactory::getPlatformAppropriateScreenshotProvider());
+
+    // instantiate and set a single screen BorderProvider
+    builder.setBorderProvider(getSingleScreenBorderProvider());
+
+    // instantiate and set an AmbiColorDataProvider
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(d.bottom, d.right, d.top, d.left)));
+
+    // initialize control widget
+    AmbiControlWidget* w = new AmbiControlWidget(builder.build(), parent, infoText());
+
+    return w;
 }

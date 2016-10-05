@@ -4,6 +4,7 @@
 #include <ambicolordataprovider.h>
 #include <triplescreenborderprovider.h>
 
+#include "ambicontrolwidget.h"
 #include "screenshotfactory.h"
 
 using namespace std;
@@ -33,7 +34,11 @@ QString TripleScreenConfigPage::pageLabel() const {
     return QString("Triple Screen");
 }
 
-void TripleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder &builder, int horizontalBorderLedCount, int verticalBorderLedCount) const {
+ControlWidget *TripleScreenConfigPage::getWidget(QWidget *parent, LedCount d) const
+{
+    // get a builder
+    AmbiConnectorBuilder builder;
+
     // instantiate and set the desired screenshot class
     builder.setScreenshotProvider(ScreenshotFactory::getPlatformAppropriateScreenshotProvider());
 
@@ -47,5 +52,10 @@ void TripleScreenConfigPage::parametriseBuilder(AmbiConnectorBuilder &builder, i
                                                              ui->y3->value())));
 
     // instantiate and set an AmbiColorDataProvider
-    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(horizontalBorderLedCount, verticalBorderLedCount)));
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(d)));
+
+    // initialize control widget
+    AmbiControlWidget* w = new AmbiControlWidget(builder.build(), parent, infoText());
+
+    return w;
 }

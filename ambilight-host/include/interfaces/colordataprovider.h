@@ -3,8 +3,16 @@
 
 #include <unordered_map>
 #include <memory>
+#include <geometry.h>
 
 #include "datafilter.h"
+
+struct LedCount {
+    LedCount() : bottom(0), right(0), top(0), left(0) {}
+    LedCount(size_t b, size_t r, size_t t, size_t l) : bottom(b), right(r), top(t), left(l) {}
+    LedCount(size_t horizontal, size_t vertical) : LedCount(horizontal, vertical, horizontal, vertical) {}
+    size_t bottom, right, top, left;
+};
 
 /**
  * @brief Classes that implement this interface provide color data for the Leds as RGB data.
@@ -31,6 +39,15 @@ public:
 	ColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount) :
 		BOTTOM_LED_COUNT(bottomLedCount), RIGHT_LED_COUNT(rightLedCount), TOP_LED_COUNT(topLedCount), LEFT_LED_COUNT(leftLedCount) {
 	}
+
+    /**
+    * @brief Create a ColorDataProvider parametrized with the given led count
+    * @param horizontalLedCount
+    * @param verticalLedCount
+    */
+    ColorDataProvider(LedCount d) :
+        BOTTOM_LED_COUNT(d.bottom), RIGHT_LED_COUNT(d.right), TOP_LED_COUNT(d.top), LEFT_LED_COUNT(d.left) {
+    }
 
     /**
      * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
@@ -100,6 +117,13 @@ public:
 
         // return
         return result->second;
+    }
+
+    /**
+     * @brief Retrieve a LedCount object detailing how many leds are where
+     */
+    LedCount getLedCounts(){
+        return LedCount(BOTTOM_LED_COUNT, RIGHT_LED_COUNT, TOP_LED_COUNT, LEFT_LED_COUNT);
     }
 
 protected:

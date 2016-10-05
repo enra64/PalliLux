@@ -15,15 +15,19 @@ class AmbiColorDataProvider : public ColorDataProvider {
 public:
     /**
      * @brief create a new AmbiColorDataProvider
-     * @param provider the BorderProvider that will be used to capture the screen borders
      * @param verticalLedCount how many leds are on each vertical border
      * @param horizontalLedCount how many leds are on each horizontal border
      */
     AmbiColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount);
 
+    /**
+     * @brief create a new AmbiColorDataProvider
+     * @param d how many leds are on which border
+     */
+    AmbiColorDataProvider(LedCount d);
+
 	/**
 	* @brief create a new AmbiColorDataProvider
-	* @param provider the BorderProvider that will be used to capture the screen borders
 	* @param verticalLedCount how many leds are on both vertical borders
 	* @param horizontalLedCount how many leds are on both horizontal borders
 	*/

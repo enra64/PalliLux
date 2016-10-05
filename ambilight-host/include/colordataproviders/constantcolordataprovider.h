@@ -7,21 +7,31 @@
 class ConstantColorDataProvider : public ColorDataProvider
 {
 public:
-    ConstantColorDataProvider(unsigned int horizontalLedCount, unsigned int verticalLedCount, uint8_t red = 0, uint8_t green = 0, uint8_t blue = 0);
+    ConstantColorDataProvider(LedCount d,
+                              uint8_t red = 0, uint8_t green = 0, uint8_t blue = 0);
 
     /**
      * @brief Update the channel values
      */
     void setRgb(uint8_t red, uint8_t green, uint8_t blue);
 
+    /**
+     * @brief Update red channel value
+     */
     void setRed(uint8_t red){
         mRed = red;
     }
 
+    /**
+     * @brief Update green channel value
+     */
     void setGreen(uint8_t green){
         mGreen = green;
     }
 
+    /**
+     * @brief Update blue channel value
+     */
     void setBlue(uint8_t blue){
         mBlue = blue;
     }
