@@ -2,18 +2,16 @@
 #include "ui_controlwidget.h"
 
 #include <QDoubleSpinBox>
+#include <QSettings>
 #include <QTime>
 
 using namespace std;
 
-ControlWidget::ControlWidget(QWidget *parent, const QString &infoString) :
+ControlWidget::ControlWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ControlWidget) {
     // setup ui
     ui->setupUi(this);
-
-    // set info string
-    updateInfo(infoString);
 
     // not running yet
     emit onStateChanged(false);
@@ -112,6 +110,15 @@ void ControlWidget::addControlWidget(QWidget* row) {
     addControlWidget(row, nullptr);
 }
 
+LedCount ControlWidget::getLedConfig() {
+    QSettings s;
+    return LedCount(s.value("leds/bottom_count", -1),
+                    s.value("leds/right_count", -1),
+                    s.value("leds/top_count", -1),
+                    s.value("leds/left_count", -1));
+
+}
+
 void ControlWidget::addControlWidget(QWidget *left, QWidget* right) {
     // initialise layout if none is there yet
     if(ui->controlGroupBox->layout() == nullptr)
@@ -141,8 +148,4 @@ void ControlWidget::updateStatus(const std::__cxx11::string &msg, bool isFailure
         ui->stateState->setStyleSheet("QLabel { color : red; }");
     else
         ui->stateState->setStyleSheet("QLabel { color : black; }");
-}
-
-void ControlWidget::updateInfo(const QString& msg) {
-    ui->infoState->setText(msg);
 }

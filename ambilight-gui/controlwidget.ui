@@ -21,27 +21,13 @@
      </property>
      <layout class="QFormLayout" name="stateLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="infoLabel">
-        <property name="text">
-         <string>Info:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="infoState">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
        <widget class="QLabel" name="stateLabel">
         <property name="text">
          <string>State:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <widget class="QLabel" name="stateState">
         <property name="text">
          <string>not connected</string>

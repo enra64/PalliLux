@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
+    <width>724</width>
     <height>487</height>
    </rect>
   </property>
@@ -35,134 +35,6 @@
            <property name="text">
             <string>/dev/ttyUSB0</string>
            </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="title">
-         <string>LED config</string>
-        </property>
-        <layout class="QFormLayout" name="formLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Horizontal count</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="xLedSpin">
-           <property name="suffix">
-            <string/>
-           </property>
-           <property name="maximum">
-            <number>1000000</number>
-           </property>
-           <property name="value">
-            <number>60</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Vertical count</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="yLedSpin">
-           <property name="suffix">
-            <string/>
-           </property>
-           <property name="maximum">
-            <number>1000000</number>
-           </property>
-           <property name="value">
-            <number>18</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Resulting LED count</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="ledCountLabel">
-           <property name="text">
-            <string>156</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="configGroupBox">
-        <property name="title">
-         <string>Screen config</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <layout class="QHBoxLayout" name="configStackControlLayout">
-           <item>
-            <widget class="QLabel" name="configStackLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Backlight</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="configStackPrevButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>prev</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="configStackNextButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>next</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QStackedWidget" name="configStack">
-           <property name="currentIndex">
-            <number>2</number>
-           </property>
-           <widget class="SingleScreenConfigPage" name="page"/>
-           <widget class="TripleScreenConfigPage" name="page_2"/>
-           <widget class="BacklightConfigPage" name="page_3"/>
           </widget>
          </item>
         </layout>
@@ -198,8 +70,52 @@
     <item>
      <layout class="QGridLayout" name="controlWidgetContainer"/>
     </item>
+    <item>
+     <widget class="QTabWidget" name="configTabHost">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="SingleScreenConfigPage" name="tab">
+       <attribute name="title">
+        <string>Single Screen</string>
+       </attribute>
+      </widget>
+      <widget class="BacklightConfigPage" name="tab_2">
+       <attribute name="title">
+        <string>Backlight</string>
+       </attribute>
+      </widget>
+      <widget class="TripleScreenConfigPage" name="tab_3">
+       <attribute name="title">
+        <string>Triple Screen</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>724</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionLED_Configuration"/>
+   </widget>
+   <addaction name="menuOptions"/>
+  </widget>
+  <action name="actionLED_Configuration">
+   <property name="text">
+    <string>LED Configuration</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

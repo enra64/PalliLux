@@ -7,11 +7,8 @@
 
 using namespace std;
 
-BacklightControlWidget::BacklightControlWidget(LedCount d, QWidget *parent,
-    const QString &infoString) :
-    ControlWidget(
-        parent,
-        infoString) {
+BacklightControlWidget::BacklightControlWidget(LedCount d, QWidget *parent) :
+    ControlWidget(parent) {
 
     // init & set ColorDataProvider
     mConstantColorProvider = shared_ptr<ConstantColorDataProvider>(new ConstantColorDataProvider(d));
@@ -19,19 +16,23 @@ BacklightControlWidget::BacklightControlWidget(LedCount d, QWidget *parent,
 
     // color sliders
     mRedSlider = new QSlider(parentWidget());
+    mRedSlider->setOrientation(Qt::Horizontal);
     addControlWidget(new QLabel("Red", parentWidget()), mRedSlider);
     connect(mRedSlider, SIGNAL(valueChanged(int)), this, SLOT(onRedChanged(int)));
 
     mGreenSlider = new QSlider(parentWidget());
+    mGreenSlider->setOrientation(Qt::Horizontal);
     addControlWidget(new QLabel("Green", parentWidget()), mGreenSlider);
     connect(mGreenSlider, SIGNAL(valueChanged(int)), this, SLOT(onGreenChanged(int)));
 
     mBlueSlider = new QSlider(parentWidget());
+    mBlueSlider->setOrientation(Qt::Horizontal);
     addControlWidget(new QLabel("Blue", parentWidget()), mBlueSlider);
     connect(mBlueSlider, SIGNAL(valueChanged(int)), this, SLOT(onBlueChanged(int)));
 
     // new frequency slider
     mFrequencySlider = new QSlider(parentWidget());
+    mFrequencySlider->setOrientation(Qt::Horizontal);
     addControlWidget(new QLabel("Period"), mFrequencySlider);
     connect(mFrequencySlider, SIGNAL(valueChanged(int)), this, SLOT(onPeriodChanged(int)));
 

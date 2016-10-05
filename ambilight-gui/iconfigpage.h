@@ -13,10 +13,15 @@
 
 
 class IScreenConfigPage {
-    virtual QString infoText() const = 0;
-public:
-    virtual QString pageLabel() const = 0;
+protected:
     virtual ControlWidget* getWidget(QWidget* parent, LedCount d) const = 0;
+    ControlWidget* mCurrentControlWidget = nullptr;
+public:
+    virtual ControlWidget& getWidget() {
+        return *mCurrentControlWidget;
+    }
+
+    virtual void updateLedCount(const LedCount& l) = 0;
 };
 
 #endif // ICONFIGPAGE_H

@@ -14,8 +14,7 @@ class BacklightControlWidget : public ControlWidget
 public:
     explicit BacklightControlWidget(
             LedCount d,
-            QWidget *parent = 0,
-            const QString &infoString = "");
+            QWidget *parent = 0);
 
 private slots:
     /**

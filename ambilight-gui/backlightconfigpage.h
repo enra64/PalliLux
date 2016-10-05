@@ -19,10 +19,9 @@ private:
     Ui::BacklightConfigPage *ui;
 
     // IScreenConfigPage interface
-    QString infoText() const override;
-public:
-    QString pageLabel() const override;
     ControlWidget* getWidget(QWidget *parent, LedCount d) const override;
+public:
+    void updateLedCount(const LedCount &l) override;
 };
 
 #endif // BACKLIGHTCONFIGPAGE_H

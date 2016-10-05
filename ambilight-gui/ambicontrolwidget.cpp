@@ -4,8 +4,8 @@
 #include <brightnessfilter.h>
 #include <lowpassfilter.h>
 
-AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector, QWidget *parent, const QString &infoString) :
-    ControlWidget(parent, infoString) {
+AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector, QWidget *parent) :
+    ControlWidget(parent) {
 
     // override the connector created by the ControlWidget constructor
     mArduinoConnector = connector;

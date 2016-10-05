@@ -14,8 +14,7 @@ class AmbiControlWidget : public ControlWidget
 public:
     explicit AmbiControlWidget(
             std::shared_ptr<ArduinoConnector> connector,
-            QWidget *parent = 0,
-            const QString &infoString = "");
+            QWidget *parent = 0);
 
 private slots:
     void onNewDataFactorChanged(double newValue);

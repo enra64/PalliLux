@@ -22,7 +22,7 @@ class ControlWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ControlWidget(QWidget *parent = 0, const QString &infoString = "");
+    explicit ControlWidget(QWidget *parent = 0);
     ~ControlWidget();
 
     std::shared_ptr<ArduinoConnector> getArduinoConnector(){
@@ -78,14 +78,14 @@ protected:
     void updateStatus(const std::string &msg, bool isFailure = false);
 
     /**
-     * @brief Show a new text in the info label
-     */
-    void updateInfo(const QString &msg);
-
-    /**
      * @brief Add a widget spanning both columns to the control widget
      */
     void addControlWidget(QWidget *row);
+
+    /**
+     * @brief Retrieve the current led config from qsettings
+     */
+    LedCount getLedConfig();
 
     std::shared_ptr<ArduinoConnector> mArduinoConnector;///< this connector instance is used to communicate with the arduino
 private:

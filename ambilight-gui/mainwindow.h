@@ -20,24 +20,22 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_yLedSpin_valueChanged(int);
-    void on_xLedSpin_valueChanged(int);
-
-    void on_configStackPrevButton_clicked();
-    void on_configStackNextButton_clicked();
-
     void on_ttyState_textChanged(const QString &);
 
     void on_startControlDialogButton_clicked();
 
+    void updateTabLedCount();
+    void refreshLedCount();
+
+    void on_actionLED_Configuration_triggered();
+
 private:
     Ui::MainWindow *ui;
-    void refreshLedCount();
-    const IScreenConfigPage* getCurrentPage();
+    IScreenConfigPage* getCurrentTab();
     void showNoSerialWarning();
     bool enteredSerialOk();
-    ControlWidget* mCurrentControlWidget = nullptr;
     void loadControlWidget();
+    void setRunState(bool running);
 };
 
 #endif // MAINWINDOW_H

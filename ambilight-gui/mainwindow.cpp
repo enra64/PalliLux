@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "iconfigpage.h"
+#include "ledconfigdialog.h"
 
 #include <ambicolordataprovider.h>
 #include <colordataprovider.h>
@@ -16,13 +17,13 @@
 
 
 #ifdef __linux__
-    #include <xlibscreenshotprovider.h>
-    #include <linuxserial.h>
+#include <xlibscreenshotprovider.h>
+#include <linuxserial.h>
 #elif _WIN32_WINNT
-    #include <winscreenshotprovider.h>
-    #include <windowsserial.h>
+#include <winscreenshotprovider.h>
+#include <windowsserial.h>
 #else
-    #error Platform not recognized
+#error Platform not recognized
 #endif
 
 #include <lowpassfilter.h>
@@ -37,6 +38,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // check whether the default tty device exists
     on_ttyState_textChanged(ui->ttyState->text());
+
+    // connect to tabhost change signal
+    connect(ui->configTabHost, &QTabWidget::currentChanged, this, &MainWindow::updateTabLedCount);
+
+    // init first tab
+    updateTabLedCount();
+
+    // disable stop button
+    setRunState(false);
 }
 
 MainWindow::~MainWindow() {
@@ -44,111 +54,82 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::refreshLedCount() {
-    int ledCount = ui->xLedSpin->text().toInt() * 2 + ui->yLedSpin->text().toInt() * 2;
+    const int ledCount =
+        ui->bLedSpin->value() +
+        ui->rLedSpin->value() +
+        ui->tLedSpin->value() +
+        ui->lLedSpin->value();
     ui->ledCountLabel->setText(QString::number(ledCount));
+
+    updateTabLedCount();
 }
 
-const IScreenConfigPage* MainWindow::getCurrentPage() {
-    return dynamic_cast<IScreenConfigPage*>(ui->configStack->currentWidget());
+IScreenConfigPage* MainWindow::getCurrentTab() {
+    return dynamic_cast<IScreenConfigPage*>(ui->configTabHost->currentWidget());
 }
 
-void MainWindow::showNoSerialWarning()
-{
+void MainWindow::showNoSerialWarning() {
     QMessageBox::warning(this, "Serial device error", QString("The serial device %1 could not be found!").arg(ui->ttyState->text()), QMessageBox::Ok);
 }
 
 bool MainWindow::enteredSerialOk() {
     // check whether the tty device exists
 #ifdef __linux__
-        LinuxSerial serial;
+    LinuxSerial serial;
 #elif _WIN32_WINNT
-        WindowsSerial serial;
+    WindowsSerial serial;
 #else
-        #error Platform not recognized
+#error Platform not recognized
 #endif
 
     return serial.deviceExists(ui->ttyState->text().toStdString());
 }
 
-void MainWindow::loadControlWidget()
-{
-    // get the currently displayed configuration page to retrieve a rgbProvider
-    const IScreenConfigPage* currentPage = getCurrentPage();
+void MainWindow::setRunState(bool running) {
+    // control tab state
+    for(int tab = 0; tab < ui->configTabHost->count(); tab++)
+        if(tab != ui->configTabHost->currentIndex())
+            ui->configTabHost->setTabEnabled(tab, !running);
 
-    QGridLayout* widgetContainer = static_cast<QGridLayout*>(ui->controlWidgetContainer);
+    // start/stop buttons
+    ui->startControlDialogButton->setEnabled(!running);
+    ui->stopControlDialogButton->setEnabled(running);
 
-    // kill old widget
-    if(mCurrentControlWidget){
-        // remove from layout
-        widgetContainer->removeWidget(mCurrentControlWidget);
+    // tty device
+    ui->ttyState->setEnabled(!running);
 
-        // disconnect signal
-        disconnect(this, &MainWindow::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-
-        // delete object
-        delete mCurrentControlWidget;
-    }
-
-    // get new ControlWidget
-    mCurrentControlWidget = currentPage->getWidget(parentWidget(), LedCount(ui->xLedSpin->value(), ui->yLedSpin->value()));
-
-    // window destroyed -> stop connection
-    connect(this, &MainWindow::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-
-    //display widget
-    widgetContainer->addWidget(mCurrentControlWidget);
+    // led count
+    ui->bLedSpin->setEnabled(!running);
+    ui->rLedSpin->setEnabled(!running);
+    ui->tLedSpin->setEnabled(!running);
+    ui->lLedSpin->setEnabled(!running);
 }
 
 void MainWindow::on_startControlDialogButton_clicked() {
     // if the serial device does not exist, the user should not be able to start the control dialog
-    if(!enteredSerialOk()){
+    if(!enteredSerialOk()) {
         showNoSerialWarning();
         return;
     }
 
-    mCurrentControlWidget->start(ui->ttyState->text());
+    // disable controls which must not be accessed at ledruntime
+    setRunState(true);
+
+    // connect stop button to this widget
+    connect(ui->stopControlDialogButton, &QPushButton::clicked, &getCurrentTab()->getWidget(), &ControlWidget::stop);
+
+    // start widget
+    getCurrentTab()->getWidget().start(ui->ttyState->text());
+
+    // re-enable controls now that the connector went offline
+    setRunState(false);
+
+    // disconnect the stop button after running
+    disconnect(ui->stopControlDialogButton, &QPushButton::clicked, &getCurrentTab()->getWidget(), &ControlWidget::stop);
 }
 
-void MainWindow::on_yLedSpin_valueChanged(int) {
-    refreshLedCount();
-}
-
-void MainWindow::on_xLedSpin_valueChanged(int) {
-    refreshLedCount();
-}
-
-void MainWindow::on_configStackPrevButton_clicked() {
-    // get current index
-    int index = ui->configStack->currentIndex() - 1;
-
-    // clamp to positive indices
-    if(index < 0) index += ui->configStack->count();
-
-    // update page
-    ui->configStack->setCurrentIndex(index);
-
-    // update label
-    ui->configStackLabel->setText(getCurrentPage()->pageLabel());
-
-    // update currently shown control widget
-    loadControlWidget();
-}
-
-void MainWindow::on_configStackNextButton_clicked() {
-    // get current index
-    int nextIndex = ui->configStack->currentIndex() + 1;
-
-    // clamp to valid values
-    nextIndex %= ui->configStack->count();
-
-    // update oage
-    ui->configStack->setCurrentIndex(nextIndex);
-
-    // update label
-    ui->configStackLabel->setText(getCurrentPage()->pageLabel());
-
-    // update currently shown control widget
-    loadControlWidget();
+void MainWindow::updateTabLedCount() {
+    getCurrentTab()->updateLedCount(LedCount(ui->bLedSpin->value(), ui->rLedSpin->value(), ui->tLedSpin->value(), ui->lLedSpin->value()));
 }
 
 void MainWindow::on_ttyState_textChanged(const QString &) {
@@ -156,4 +137,9 @@ void MainWindow::on_ttyState_textChanged(const QString &) {
         ui->ttyState->setStyleSheet("color: black;");
     else
         ui->ttyState->setStyleSheet("color: red;");
+}
+
+void MainWindow::on_actionLED_Configuration_triggered() {
+    LedConfigDialog d(this);
+    d.exec();
 }

@@ -35,21 +35,6 @@ shared_ptr<BorderProvider> SingleScreenConfigPage::getSingleScreenBorderProvider
     return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, xOff, yOff, xLetterbox, yLetterbox));
 }
 
-QString SingleScreenConfigPage::pageLabel() const {
-    return QString("Single Screen");
-}
-
-QString SingleScreenConfigPage::infoText() const {
-    QString w = QString::number(ui->resolutionWidthSpinbox->value());
-    QString h = QString::number(ui->resolutionHeightSpinbox->value());
-    QString xOff = QString::number(ui->xOffsetSpinbox->value());
-    QString yOff = QString::number(ui->yOffsetSpinbox->value());
-    QString xLetterbox = QString::number(ui->letterboxingWidthSpinBox->value());
-    QString yLetterbox = QString::number(ui->letterboxingHeightSpinBox->value());
-
-    return QString("Single screen, %1x%2+%3+%4, letterboxing %5x%6").arg(w, h, xOff, yOff, xLetterbox, yLetterbox);
-}
-
 void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
     // get relevant sizes
     int w = ui->resolutionWidthSpinbox->value();
@@ -77,10 +62,29 @@ ControlWidget* SingleScreenConfigPage::getWidget(QWidget* parent, LedCount d) co
     builder.setBorderProvider(getSingleScreenBorderProvider());
 
     // instantiate and set an AmbiColorDataProvider
-    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(d.bottom, d.right, d.top, d.left)));
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(d)));
 
     // initialize control widget
-    AmbiControlWidget* w = new AmbiControlWidget(builder.build(), parent, infoText());
+    AmbiControlWidget* w = new AmbiControlWidget(builder.build(), parent);
 
     return w;
+}
+
+
+void SingleScreenConfigPage::updateLedCount(const LedCount &l) {
+    // remove, disconnect & delete previous widget if exists
+    if(mCurrentControlWidget != nullptr){
+        ui->tabMainLayout->removeWidget(mCurrentControlWidget);
+        disconnect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
+        delete mCurrentControlWidget;
+    }
+
+    // load control widget
+    mCurrentControlWidget = getWidget(0, l);
+
+    // window destroyed -> stop connection
+    connect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
+
+    //display widget
+    ui->tabMainLayout->addWidget(mCurrentControlWidget);
 }
