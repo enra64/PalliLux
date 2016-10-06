@@ -42,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // get user to set led and serial config
     checkConfiguration();
+
+    // connect kill buttons to the stop function
+    connect(ui->stopControlDialogButton, &QPushButton::clicked, this, &MainWindow::stop);
 }
 
 MainWindow::~MainWindow() {
@@ -108,17 +111,11 @@ void MainWindow::on_startControlDialogButton_clicked() {
     // disable controls which must not be accessed at ledruntime
     setRunState(true);
 
-    // connect stop button to this widget
-    connect(ui->stopControlDialogButton, &QPushButton::clicked, &getCurrentTab()->getControlWidget(), &ControlWidget::stop);
-
     // start widget
     getCurrentTab()->getControlWidget().start(SerialConfigDialog::getSerialDevice());
 
     // re-enable controls now that the connector went offline
     setRunState(false);
-
-    // disconnect the stop button after running
-    disconnect(ui->stopControlDialogButton, &QPushButton::clicked, &getCurrentTab()->getControlWidget(), &ControlWidget::stop);
 }
 
 void MainWindow::on_actionLED_Configuration_triggered() {
@@ -131,4 +128,13 @@ void MainWindow::on_actionSerial_Configuration_triggered() {
     SerialConfigDialog d(this);
     d.exec();
     checkConfiguration();
+}
+
+void MainWindow::stop() {
+    getCurrentTab()->getControlWidget().stop();
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *) {
+    stop();
 }

@@ -25,18 +25,16 @@ private slots:
     void on_actionLED_Configuration_triggered();
     void on_actionSerial_Configuration_triggered();
 
+    /// \brief find the current control widget, and stop the pallilux
+    void stop();
 private:
     Ui::MainWindow *ui;
 
     /// \brief Get the currently displayed tab
     IScreenConfigPage* getCurrentTab();
 
-
-
     /// \brief dis/enable appropriate widgets
     void setRunState(bool running);
-
-
 
     // configuration control stuff
 private:
@@ -54,6 +52,10 @@ private:
 
     /// \brief button to show that the serial config is bad
     QPushButton* mSerialButton = nullptr;
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *) override;
 };
 
 #endif // MAINWINDOW_H

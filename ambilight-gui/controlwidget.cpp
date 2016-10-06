@@ -1,7 +1,10 @@
 #include "controlwidget.h"
 #include "ui_controlwidget.h"
 
+#include <QtConcurrent>
 #include <QDoubleSpinBox>
+#include <QFutureWatcher>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QTime>
 
@@ -39,8 +42,19 @@ void ControlWidget::start(const QString& port) {
     updateStatus("beginning connection attempt");
 
     try {
-        // try to connect
-        mArduinoConnector->connect();
+        // try to connect, showing a busy dialog
+        QProgressDialog dialog("connecting", "cancel", 0, 0, this);
+
+        dialog.setCancelButton(nullptr);
+
+        QFutureWatcher<void> watcher;
+        connect(&watcher, SIGNAL(finished()), &dialog, SLOT(cancel()));
+
+        QFuture<void> future = QtConcurrent::run(mArduinoConnector.get(), &ArduinoConnector::connect);
+        watcher.setFuture(future);
+
+        dialog.exec();
+
         // ui update
         updateStatus("connection ok");
     } catch(ArduinoConnectorException e) {
