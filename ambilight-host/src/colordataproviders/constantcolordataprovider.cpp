@@ -5,7 +5,7 @@
 
 using namespace std;
 
-ConstantColorDataProvider::ConstantColorDataProvider(LedCount d, uint8_t red, uint8_t green, uint8_t blue)
+ConstantColorDataProvider::ConstantColorDataProvider(LedConfig d, uint8_t red, uint8_t green, uint8_t blue)
     : ColorDataProvider(d) {
 
 }

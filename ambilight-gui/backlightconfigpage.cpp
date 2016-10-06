@@ -4,33 +4,17 @@
 
 BacklightConfigPage::BacklightConfigPage(QWidget *parent) :
     QWidget(parent),
+    IScreenConfigPage(),
     ui(new Ui::BacklightConfigPage) {
     ui->setupUi(this);
+    ui->tabMainLayout->addWidget(getControlWidget(parent));
 }
 
 BacklightConfigPage::~BacklightConfigPage() {
     delete ui;
 }
 
-ControlWidget *BacklightConfigPage::getWidget(QWidget* parent, LedCount d) const {
-    return new BacklightControlWidget(d, parent);
-}
-
-
-void BacklightConfigPage::updateLedCount(const LedCount &l) {
-    // remove, disconnect & delete previous widget if exists
-    if(mCurrentControlWidget != nullptr){
-        ui->tabMainLayout->removeWidget(mCurrentControlWidget);
-        disconnect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-        delete mCurrentControlWidget;
-    }
-
-    // load control widget
-    mCurrentControlWidget = getWidget(0, l);
-
-    // window destroyed -> stop connection
-    connect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-
-    //display widget
-    ui->tabMainLayout->addWidget(mCurrentControlWidget);
+ControlWidget *BacklightConfigPage::getControlWidget(QWidget* parent) {
+    mCurrentControlWidget = new BacklightControlWidget(mLedConfiguration, parent);
+    return mCurrentControlWidget;
 }

@@ -21,9 +21,7 @@ private:
     Ui::TripleScreenConfigPage *ui;
 
     // IScreenConfigPage interface
-    ControlWidget* getWidget(QWidget* parent, LedCount d) const override;
-public:
-    void updateLedCount(const LedCount &l) override;
+    ControlWidget* getControlWidget(QWidget* parent) override;
 };
 
 

@@ -14,62 +14,10 @@
    <string/>
   </property>
   <widget class="QWidget" name="mainHLayout">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Connection</string>
-        </property>
-        <layout class="QFormLayout" name="formLayout_3">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>tty device name</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="ttyState">
-           <property name="text">
-            <string>/dev/ttyUSB0</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="startControlDialogButton">
-          <property name="text">
-           <string>Let there be light</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stopControlDialogButton">
-          <property name="text">
-           <string>Stop</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="controlWidgetContainer"/>
-    </item>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="bottomMargin">
+     <number>3</number>
+    </property>
     <item>
      <widget class="QTabWidget" name="configTabHost">
       <property name="currentIndex">
@@ -92,6 +40,24 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="buttonLayout">
+      <item>
+       <widget class="QPushButton" name="startControlDialogButton">
+        <property name="text">
+         <string>Let there be light</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stopControlDialogButton">
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -108,12 +74,18 @@
      <string>Options</string>
     </property>
     <addaction name="actionLED_Configuration"/>
+    <addaction name="actionSerial_Configuration"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
   <action name="actionLED_Configuration">
    <property name="text">
     <string>LED Configuration</string>
+   </property>
+  </action>
+  <action name="actionSerial_Configuration">
+   <property name="text">
+    <string>Serial Configuration</string>
    </property>
   </action>
  </widget>

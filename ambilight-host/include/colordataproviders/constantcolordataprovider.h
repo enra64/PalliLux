@@ -7,7 +7,7 @@
 class ConstantColorDataProvider : public ColorDataProvider
 {
 public:
-    ConstantColorDataProvider(LedCount d,
+    ConstantColorDataProvider(LedConfig d,
                               uint8_t red = 0, uint8_t green = 0, uint8_t blue = 0);
 
     /**

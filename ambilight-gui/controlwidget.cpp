@@ -110,15 +110,6 @@ void ControlWidget::addControlWidget(QWidget* row) {
     addControlWidget(row, nullptr);
 }
 
-LedCount ControlWidget::getLedConfig() {
-    QSettings s;
-    return LedCount(s.value("leds/bottom_count", -1),
-                    s.value("leds/right_count", -1),
-                    s.value("leds/top_count", -1),
-                    s.value("leds/left_count", -1));
-
-}
-
 void ControlWidget::addControlWidget(QWidget *left, QWidget* right) {
     // initialise layout if none is there yet
     if(ui->controlGroupBox->layout() == nullptr)

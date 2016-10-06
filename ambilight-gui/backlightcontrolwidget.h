@@ -13,7 +13,7 @@ class BacklightControlWidget : public ControlWidget
     Q_OBJECT
 public:
     explicit BacklightControlWidget(
-            LedCount d,
+            LedConfig d,
             QWidget *parent = 0);
 
 private slots:

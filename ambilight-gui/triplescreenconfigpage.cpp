@@ -11,15 +11,17 @@ using namespace std;
 
 TripleScreenConfigPage::TripleScreenConfigPage(QWidget *parent) :
     QWidget(parent),
+    IScreenConfigPage(),
     ui(new Ui::TripleScreenConfigPage) {
     ui->setupUi(this);
+    ui->tabMainLayout->addWidget(getControlWidget(parent));
 }
 
 TripleScreenConfigPage::~TripleScreenConfigPage() {
     delete ui;
 }
 
-ControlWidget *TripleScreenConfigPage::getWidget(QWidget *parent, LedCount d) const {
+ControlWidget *TripleScreenConfigPage::getControlWidget(QWidget *parent) {
     // get a builder
     AmbiConnectorBuilder builder;
 
@@ -36,29 +38,10 @@ ControlWidget *TripleScreenConfigPage::getWidget(QWidget *parent, LedCount d) co
                                   ui->y3->value())));
 
     // instantiate and set an AmbiColorDataProvider
-    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(d)));
+    builder.setAmbiColorDataProvider(shared_ptr<AmbiColorDataProvider>(new AmbiColorDataProvider(mLedConfiguration)));
 
     // initialize control widget
-    AmbiControlWidget* w = new AmbiControlWidget(builder.build(), parent);
+    mCurrentControlWidget = new AmbiControlWidget(builder.build(), parent);
 
-    return w;
-}
-
-
-void TripleScreenConfigPage::updateLedCount(const LedCount &l) {
-    // remove, disconnect & delete previous widget if exists
-    if(mCurrentControlWidget != nullptr){
-        ui->tabMainLayout->removeWidget(mCurrentControlWidget);
-        disconnect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-        delete mCurrentControlWidget;
-    }
-
-    // load control widget
-    mCurrentControlWidget = getWidget(0, l);
-
-    // window destroyed -> stop connection
-    connect(this, &QWidget::destroyed, mCurrentControlWidget, &ControlWidget::stop);
-
-    //display widget
-    ui->tabMainLayout->addWidget(mCurrentControlWidget);
+    return mCurrentControlWidget;
 }

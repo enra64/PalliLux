@@ -2,6 +2,7 @@
 #include "ui_ledconfigdialog.h"
 
 #include <QSettings>
+#include <colordataprovider.h>
 
 LedConfigDialog::LedConfigDialog(QWidget *parent) :
     QDialog(parent),
@@ -12,10 +13,10 @@ LedConfigDialog::LedConfigDialog(QWidget *parent) :
     QSettings s;
 
     // load stored led config values
-    ui->bLedSpin->setValue(s.value("leds/bottom_count", 0));
-    ui->rLedSpin->setValue(s.value("leds/right_count", 0));
-    ui->tLedSpin->setValue(s.value("leds/top_count", 0));
-    ui->lLedSpin->setValue(s.value("leds/left_count", 0));
+    ui->bLedSpin->setValue(s.value("leds/bottom_count", LedConfig::INVALID).toInt());
+    ui->rLedSpin->setValue(s.value("leds/right_count", LedConfig::INVALID).toInt());
+    ui->tLedSpin->setValue(s.value("leds/top_count", LedConfig::INVALID).toInt());
+    ui->lLedSpin->setValue(s.value("leds/left_count", LedConfig::INVALID).toInt());
 
     // refresh led count
     refreshLedCount();
@@ -29,6 +30,18 @@ LedConfigDialog::LedConfigDialog(QWidget *parent) :
 
 LedConfigDialog::~LedConfigDialog() {
     delete ui;
+}
+
+LedConfig LedConfigDialog::getLedConfig() {
+    QSettings s;
+    return LedConfig(s.value("leds/bottom_count", LedConfig::INVALID).toInt(),
+                    s.value("leds/right_count", LedConfig::INVALID).toInt(),
+                    s.value("leds/top_count", LedConfig::INVALID).toInt(),
+                    s.value("leds/left_count", LedConfig::INVALID).toInt());
+}
+
+bool LedConfigDialog::isLedCountSet() {
+    return getLedConfig().bottom != LedConfig::INVALID;
 }
 
 void LedConfigDialog::refreshLedCount() {
@@ -46,4 +59,6 @@ void LedConfigDialog::accept() {
     s.setValue("leds/right_count", ui->rLedSpin->value());
     s.setValue("leds/top_count", ui->tLedSpin->value());
     s.setValue("leds/left_count", ui->lLedSpin->value());
+
+    QDialog::accept();
 }

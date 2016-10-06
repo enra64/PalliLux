@@ -7,11 +7,13 @@
 
 #include "datafilter.h"
 
-struct LedCount {
-    LedCount() : bottom(0), right(0), top(0), left(0) {}
-    LedCount(size_t b, size_t r, size_t t, size_t l) : bottom(b), right(r), top(t), left(l) {}
-    LedCount(size_t horizontal, size_t vertical) : LedCount(horizontal, vertical, horizontal, vertical) {}
-    size_t bottom, right, top, left;
+struct LedConfig {
+    LedConfig() : bottom(INVALID), right(INVALID), top(INVALID), left(INVALID) {}
+    LedConfig(int b, int r, int t, int l) : bottom(b), right(r), top(t), left(l) {}
+    LedConfig(int horizontal, int vertical) : LedConfig(horizontal, vertical, horizontal, vertical) {}
+    int bottom, right, top, left;
+
+    static const int INVALID = -1;
 };
 
 /**
@@ -45,7 +47,7 @@ public:
     * @param horizontalLedCount
     * @param verticalLedCount
     */
-    ColorDataProvider(LedCount d) :
+    ColorDataProvider(LedConfig d) :
         BOTTOM_LED_COUNT(d.bottom), RIGHT_LED_COUNT(d.right), TOP_LED_COUNT(d.top), LEFT_LED_COUNT(d.left) {
     }
 
@@ -122,8 +124,8 @@ public:
     /**
      * @brief Retrieve a LedCount object detailing how many leds are where
      */
-    LedCount getLedCounts(){
-        return LedCount(BOTTOM_LED_COUNT, RIGHT_LED_COUNT, TOP_LED_COUNT, LEFT_LED_COUNT);
+    LedConfig getLedCounts(){
+        return LedConfig(BOTTOM_LED_COUNT, RIGHT_LED_COUNT, TOP_LED_COUNT, LEFT_LED_COUNT);
     }
 
 protected:

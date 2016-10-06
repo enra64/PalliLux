@@ -22,11 +22,11 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
     mHistogramWidget = new HistogramWidget(this);
     addMiscWidget(mHistogramWidget);
 
+    // set up most control widgets
+    setupControlBox();
+
     // set up combobox for selecting the interpolation type
     setupInterpolationCombobox();
-
-    // nudge the dialog to stay at the smallest possible size after adding all ui
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {
@@ -62,6 +62,8 @@ void AmbiControlWidget::setupControlBox() {
 
     // set range
     newDataFactorSpinbox->setRange(0, 1);
+    newDataFactorSpinbox->setValue(.6);
+    newDataFactorSpinbox->setSingleStep(.1);
 
     // connect to update signal
     connect(newDataFactorSpinbox, SIGNAL(valueChanged(double)), this, SLOT(onNewDataFactorChanged(double)));
@@ -77,6 +79,8 @@ void AmbiControlWidget::setupControlBox() {
 
     // set range
     brightnessFactorSpinbox->setRange(0, 1);
+    brightnessFactorSpinbox->setValue(1);
+    brightnessFactorSpinbox->setSingleStep(.1);
 
     // connect to update signal
     connect(brightnessFactorSpinbox, SIGNAL(valueChanged(double)), this, SLOT(onBrightnessFactorChanged(double)));

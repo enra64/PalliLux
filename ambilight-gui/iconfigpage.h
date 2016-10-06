@@ -2,9 +2,11 @@
 #define ICONFIGPAGE_H
 
 #include "controlwidget.h"
+#include "ledconfigdialog.h"
 
 #include <QString>
 #include <QDialog>
+#include <QSettings>
 #include <memory>
 
 #include <colordataprovider.h>
@@ -14,14 +16,21 @@
 
 class IScreenConfigPage {
 protected:
-    virtual ControlWidget* getWidget(QWidget* parent, LedCount d) const = 0;
-    ControlWidget* mCurrentControlWidget = nullptr;
-public:
-    virtual ControlWidget& getWidget() {
-        return *mCurrentControlWidget;
+    virtual ControlWidget* getControlWidget(QWidget* parent) = 0;
+
+    IScreenConfigPage(){
+        mLedConfiguration = LedConfigDialog::getLedConfig();
     }
 
-    virtual void updateLedCount(const LedCount& l) = 0;
+    ControlWidget* mCurrentControlWidget = nullptr;
+    LedConfig mLedConfiguration;
+public:
+    /**
+     * @brief Get a reference to the control widget of this page
+     */
+    virtual ControlWidget& getControlWidget() {
+        return *mCurrentControlWidget;
+    }
 };
 
 #endif // ICONFIGPAGE_H

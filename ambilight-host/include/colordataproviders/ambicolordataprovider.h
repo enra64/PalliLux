@@ -24,7 +24,7 @@ public:
      * @brief create a new AmbiColorDataProvider
      * @param d how many leds are on which border
      */
-    AmbiColorDataProvider(LedCount d);
+    AmbiColorDataProvider(LedConfig d);
 
 	/**
 	* @brief create a new AmbiColorDataProvider

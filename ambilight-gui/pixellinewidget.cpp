@@ -29,6 +29,8 @@ PixelLineWidget::PixelLineWidget(QWidget *parent) : QWidget(parent) {
 
     // get our temporary file location (the histogram will be stored here)
     mTempLocation = QDir::tempPath() + "/line.ppm";
+
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 void PixelLineWidget::update(Image *pixelLine) {

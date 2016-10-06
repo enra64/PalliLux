@@ -18,6 +18,8 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
 
     // set up chart
     setupChart();
+
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 FpsMeter::~FpsMeter() {

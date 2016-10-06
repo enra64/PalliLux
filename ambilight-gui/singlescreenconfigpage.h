@@ -28,10 +28,9 @@ private:
     std::shared_ptr<BorderProvider> getSingleScreenBorderProvider() const;
 
     // IScreenConfigPage interface
-    ControlWidget* getWidget(QWidget* parent, LedCount d) const override;
+    ControlWidget* getControlWidget(QWidget* parent) override;
 private slots:
     void on_letterboxAutoConfigButton_clicked();
-    void updateLedCount(const LedCount &l) override;
 };
 
 

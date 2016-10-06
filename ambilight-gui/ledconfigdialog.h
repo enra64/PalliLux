@@ -2,6 +2,7 @@
 #define LEDCONFIGDIALOG_H
 
 #include <QDialog>
+#include <colordataprovider.h>
 
 namespace Ui {
 class LedConfigDialog;
@@ -14,7 +15,8 @@ class LedConfigDialog : public QDialog
 public:
     explicit LedConfigDialog(QWidget *parent = 0);
     ~LedConfigDialog();
-
+    static LedConfig getLedConfig();
+    static bool isLedCountSet();
 private:
     Ui::LedConfigDialog *ui;
 
@@ -22,7 +24,6 @@ private:
     void refreshLedCount();
 public slots:
     void accept() override;
-    void reject() override;
 };
 
 #endif // LEDCONFIGDIALOG_H

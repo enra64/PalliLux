@@ -20,7 +20,7 @@ AmbiColorDataProvider::AmbiColorDataProvider(size_t bottomLedCount, size_t right
 	mRightLedGeometry = Geometry(1, rightLedCount);
 }
 
-AmbiColorDataProvider::AmbiColorDataProvider(LedCount d)
+AmbiColorDataProvider::AmbiColorDataProvider(LedConfig d)
     : AmbiColorDataProvider(d.bottom, d.right, d.top, d.left)
 {
 }

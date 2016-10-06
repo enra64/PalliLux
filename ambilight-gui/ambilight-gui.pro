@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     controlwidget.cpp \
     ambicontrolwidget.cpp \
     backlightcontrolwidget.cpp \
-    ledconfigdialog.cpp
+    ledconfigdialog.cpp \
+    serialconfigdialog.cpp
 
 HEADERS  += mainwindow.h \
     singlescreenconfigpage.h \
@@ -43,7 +44,8 @@ HEADERS  += mainwindow.h \
     controlwidget.h \
     ambicontrolwidget.h \
     backlightcontrolwidget.h \
-    ledconfigdialog.h
+    ledconfigdialog.h \
+    serialconfigdialog.h
 
 FORMS    += mainwindow.ui \
     singlescreenconfigpage.ui \
@@ -51,7 +53,8 @@ FORMS    += mainwindow.ui \
     letterboxingautoconfigdialog.ui \
     backlightconfigpage.ui \
     controlwidget.ui \
-    ledconfigdialog.ui
+    ledconfigdialog.ui \
+    serialconfigdialog.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){

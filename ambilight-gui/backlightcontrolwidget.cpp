@@ -7,7 +7,7 @@
 
 using namespace std;
 
-BacklightControlWidget::BacklightControlWidget(LedCount d, QWidget *parent) :
+BacklightControlWidget::BacklightControlWidget(LedConfig d, QWidget *parent) :
     ControlWidget(parent) {
 
     // init & set ColorDataProvider
@@ -46,6 +46,9 @@ BacklightControlWidget::BacklightControlWidget(LedCount d, QWidget *parent) :
     // add pulsing filter
     unique_ptr<DataFilter> pulsingFilter(new PulsingFilter(100, 0));
     mArduinoConnector->addFilter("pulse", std::move(pulsingFilter));
+
+    // show 'none' in misc group box
+    addMiscWidget(new QLabel("none"));
 }
 
 

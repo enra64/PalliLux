@@ -66,6 +66,11 @@ protected:
     void addControlWidget(QWidget* left, QWidget *right);
 
     /**
+     * @brief Add widget spanning both columns
+     */
+    void addControlWidget(QWidget *row);
+
+    /**
      * @brief Add widget to the miscanellous group box
      */
     void addMiscWidget(QWidget* widget);
@@ -77,17 +82,8 @@ protected:
      */
     void updateStatus(const std::string &msg, bool isFailure = false);
 
-    /**
-     * @brief Add a widget spanning both columns to the control widget
-     */
-    void addControlWidget(QWidget *row);
-
-    /**
-     * @brief Retrieve the current led config from qsettings
-     */
-    LedCount getLedConfig();
-
     std::shared_ptr<ArduinoConnector> mArduinoConnector;///< this connector instance is used to communicate with the arduino
+
 private:
     Ui::ControlWidget *ui;
 };
