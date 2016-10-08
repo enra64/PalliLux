@@ -32,7 +32,7 @@ HistogramWidget::HistogramWidget(QWidget *parent) : QWidget(parent) {
     // conform visibility to initial checkbox state
     mHistogramView->setVisible(mEnableCheckBox->isChecked());
 
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    //layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
 void HistogramWidget::update(Image *lineImg) {

@@ -40,6 +40,13 @@ signals:
      */
     void onStateChanged(bool running);
 
+    /**
+     * @brief Refresh the state of this control widget
+     * @param newText the text that should be displayed in a status bar of some kind
+     * @param warning true if the text should appear in a warning color
+     */
+    void onStatusUpdate(const QString& newText, bool warning);
+
 protected:
     std::shared_ptr<ColorDataProvider> getColorDataProvider(){
         return mArduinoConnector->getColorDataProvider();
@@ -75,12 +82,8 @@ protected:
      */
     void addMiscWidget(QWidget* widget);
 
-    /**
-     * @brief Show a new text in the state label
-     * @param msg the message to display
-     * @param isFailure if true, the text will be red
-     */
-    void updateStatus(const std::string &msg, bool isFailure = false);
+    /// \brief overload for the signal with the same name to allow std::string parameter \overload
+    void onStatusUpdate(const std::string& text, bool failure);
 
     std::shared_ptr<ArduinoConnector> mArduinoConnector;///< this connector instance is used to communicate with the arduino
 

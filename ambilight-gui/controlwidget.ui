@@ -27,29 +27,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="stateGroupBox">
-     <property name="title">
-      <string>Status</string>
-     </property>
-     <layout class="QFormLayout" name="stateLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="stateLabel">
-        <property name="text">
-         <string>State:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="stateState">
-        <property name="text">
-         <string>not connected</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="controlGroupBox">
      <property name="title">
       <string>Control</string>

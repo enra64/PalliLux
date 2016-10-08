@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include <QLabel>
 #include <memory>
 
 #include "arduinoconnector.h"
@@ -20,13 +21,18 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_startControlDialogButton_clicked();
-
     void on_actionLED_Configuration_triggered();
     void on_actionSerial_Configuration_triggered();
 
+    /// \brief find the current control widget, and start the pallilux
+    void start();
+
     /// \brief find the current control widget, and stop the pallilux
     void stop();
+
+    /// \brief update the tool bar status label
+    void updateStatus(const QString& text, bool failure);
+
 private:
     Ui::MainWindow *ui;
 
@@ -35,6 +41,15 @@ private:
 
     /// \brief dis/enable appropriate widgets
     void setRunState(bool running);
+
+    /// \brief label used to display application state
+    QLabel* mStatusLabel = nullptr;
+
+    /// \brief text to be displayed in the start/stop button when pallilux is not running
+    const QString mStartText = "Let there be light";
+
+    /// \brief text to be displayed in the start/stop button when pallilux is running
+    const QString mStopText = "Shut down";
 
     // configuration control stuff
 private:

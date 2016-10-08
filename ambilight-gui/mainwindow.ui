@@ -43,16 +43,9 @@
     <item>
      <layout class="QHBoxLayout" name="buttonLayout">
       <item>
-       <widget class="QPushButton" name="startControlDialogButton">
+       <widget class="QPushButton" name="startStopButton">
         <property name="text">
          <string>Let there be light</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="stopControlDialogButton">
-        <property name="text">
-         <string>Stop</string>
         </property>
        </widget>
       </item>

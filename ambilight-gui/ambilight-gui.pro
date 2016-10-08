@@ -88,10 +88,10 @@ unix {
     LIBS += -lpulse
 
     # static ambilight lib
-    #LIBS += "/home/arne/Documents/Development/PalliLux/ambilight-host/build/libhost.a"
+    LIBS += "/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Release/libhost.a"
 
     # dynamic ambilight lib
-    LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Debug -lhost
+    #LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Debug -lhost
 }
 
 INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/cimg \

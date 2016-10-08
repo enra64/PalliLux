@@ -89,7 +89,6 @@ void AmbiControlWidget::setupControlBox() {
     addControlWidget(brightnessFactorLabel, brightnessFactorSpinbox);
 
 
-
     // set up border width widgets
     QLabel* borderWidthLabel = new QLabel("Border width", parentWidget());
     QSpinBox* borderWidthSpinbox = new QSpinBox(parentWidget());

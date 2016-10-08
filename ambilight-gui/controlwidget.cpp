@@ -7,6 +7,7 @@
 #include <QProgressDialog>
 #include <QSettings>
 #include <QTime>
+#include <QFormLayout>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ void ControlWidget::start(const QString& port) {
     mArduinoConnector->setPort(port.toStdString());
 
     // ui update
-    updateStatus("beginning connection attempt");
+    onStatusUpdate(string("beginning connection attempt"), false);
 
     try {
         // try to connect, showing a busy dialog
@@ -55,18 +56,23 @@ void ControlWidget::start(const QString& port) {
 
         dialog.exec();
 
+        // wait for finished to collect exception
+        future.waitForFinished();
+
         // ui update
-        updateStatus("connection ok");
+        onStatusUpdate(string("connection ok"), false);
     } catch(ArduinoConnectorException e) {
         // ui update
-        updateStatus(string("catastrophic failure: ") + e.what(), true);
+        onStatusUpdate(string("catastrophic failure: ") + e.what(), true);
         emit onStateChanged(false);
         return;
     } catch(SerialException e) {
         // ui update
-        updateStatus(string("serial failure: ") + e.what(), true);
+        onStatusUpdate(string("serial failure: ") + e.what(), true);
         emit onStateChanged(false);
         return;
+    } catch (QtConcurrent::UnhandledException&){
+        onStatusUpdate(string("unhandled exception: check your connection"), true);
     }
 
     // start timing
@@ -82,7 +88,7 @@ void ControlWidget::start(const QString& port) {
 
             // update state label with runtime information
             QTime elapsed = QTime(0, 0).addMSecs(startTime.elapsed());
-            updateStatus("running for " + elapsed.toString("hh:mm:ss").toStdString());
+            onStatusUpdate("running for " + elapsed.toString("hh:mm:ss").toStdString(), false);
 
             // update custom widgets
             updateWidgets();
@@ -91,11 +97,11 @@ void ControlWidget::start(const QString& port) {
             qApp->processEvents();
         } catch(ArduinoConnectorException e) {
             // ui update
-            updateStatus(string("catastrophic failure: ") + e.what(), true);
+            onStatusUpdate(string("catastrophic failure: ") + e.what(), true);
             emit onStateChanged(false);
             break;
         } catch (ScreenshotException e) {
-            updateStatus(string("catastrophic failure: ") + e.what(), true);
+            onStatusUpdate(string("catastrophic failure: ") + e.what(), true);
             emit onStateChanged(false);
             break;
         }
@@ -110,14 +116,10 @@ void ControlWidget::stop() {
     // stop the arduino lighting
     try {
         mArduinoConnector->disconnect(true);
-        updateStatus("ambilight shut down");
+        onStatusUpdate(string("ambilight shut down"), false);
     } catch (ArduinoConnectorException e) {
-        updateStatus(string("disconnect failed: ") + e.what(), true);
+        onStatusUpdate(string("disconnect failed: ") + e.what(), true);
     }
-}
-
-void ControlWidget::addStatusWidget(QWidget *widget) {
-    ui->stateLayout->addWidget(widget);
 }
 
 void ControlWidget::addControlWidget(QWidget* row) {
@@ -147,10 +149,6 @@ void ControlWidget::addMiscWidget(QWidget *widget) {
     ui->miscGroupBOx->layout()->addWidget(widget);
 }
 
-void ControlWidget::updateStatus(const std::__cxx11::string &msg, bool isFailure) {
-    ui->stateState->setText(QString(msg.c_str()));
-    if(isFailure)
-        ui->stateState->setStyleSheet("QLabel { color : red; }");
-    else
-        ui->stateState->setStyleSheet("QLabel { color : black; }");
+void ControlWidget::onStatusUpdate(const string &text, bool failure) {
+    emit onStatusUpdate(QString::fromStdString(text), failure);
 }

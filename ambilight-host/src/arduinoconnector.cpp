@@ -155,7 +155,7 @@ void ArduinoConnector::connect() {
         return;
 
     // failure; the arduino response is not what we expected ("SAM")
-    throw ArduinoConnectorProtocolException("faulty opening sequence");
+    throw ArduinoConnectorProtocolException("faulty opening sequence; is the correct sketch flashed?");
 }
 
 ArduinoConnector::~ArduinoConnector() {
