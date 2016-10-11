@@ -92,11 +92,11 @@ endif(UNIX)
 ######################################################################################################################################################
 SET(WIN_ONLY_HEADERS
     "include/serial/windowsserial.h"
-    "include/screenshotproviders/winscreenshotprovider.h")
+    "include/screenshotproviders/ddapiscreenshotprovider.h")
     
 SET(WIN_ONLY_SOURCES
     "src/serial/windowsserial.cpp"
-    "src/screenshotproviders/winscreenshotprovider.cpp")
+    "src/screenshotproviders/ddapiscreenshotprovider.cpp")
     
 if(WIN32)
     SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
@@ -116,11 +116,11 @@ if(MAIN_CPP_EXECUTABLE)
 	add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
 else(MAIN_CPP_EXECUTABLE)
     option(DYNAMIC_LIB "compile to a dynamic library instead of a static one" ON)
-    if(DYNAMIC_LIB)
+    if(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
         add_library(${PROJECT_NAME} SHARED ${BASE_SOURCES} ${BASE_HEADERS})
-    else(DYNAMIC_LIB)
+    else(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
         add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
-    endif(DYNAMIC_LIB)
+    endif(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
 endif(MAIN_CPP_EXECUTABLE)
 
 
@@ -134,57 +134,6 @@ option(DEBUG_MODE "use cmake debug build type" ON)
 if(DEBUG_MODE)
 	set(CMAKE_BUILD_TYPE Debug)
 endif(DEBUG_MODE)
-
-
-
-######################################################################################################################################################
-# direct x screenshot support
-# Thanks to the people of h3dapi for the find-direct-x-snippet:
-# https://www.h3dapi.org:8090/HAPI/trunk/build/modules/FindDirectX.cmake
-######################################################################################################################################################
-if(WIN32)
-	option(DIRECTX "include direct x screenshot provider" ON)
-
-	if(DIRECTX)
-		# Look for the header file.
-		FIND_PATH( DirectX_INCLUDE_DIR 
-					NAMES 
-						d3d9.h
-					PATHS 
-					   "$ENV{DXSDK_DIR}Include"
-				    DOC "Path in which d3dx9.h and d3d9.h are located." )
-		
-		# Look for the library.
-		FIND_LIBRARY( DirectX_d3d9_LIBRARY 
-					NAMES d3d9.lib
-					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
-					DOC "Path to d3d9.lib" )
-					
-		FIND_LIBRARY( DirectX_d3dx9_LIBRARY 
-					NAMES d3dx9.lib
-					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
-					DOC "Path to d3dx9.lib" )
-
-		# Copy the results to the output variables.
-		IF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
-			SET(DirectX_FOUND 1)
-			SET(DirectX_LIBRARIES ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY} )
-			SET(DirectX_INCLUDE_DIR ${DirectX_INCLUDE_DIR})
-		ELSE(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )		  
-			# report that this just wont work
-			MESSAGE(FATAL_ERROR "DirectX was not found!")
-		ENDIF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
-		
-		target_sources(${PROJECT_NAME} 
-			PUBLIC 
-				"src/screenshotproviders/d3dscreenshotprovider.cpp"
-				"include/screenshotproviders/d3dscreenshotprovider.h")
-	
-		INCLUDE_DIRECTORIES ( ${DirectX_INCLUDE_DIR} )
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY})
-	
-	endif(DIRECTX)
-endif(WIN32)
 
 
 ######################################################################################################################################################
