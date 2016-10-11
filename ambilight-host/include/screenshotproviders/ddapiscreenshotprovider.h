@@ -21,6 +21,7 @@ enum struct Rotation {
 	CounterClockWise270 = 270
 };
 
+/// \brief the class that abstracts handling each screen seperately with dd api
 class ScreenHandler {
 public:
 	ScreenHandler(ID3D11Device* dxDevice, unsigned int screenNumber) : mDxDevice(dxDevice), mScreenNumber(screenNumber) {
@@ -86,8 +87,8 @@ public:
 		mDxDevice->Release();
 	}
 
-	std::shared_ptr<Image> getImageFromTexture(ID3D11Texture2D * inputTexture, ID3D11DeviceContext* dxDeviceContext)
-	{
+	/// \brief copy the texture into cpu-usable space, and then create a CImg from it
+	std::shared_ptr<Image> getImageFromTexture(ID3D11Texture2D * inputTexture, ID3D11DeviceContext* dxDeviceContext){
 		// get input texture information
 		D3D11_TEXTURE2D_DESC inputDesc;
 		inputTexture->GetDesc(&inputDesc);
@@ -121,9 +122,7 @@ public:
 		std::shared_ptr<Image> result = std::make_shared<Image>();
 
 		result->read((char*)mapResource.pData, "BGRA", 4, newTextureDesc.Width, newTextureDesc.Height, 3, nullptr, mapResource.RowPitch);
-
-		result->save("debug.ppm");
-
+		
 		dxDeviceContext->Unmap(newTexture, 0);
 		newTexture->Release();
 
@@ -199,10 +198,21 @@ private:
 	
 	// ScreenHandler stuff
 private:
+	/// \brief add a ScreenHandler
 	void addScreenHandler(int screenNumber, Rotation rotation);
-	std::vector<Rotation> mRotationList;
-	std::vector<ScreenHandler*> mScreenHandlerList;
-	std::vector<Image> mFallbackImageVector;
+	
+	/// \brief contains the rotation for each screen
+	std::vector<Rotation> mRotationVector;
+
+	/// \brief contains the ScreenHandler for each screen
+	std::vector<ScreenHandler*> mScreenHandlerVector;
+	
+	/// \brief contains the last successfully taken image for each ScreenHandler
+	std::vector<std::shared_ptr<Image>> mFallbackImageVector;
+
+	std::vector<char> mFallBackImageAgeVector;
+
+	const char FALLBACK_IMAGE_INVALID = -1;
 
 	// dx stuff
 private:
