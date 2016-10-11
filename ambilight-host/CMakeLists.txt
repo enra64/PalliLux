@@ -84,26 +84,6 @@ if(UNIX)
     SET(BASE_SOURCES ${BASE_SOURCES} ${LINUX_ONLY_SOURCES})
 endif(UNIX)
     
-    
-    
-    
-######################################################################################################################################################
-# WIN
-######################################################################################################################################################
-SET(WIN_ONLY_HEADERS
-    "include/serial/windowsserial.h"
-    "include/screenshotproviders/ddapiscreenshotprovider.h")
-    
-SET(WIN_ONLY_SOURCES
-    "src/serial/windowsserial.cpp"
-    "src/screenshotproviders/ddapiscreenshotprovider.cpp")
-    
-if(WIN32)
-    SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
-    SET(BASE_SOURCES ${BASE_SOURCES} ${WIN_ONLY_SOURCES})
-endif(WIN32)
-
-
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -177,3 +157,46 @@ if(UNIX)
     endif(SPECTROMETER)
 
 endif(UNIX)
+
+######################################################################################################################################################
+# DX - WIN ONLY
+######################################################################################################################################################
+if(WIN32)
+######################################################################################################################################################
+# WIN
+######################################################################################################################################################
+	SET(WIN_ONLY_HEADERS
+		"include/serial/windowsserial.h"
+		"include/screenshotproviders/ddapiscreenshotprovider.h")
+		
+	SET(WIN_ONLY_SOURCES
+		"src/serial/windowsserial.cpp"
+		"src/screenshotproviders/ddapiscreenshotprovider.cpp")
+	
+	# Look for the header file.
+		FIND_PATH( DX_INCLUDE_DIR 
+					NAMES 
+						d3d11.h
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Include/um"
+				    DOC "Path in which d3d11.h are located." )
+		
+		# Look for the library.
+		FIND_LIBRARY( DXGI_LIBRARY 
+					NAMES dxgi.lib
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+					DOC "Path to dxgi.lib" )
+					
+		FIND_LIBRARY( D3D11_LIBRARY 
+					NAMES d3d11.lib
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+					DOC "Path to d3d11.lib" )
+					
+	if(NOT DX_INCLUDE_DIR OR NOT DXGI_LIBRARY OR NOT D3D11_LIBRARY)
+		message("not all dxgi+dx11 libs found" FATAL_ERROR)
+	endif(NOT DX_INCLUDE_DIR OR NOT DXGI_LIBRARY OR NOT D3D11_LIBRARY)
+	
+	INCLUDE_DIRECTORIES ( ${DX_INCLUDE_DIR} )
+	TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DXGI_LIBRARY} ${D3D11_LIBRARY})
+	
+	target_sources(${PROJECT_NAME} PUBLIC ${WIN_ONLY_SOURCES} ${WIN_ONLY_HEADERS})
+endif(WIN32)
