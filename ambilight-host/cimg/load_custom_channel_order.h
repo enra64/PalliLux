@@ -2,15 +2,14 @@
 #define cimg_plugin_LOAD_CUSTOM_CHANNEL_ORDER
 
 unsigned char charPosition(const unsigned char searched, const char* order, const unsigned int channels) {
-	for (unsigned int i = 0; i < channels; i++) {
-		if (order[i] == searched) {
-			return i;
-		}
-	}
+    for(unsigned int i = 0; i < channels; i++) {
+        if(order[i] == searched){
+            return i;
+        }
+    } 
 
-	return 255;
-}
- 
+    return 255;
+} 
 
 //! Construct image with specified size and initialize pixel values from a memory buffer \specialization.
 //! channel_order may be any order of "BGRA" with 4 channels or any order of "BGR" with 3 channels at this time.
@@ -20,16 +19,14 @@ unsigned char charPosition(const unsigned char searched, const char* order, cons
 //! if shared_buffer is nullptr, a new buffer will be allocated, and source will be copied there in the right order.
 //! pitch is the byte count of a row. this is relevant because it might not be the same value as the count of rgb bytes per row (see windows DIB...)
 //! if pitch is zero, it will default to the calculated amount of bytes per row (eg 3*width)
-void read(const char * source,
-	const char* channel_order,
-	const unsigned int source_channel_count,
-	const unsigned int size_x,
-	const unsigned int size_y = 1,
-	const unsigned int size_c = 1,
-	unsigned char* const shared_buffer = nullptr,
-	int pitch = 0,
-	int xOffset = 0,
-	int yOffset = 0) {
+void read(const char *const source,
+          const char* channel_order,
+          const unsigned int source_channel_count,
+          const unsigned int size_x,
+          const unsigned int size_y=1,
+          const unsigned int size_c=1,
+          unsigned char* const shared_buffer = nullptr,
+          int pitch = 0){
 
     // check channel count validity
     if(size_c != 3 && size_c != 4 && source_channel_count != 3 && source_channel_count != 4)
@@ -90,12 +87,6 @@ void read(const char * source,
 
         uint8_t *redStart, *greenStart, *blueStart, *alphaStart;
 
-		// if we want yOffset, we need to move the start of the image up/down
-		source += yOffset * pitch;
-
-		// if we want xOffset, we need to move the start of each line
-		source += xOffset * source_channel_count;
-
         // for each row
         for (size_t row = 0; row < _height; row++) {
                 // where does the data for this row start in the source buffer?
@@ -111,14 +102,14 @@ void read(const char * source,
                     alphaStart = this->data(0, row, 0, 3);
 
                 // copy R, then G, then B into the result images buffer
-                for (size_t column = 0; column < _width; column++) {
-                        blueStart[column] = rowStart[source_channel_count * column + bOff];
-                        greenStart[column] = rowStart[source_channel_count * column + gOff];
-                        redStart[column] = rowStart[source_channel_count * column + rOff];
+                for (size_t pixelIndex = 0; pixelIndex < _width; pixelIndex++) {
+                        blueStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + bOff];
+                        greenStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + gOff];
+                        redStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + rOff];
 
                         // if an alpha channel exists, copy it
                         if(source_channel_count == 4 && _spectrum == 4)
-                            alphaStart[column] = rowStart[source_channel_count * column + aOff];
+                            alphaStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + aOff];
                 }
         }
 
