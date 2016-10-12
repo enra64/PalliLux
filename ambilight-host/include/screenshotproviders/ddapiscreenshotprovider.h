@@ -4,13 +4,8 @@
 #include "screenshotprovider.h"
 #include "ddapiscreen.h"
 
-#include <windows.h>
 #include <d3d11.h>
 #include <dxgi1_2.h>
-#include <sal.h>
-#include <new>
-#include <warning.h>
-#include <DirectXMath.h>
 
 #include <vector>
 #include <memory>
@@ -35,8 +30,6 @@ public:
 
 	// custom stuff
 private:
-	/// \brief storage space for the whole image
-	Image mImage;
 	
 	// ScreenHandler stuff
 private:
@@ -50,9 +43,6 @@ private:
 private:
 	ID3D11Device* mDxDevice = nullptr;
 	ID3D11DeviceContext* mDxDeviceContext = nullptr;
-
-	/// \brief navigate through the parameter maze of D3D11CreateDevice to get us a dx device; returns true upon success
-	bool getDxDevice();
 
 	// static const dx stuff
 private:

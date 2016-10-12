@@ -68,41 +68,22 @@ void DdApiScreenshotProvider::takeScreenshot() {
 		// "safe default" since 0 is main screen
 		addScreenHandler(0, Rotation::CounterClockWise0);
 
-	// reset main image
-	mImage.clear();
-	
-	for (unsigned int i = 0; i < mScreenVector.size(); i++) {
-		shared_ptr<Image> img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
-		
-		// check whether cimg is ok
-		assert(!img->is_empty());
-
-		// if the fallback system of DdApiScreen failed, we must force retaking the screenshot
-		if (!img) {
-			i--;
-			continue;
-		}
-
-		mImage.append(*img.get());
-	}
+	for (unsigned int i = 0; i < mScreenVector.size(); i++)
+		mScreenVector.at(i)->takeScreenshot(mDxDeviceContext);
 }
 
 float DdApiScreenshotProvider::getScreenCrop(Image& result, const Geometry& d) {
 	// benchmarking
 	clock_t start = clock();
-
-	assert(!mImage.is_empty());
+	
+	std::shared_ptr<Image> img = mScreenVector[0]->getScreenshot(mDxDeviceContext, d);
 
 	// crop out the relevant part
-	result = mImage.get_crop(d.left(), d.top(), d.right(), d.bottom());
+	if (img->is_empty())
+		result = Image();
+	else
+		result = img->get_crop(d.left(), d.top(), d.right(), d.bottom());
 
 	// benchmarking end
 	return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
-}
-
-bool DdApiScreenshotProvider::getDxDevice()
-{
-	
-
-	return false;
 }

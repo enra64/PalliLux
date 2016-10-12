@@ -1,13 +1,14 @@
 #ifndef DD_API_SCREEN_H
 #define DD_API_SCREEN_H
 
-//#include <windows.h>
+// define our custom plugin to allow easier loading of interleaved BGR-or-BGRA-in-whatever-order images
+#define cimg_plugin1 "load_custom_channel_order.h"
+
+// display support is disabled in CImg under unix to avoid including X11 here, which would break building with Qt. (line 266)
+#include "CImg.h"
+
 #include <d3d11.h>
 #include <dxgi1_2.h>
-//#include <sal.h>
-//#include <new>
-//#include <warning.h>
-//#include <DirectXMath.h>
 
 #include <memory>
 #include <assert.h>
@@ -30,14 +31,6 @@ private:
 	/// \brief fallback image should the image creation fail
 	std::shared_ptr<Image> mFallbackImage;
 
-	/// \brief constant value if the fallback image is not valid
-	const char FALLBACK_IMAGE_INVALID = -1;
-
-	/// \brief age of the fallback image
-	char mFallbackImageAge = FALLBACK_IMAGE_INVALID;
-
-
-
 	// dx stuff
 private:
 	/// \brief the object enabling the desktop duplication
@@ -51,6 +44,15 @@ private:
 
 	/// \brief which screen does this ScreenHandler handle
 	const unsigned int mScreenNumber;
+
+	/// \brief stores the screenshot last taken as a dx texture
+	D3D11_MAPPED_SUBRESOURCE mLastScreenshotMappedSubresource;
+
+	/// \brief stores the texture of the last screenshot taken
+	ID3D11Texture2D* mLastScreenshotTexture;
+
+	/// \brief stores the texture description of the last screenshot taken
+	D3D11_TEXTURE2D_DESC mLastScreenshotTextureDescription;
 
 	// public interface
 public:
@@ -118,7 +120,15 @@ public:
 		mDxDevice->Release();
 	}
 
-	std::shared_ptr<Image> getScreenshot(ID3D11DeviceContext* dxDeviceContext) {
+	/// \brief take the screenshot, extract the pixels to member variables, and return
+	void takeScreenshot(ID3D11DeviceContext* dxDeviceContext) {
+		// if we previously took a screenshot, we have to release it now
+		if (mLastScreenshotTexture) {
+			dxDeviceContext->Unmap(mLastScreenshotTexture, 0);
+			mLastScreenshotTexture->Release();
+		}
+
+		// begin taking screenshot
 		IDXGIResource* dxgiDesktopResource = nullptr;
 		DXGI_OUTDUPL_FRAME_INFO FrameInfo;
 
@@ -126,101 +136,78 @@ public:
 		HRESULT duplicationResult = mDesktopDuplication->AcquireNextFrame(10, &FrameInfo, &dxgiDesktopResource);
 
 		if (FAILED(duplicationResult))
-			return nullptr;
+			return;
 
-		// screenshot as a dx 11 texture
-		ID3D11Texture2D* screenshot;
-
+		ID3D11Texture2D* screenshotTexture;
+		
 		// query for IDXGIResource
-		HRESULT desktopResult = dxgiDesktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&screenshot));
+		HRESULT desktopResult = dxgiDesktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&screenshotTexture));
 		dxgiDesktopResource->Release();
 		dxgiDesktopResource = nullptr;
 		if (FAILED(desktopResult)) throw new std::runtime_error("failed to QueryInterface for screenshot");
 
-		std::shared_ptr<Image> result = getImageFromTexture(screenshot, dxDeviceContext);
+		// retrieve the texture data into our mapped result structure
+		mLastScreenshotMappedSubresource = retrieveTexture(dxDeviceContext, screenshotTexture);
 
-		// release data
+		// release texture & duplication frame data
 		HRESULT desktopDuplicationFrameRelease = mDesktopDuplication->ReleaseFrame();
 		if (FAILED(desktopDuplicationFrameRelease)) throw std::runtime_error("could not release last frame");
-		if (screenshot)
-			screenshot->Release();
+		if (screenshotTexture)
+			screenshotTexture->Release();
+	}
 
-		return result;
+	/// \brief create a CImg from the member variables
+	std::shared_ptr<Image> getScreenshot(ID3D11DeviceContext* dxDeviceContext, Geometry g) {
+		return getImageFromTexture(dxDeviceContext, g);
 	}
 
 	// functions for handling screenshots
 private:
-	/// \brief copy the texture into cpu-usable space, and then create a CImg from it
-	std::shared_ptr<Image> getImageFromTexture(ID3D11Texture2D * inputTexture, ID3D11DeviceContext* dxDeviceContext) {
+	D3D11_MAPPED_SUBRESOURCE retrieveTexture(ID3D11DeviceContext* dxDeviceContext, ID3D11Texture2D* inputTexture) {
 		// get input texture information
 		D3D11_TEXTURE2D_DESC inputDesc;
 		inputTexture->GetDesc(&inputDesc);
 
 		// create new texture information
-		ID3D11Texture2D* newTexture;
-		D3D11_TEXTURE2D_DESC newTextureDesc;
+		ID3D11Texture2D* copiedTexture;
 		// memset for when you just dont give a f*ck any more about f*cking macros like zeromemory
-		::memset((void*) &newTextureDesc, 0, sizeof(newTextureDesc));
-		newTextureDesc.Width = inputDesc.Width;
-		newTextureDesc.Height = inputDesc.Height;
-		newTextureDesc.MipLevels = 1;
-		newTextureDesc.ArraySize = 1;
-		newTextureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		newTextureDesc.SampleDesc.Count = 1;
-		newTextureDesc.SampleDesc.Quality = 0;
-		newTextureDesc.Usage = D3D11_USAGE_STAGING;
-		newTextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		newTextureDesc.MiscFlags = 0;
+		::memset((void*)&mLastScreenshotTextureDescription, 0, sizeof(mLastScreenshotTextureDescription));
+		mLastScreenshotTextureDescription.Width = inputDesc.Width;
+		mLastScreenshotTextureDescription.Height = inputDesc.Height;
+		mLastScreenshotTextureDescription.MipLevels = 1;
+		mLastScreenshotTextureDescription.ArraySize = 1;
+		mLastScreenshotTextureDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		mLastScreenshotTextureDescription.SampleDesc.Count = 1;
+		mLastScreenshotTextureDescription.SampleDesc.Quality = 0;
+		mLastScreenshotTextureDescription.Usage = D3D11_USAGE_STAGING;
+		mLastScreenshotTextureDescription.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		mLastScreenshotTextureDescription.MiscFlags = 0;
 
 		// create new texture
-		HRESULT textureCreationCheck = mDxDevice->CreateTexture2D(&newTextureDesc, NULL, &newTexture);
+		HRESULT textureCreationCheck = mDxDevice->CreateTexture2D(&mLastScreenshotTextureDescription, NULL, &copiedTexture);
 		assert(SUCCEEDED(textureCreationCheck));
 
-		dxDeviceContext->CopyResource(newTexture, inputTexture);
+		dxDeviceContext->CopyResource(copiedTexture, inputTexture);
 
 		D3D11_MAPPED_SUBRESOURCE  mapResource;
-		HRESULT mapCheck = dxDeviceContext->Map(newTexture, 0, D3D11_MAP_READ, NULL, &mapResource);
-
+		HRESULT mapCheck = dxDeviceContext->Map(copiedTexture, 0, D3D11_MAP_READ, NULL, &mapResource);
 		assert(SUCCEEDED(mapCheck));
 
+		return mapResource;
+	}
+
+	/// \brief copy the texture into cpu-usable space, and then create a CImg from it
+	std::shared_ptr<Image> getImageFromTexture(ID3D11DeviceContext* dxDeviceContext, Geometry g) {
 		std::shared_ptr<Image> result = std::make_shared<Image>();
 
-		updateFallbackSystem(result);
-
-		result->read((char*)mapResource.pData, "BGRA", 4, newTextureDesc.Width, newTextureDesc.Height, 3, nullptr, mapResource.RowPitch);
-
-		dxDeviceContext->Unmap(newTexture, 0);
-		newTexture->Release();
+		// read from screenshot texture
+		result->read((char*)mLastScreenshotMappedSubresource.pData, "BGRA", 4, g.width, g.height, 3, nullptr, mLastScreenshotMappedSubresource.RowPitch, g.xOffset, g.yOffset);
+		
+		// rotate according to the screen rotation
+		result->rotate((float)mScreenRotation);
 
 		return result;
-	}
-
-	void updateFallbackSystem(std::shared_ptr<Image> latestImage) {
-		// screenshot success!
-		if (latestImage) {
-			// rotate according to the screen rotation
-			latestImage->rotate((float) mScreenRotation);
-
-			// if the fallback image is not too old or invalid
-			if (mFallbackImageAge >= 0 && mFallbackImageAge < 100) {
-				// fallback image is now older
-				mFallbackImageAge++;
-			}
-			// the fallback image must be refreshed
-			else {
-				// save fallback image
-				mFallbackImage = latestImage;
-				// update age to zero
-				mFallbackImageAge = 0;
-			}
-		}
-		// the screenshot was not successfully taken - use the fallback image
-		else {
-			latestImage = mFallbackImage;
-		}
-	}
-
-	
+	}	
 };
 
 #endif
