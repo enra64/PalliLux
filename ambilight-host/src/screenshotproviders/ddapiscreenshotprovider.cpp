@@ -54,63 +54,36 @@ DdApiScreenshotProvider::~DdApiScreenshotProvider() {
 		mDxDeviceContext = nullptr;
 	}
 
-	for (ScreenHandler* s : mScreenHandlerVector)
+	for (DdApiScreen* s : mScreenVector)
 		delete s;
 }
 
 void DdApiScreenshotProvider::addScreenHandler(int screenNumber, Rotation rotation) {
-	mRotationVector.push_back(rotation);
-	mScreenHandlerVector.push_back(new ScreenHandler(mDxDevice, screenNumber));
-	
-	// pushes back an empty image as fallback -> when first image creation fails, this shit goes down
-	mFallbackImageVector.push_back(shared_ptr<Image>(new Image()));
-	
-	// push back how old this fallback image is
-	mFallBackImageAgeVector.push_back(FALLBACK_IMAGE_INVALID);
+	mScreenVector.push_back(new DdApiScreen(mDxDevice, rotation, screenNumber));
 }
 
 void DdApiScreenshotProvider::takeScreenshot() {
 	// panic: if we dont have a single ScreenHandler, this house of cards will come crashing down
-	if (mRotationVector.size() == 0)
+	if (mScreenVector.size() == 0)
 		// "safe default" since 0 is main screen
 		addScreenHandler(0, Rotation::CounterClockWise0);
 
 	// reset main image
 	mImage.clear();
 	
-	for (int i = 0; i < mScreenHandlerVector.size(); i++) {
-		// if this image does not have a fallback, we force waiting until it has - that
-		// looks like shit, but the program doesn't go down
-		shared_ptr<Image> img = mScreenHandlerVector.at(i)->getScreenshot(mDxDeviceContext);
+	for (unsigned int i = 0; i < mScreenVector.size(); i++) {
+		shared_ptr<Image> img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
 		
-		// screenshot success!
-		if (img) {
-			// append new screenshot to mImage
-			mImage.append(img->rotate(static_cast<float>(mRotationVector.at(i))));
-			
-			// if the fallback image is not too old or invalid, just rotate the image
-			if (mFallBackImageAgeVector[i] >= 0 && mFallBackImageAgeVector[i] < 100) {
-				// fallback image is now older
-				mFallBackImageAgeVector[i]++;
-			}
-			// the fallback image must be refreshed
-			else {
-				// save fallback image
-				mFallbackImageVector[i] = img;
-				// update age to zero
-				mFallBackImageAgeVector[i] = 0;
-			}
+		// check whether cimg is ok
+		assert(!img->is_empty());
+
+		// if the fallback system of DdApiScreen failed, we must force retaking the screenshot
+		if (!img) {
+			i--;
+			continue;
 		}
-		// the screenshot was not successfully taken - use the fallback image
-		else {
-			if (mFallBackImageAgeVector[i] == FALLBACK_IMAGE_INVALID) {
-				// force retaking the screenshot
-				i--;
-				continue;
-			}
-				
-			mImage.append(*mFallbackImageVector[i]);
-		}
+
+		mImage.append(*img.get());
 	}
 }
 
@@ -120,7 +93,7 @@ float DdApiScreenshotProvider::getScreenCrop(Image& result, const Geometry& d) {
 
 	assert(!mImage.is_empty());
 
-	// TODO: this is somewhat fucked up if you have more than one monitor, as currently only the center one will be captured
+	// crop out the relevant part
 	result = mImage.get_crop(d.left(), d.top(), d.right(), d.bottom());
 
 	// benchmarking end

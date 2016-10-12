@@ -167,6 +167,7 @@ if(WIN32)
 ######################################################################################################################################################
 	SET(WIN_ONLY_HEADERS
 		"include/serial/windowsserial.h"
+		"include/screenshotproviders/ddapiscreen.h"
 		"include/screenshotproviders/ddapiscreenshotprovider.h")
 		
 	SET(WIN_ONLY_SOURCES
