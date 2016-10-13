@@ -8,11 +8,11 @@ QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = ambilight-gui
+TARGET = pallilux-gui
 TEMPLATE = app
 
 # amblight host library folder location
-AMBILIGHT_LIB_FOLDER = ../ambilight-host/
+PALLILUX_LIB_FOLDER = ../pallilux/
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -58,9 +58,13 @@ FORMS    += mainwindow.ui \
 
 # check whether we can use qt charts
 qtHaveModule(charts){
-    QT += charts
-    DEFINES += QT_CHARTS_FOUND
-    message("qt charts component found")
+    if(!defined(DISABLE_QT_CHARTS)){
+        QT += charts
+        DEFINES += QT_CHARTS_FOUND
+        message("qt charts component found")
+    } else {
+        message("qt charts component found, but disabled due to DISABLE_QT_CHARTS")
+    }
 }
 
 win32 {
@@ -70,8 +74,8 @@ win32 {
     # ignore unknown pragmas in stuff not written by me
     #QMAKE_CXXFLAGS += -Wnounknown-pragmas
 
-    # static ambilight lib
-    LIBS += $${AMBILIGHT_LIB_FOLDER}/build64/Debug/host.lib
+    # static pallilux lib
+    LIBS += $${PALLILUX_LIB_FOLDER}/build64/Debug/host.lib
 }
 
 unix {
@@ -87,18 +91,18 @@ unix {
     # pa_strerror is in here
     LIBS += -lpulse
 
-    # static ambilight lib
-    LIBS += "/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Release/libhost.a"
+    # static pallilux lib
+    LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Release/libpallilux.a"
 
-    # dynamic ambilight lib
-    #LIBS += -L/home/arne/Documents/Development/PalliLux/build-ambilight-host-Desktop-Debug -lhost
+    # dynamic pallilux lib
+    #LIBS += -L/home/arne/Documents/Development/PalliLux/build-pallilux-host-Desktop-Debug -lhost
 }
 
-INCLUDEPATH += $${AMBILIGHT_LIB_FOLDER}/cimg \
-    $${AMBILIGHT_LIB_FOLDER}/include \
-    $${AMBILIGHT_LIB_FOLDER}/include/borderproviders \
-    $${AMBILIGHT_LIB_FOLDER}/include/interfaces \
-    $${AMBILIGHT_LIB_FOLDER}/include/colordataproviders \
-    $${AMBILIGHT_LIB_FOLDER}/include/datafilters \
-    $${AMBILIGHT_LIB_FOLDER}/include/serial \
-    $${AMBILIGHT_LIB_FOLDER}/include/screenshotproviders
+INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \
+    $${PALLILUX_LIB_FOLDER}/include \
+    $${PALLILUX_LIB_FOLDER}/include/borderproviders \
+    $${PALLILUX_LIB_FOLDER}/include/interfaces \
+    $${PALLILUX_LIB_FOLDER}/include/colordataproviders \
+    $${PALLILUX_LIB_FOLDER}/include/datafilters \
+    $${PALLILUX_LIB_FOLDER}/include/serial \
+    $${PALLILUX_LIB_FOLDER}/include/screenshotproviders

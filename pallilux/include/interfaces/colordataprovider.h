@@ -13,6 +13,10 @@ struct LedConfig {
     LedConfig(int horizontal, int vertical) : LedConfig(horizontal, vertical, horizontal, vertical) {}
     int bottom, right, top, left;
 
+    bool valid() {
+        return bottom > 0 && right > 0 && top > 0 && left > 0;
+    }
+
     static const int INVALID = -1;
 };
 
