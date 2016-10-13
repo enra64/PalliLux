@@ -70,8 +70,11 @@ win32 {
     # ignore unknown pragmas in stuff not written by me
     #QMAKE_CXXFLAGS += -Wnounknown-pragmas
 
+    # dx
+    LIBS += "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64/dxgi.lib" "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64/d3d11.lib"
+
     # static ambilight lib
-    LIBS += $${AMBILIGHT_LIB_FOLDER}/build64/Debug/host.lib
+    LIBS += "$${AMBILIGHT_LIB_FOLDER}\..\build-ambilight-host-Desktop_Qt_5_7_0_MSVC2015_64bit-Default\host.lib"
 }
 
 unix {
