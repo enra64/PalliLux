@@ -2,6 +2,22 @@ project(pallilux)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
+######################################################################################################################################################
+######################################################################################################################################################
+######################################################################################################################################################
+#
+#
+#
+# Available options are X11 and SPECTROMETER, both on linux only, both enabled by default
+# use "cmake CMakeLists.txt (-DX11=OFF) (-DSPECTROMETER=OFF)" to disable them
+#
+#
+#
+######################################################################################################################################################
+######################################################################################################################################################
+######################################################################################################################################################
+
+
 # get qt creator to show these headers
 SET(BASE_HEADERS
     "cimg/CImg.h"
@@ -25,6 +41,7 @@ SET(BASE_HEADERS
     "include/interfaces/colordataprovider.h"
     "include/interfaces/screenshotprovider.h"
     "include/interfaces/serial.h")
+
 
 # relevant source files
 SET(BASE_SOURCES
@@ -68,26 +85,6 @@ if(UNIX)
     SET(BASE_SOURCES ${BASE_SOURCES} ${LINUX_ONLY_SOURCES})
 endif(UNIX)
     
-    
-    
-    
-######################################################################################################################################################
-# WIN
-######################################################################################################################################################
-SET(WIN_ONLY_HEADERS
-    "include/serial/windowsserial.h"
-    "include/screenshotproviders/winscreenshotprovider.h")
-    
-SET(WIN_ONLY_SOURCES
-    "src/serial/windowsserial.cpp"
-    "src/screenshotproviders/winscreenshotprovider.cpp")
-    
-if(WIN32)
-    SET(BASE_HEADERS ${BASE_HEADERS} ${WIN_ONLY_HEADERS})
-    SET(BASE_SOURCES ${BASE_SOURCES} ${WIN_ONLY_SOURCES})
-endif(WIN32)
-
-
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -102,9 +99,9 @@ else(MAIN_CPP_EXECUTABLE)
     option(DYNAMIC_LIB "compile to a dynamic library instead of a static one" OFF)
     if(DYNAMIC_LIB)
         add_library(${PROJECT_NAME} SHARED ${BASE_SOURCES} ${BASE_HEADERS})
-    else(DYNAMIC_LIB)
+    else(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
         add_library(${PROJECT_NAME} ${BASE_SOURCES} ${BASE_HEADERS})
-    endif(DYNAMIC_LIB)
+    endif(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
 endif(MAIN_CPP_EXECUTABLE)
 
 
@@ -120,57 +117,6 @@ if(DEBUG_MODE)
 endif(DEBUG_MODE)
 
 
-
-######################################################################################################################################################
-# direct x screenshot support
-# Thanks to the people of h3dapi for the find-direct-x-snippet:
-# https://www.h3dapi.org:8090/HAPI/trunk/build/modules/FindDirectX.cmake
-######################################################################################################################################################
-if(WIN32)
-	option(DIRECTX "include direct x screenshot provider" ON)
-
-	if(DIRECTX)
-		# Look for the header file.
-		FIND_PATH( DirectX_INCLUDE_DIR 
-					NAMES 
-						d3d9.h
-					PATHS 
-					   "$ENV{DXSDK_DIR}Include"
-				    DOC "Path in which d3dx9.h and d3d9.h are located." )
-		
-		# Look for the library.
-		FIND_LIBRARY( DirectX_d3d9_LIBRARY 
-					NAMES d3d9.lib
-					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
-					DOC "Path to d3d9.lib" )
-					
-		FIND_LIBRARY( DirectX_d3dx9_LIBRARY 
-					NAMES d3dx9.lib
-					PATHS "$ENV{DXSDK_DIR}Lib\\x86"
-					DOC "Path to d3dx9.lib" )
-
-		# Copy the results to the output variables.
-		IF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
-			SET(DirectX_FOUND 1)
-			SET(DirectX_LIBRARIES ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY} )
-			SET(DirectX_INCLUDE_DIR ${DirectX_INCLUDE_DIR})
-		ELSE(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )		  
-			# report that this just wont work
-			MESSAGE(FATAL_ERROR "DirectX was not found!")
-		ENDIF(DirectX_INCLUDE_DIR AND DirectX_d3d9_LIBRARY AND DirectX_d3dx9_LIBRARY )
-		
-		target_sources(${PROJECT_NAME} 
-			PUBLIC 
-				"src/screenshotproviders/d3dscreenshotprovider.cpp"
-				"include/screenshotproviders/d3dscreenshotprovider.h")
-	
-		INCLUDE_DIRECTORIES ( ${DirectX_INCLUDE_DIR} )
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DirectX_d3d9_LIBRARY} ${DirectX_d3dx9_LIBRARY})
-	
-	endif(DIRECTX)
-endif(WIN32)
-
-
 ######################################################################################################################################################
 # LINUX ONLY LIBRARIES
 ######################################################################################################################################################
@@ -180,12 +126,12 @@ if(UNIX)
 	# OPTIONS	
 	######################################################################################################################################################
 	option(X11 "find and include x11 lib" ON)
-	
+	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 
 
-    ######################################################################################################################################################
-    # X11 OPTION - needed for xlibscreenshot - LINUX ONLY
-    ######################################################################################################################################################
+######################################################################################################################################################
+# X11 OPTION - needed for xlibscreenshot - LINUX ONLY
+######################################################################################################################################################
     if(X11)
         target_sources(${PROJECT_NAME} PUBLIC "src/screenshotproviders/xlibscreenshotprovider.cpp" "include/screenshotproviders/xlibscreenshotprovider.h")
         find_package(X11 REQUIRED)
@@ -226,3 +172,47 @@ if(UNIX)
     endif(SPECTROMETER)
 
 endif(UNIX)
+
+######################################################################################################################################################
+# DX - WIN ONLY
+######################################################################################################################################################
+if(WIN32)
+######################################################################################################################################################
+# WIN
+######################################################################################################################################################
+	SET(WIN_ONLY_HEADERS
+		"include/serial/windowsserial.h"
+		"include/screenshotproviders/ddapiscreen.h"
+		"include/screenshotproviders/ddapiscreenshotprovider.h")
+		
+	SET(WIN_ONLY_SOURCES
+		"src/serial/windowsserial.cpp"
+		"src/screenshotproviders/ddapiscreenshotprovider.cpp")
+	
+	# Look for the header file.
+		FIND_PATH( DX_INCLUDE_DIR 
+					NAMES 
+						d3d11.h
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Include/um"
+				    DOC "Path in which d3d11.h are located." )
+		
+		# Look for the library.
+		FIND_LIBRARY( DXGI_LIBRARY 
+					NAMES dxgi.lib
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+					DOC "Path to dxgi.lib" )
+					
+		FIND_LIBRARY( D3D11_LIBRARY 
+					NAMES d3d11.lib
+					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+					DOC "Path to d3d11.lib" )
+					
+	if(NOT DX_INCLUDE_DIR OR NOT DXGI_LIBRARY OR NOT D3D11_LIBRARY)
+		message("not all dxgi+dx11 libs found" FATAL_ERROR)
+	endif(NOT DX_INCLUDE_DIR OR NOT DXGI_LIBRARY OR NOT D3D11_LIBRARY)
+	
+	INCLUDE_DIRECTORIES ( ${DX_INCLUDE_DIR} )
+	TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${DXGI_LIBRARY} ${D3D11_LIBRARY})
+	
+	target_sources(${PROJECT_NAME} PUBLIC ${WIN_ONLY_SOURCES} ${WIN_ONLY_HEADERS})
+endif(WIN32)
