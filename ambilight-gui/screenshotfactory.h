@@ -4,7 +4,7 @@
 #ifdef __linux__
     #include <xlibscreenshotprovider.h>
 #elif _WIN32
-    #include <winscreenshotprovider.h>
+    #include <ddapiscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
@@ -20,7 +20,7 @@ struct ScreenshotFactory {
         #ifdef __linux__
             return std::shared_ptr<ScreenshotProvider>(new XlibScreenshotProvider());
         #elif _WIN32
-            return std::shared_ptr<ScreenshotProvider>(new WinScreenshotProvider());
+            return std::shared_ptr<ScreenshotProvider>(new DdApiScreenshotProvider());
         #else
             #error Platform not recognized
         #endif

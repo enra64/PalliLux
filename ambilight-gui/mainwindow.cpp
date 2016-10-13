@@ -21,7 +21,7 @@
 #include <xlibscreenshotprovider.h>
 #include <linuxserial.h>
 #elif _WIN32_WINNT
-#include <winscreenshotprovider.h>
+#include <ddapiscreenshotprovider.h>
 #include <windowsserial.h>
 #else
 #error Platform not recognized

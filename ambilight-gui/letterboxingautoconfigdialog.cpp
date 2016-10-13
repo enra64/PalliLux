@@ -15,7 +15,7 @@
 #ifdef __linux__
     #include <xlibscreenshotprovider.h>
 #elif _WIN32_WINNT
-    #include <winscreenshotprovider.h>
+    #include <ddapiscreenshotprovider.h>
 #else
     #error Platform not recognized
 #endif
