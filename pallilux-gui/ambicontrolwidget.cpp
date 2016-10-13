@@ -98,7 +98,7 @@ void AmbiControlWidget::setupControlBox() {
     borderWidthSpinbox->setValue(100);
 
     // connect to update signal
-    connect(borderWidthSpinbox, SIGNAL(valueChanged(int)), this, SLOT(onBorderWidthFactorChanged(int)));
+    connect(borderWidthSpinbox, SIGNAL(valueChanged(int)), this, SLOT(onBorderWidthChanged(int)));
 
     // add to control layout
     addControlWidget(borderWidthLabel, borderWidthSpinbox);
