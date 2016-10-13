@@ -39,7 +39,7 @@ void HistogramWidget::update(Image *lineImg) {
     if(!mEnableCheckBox->isChecked()) return;
 
     // save a histogram to the temp location
-    Image histogram = lineImg->get_2D_histogram(NUMBER_OF_BINS);
+    Image histogram = lineImg->get_2D_histogram<NUMBER_OF_BINS>();
 
     histogram.save(mTempLocation.toStdString().c_str());
 

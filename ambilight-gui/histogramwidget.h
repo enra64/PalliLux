@@ -27,7 +27,7 @@ private:
     QPixmap mHistogram;///< a pixmap of our histogram
     QLabel* mHistogramView = nullptr;///< the label used to display our histogram
 
-    const int NUMBER_OF_BINS = 128;///< amount of bins used in histogram
+    static const unsigned int NUMBER_OF_BINS = 128;///< amount of bins used in histogram
 };
 
 #endif // HISTOGRAMWIDGET_H

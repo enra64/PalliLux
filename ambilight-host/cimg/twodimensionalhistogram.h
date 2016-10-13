@@ -2,7 +2,8 @@
 #define cimg_plugin_TWO_DIMENSIONAL_HISTOGRAM
 
 //! Compute the histogram of pixel values \newinstance.
-CImg get_2D_histogram(const unsigned int nb_levels) const {
+template <unsigned int nb_levels>
+CImg get_2D_histogram() const {
     const char channel_count = 3;
     const unsigned int height = nb_levels;
     const ulongT bytesPerChannel = size() / 3;
