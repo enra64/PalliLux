@@ -41,7 +41,7 @@ LedConfig LedConfigDialog::getLedConfig() {
 }
 
 bool LedConfigDialog::isLedCountSet() {
-    return getLedConfig().bottom != LedConfig::INVALID;
+    return getLedConfig().valid();
 }
 
 void LedConfigDialog::refreshLedCount() {

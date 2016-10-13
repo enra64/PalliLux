@@ -1,4 +1,4 @@
-project(host)
+project(pallilux)
 cmake_minimum_required(VERSION 2.8)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
@@ -26,6 +26,7 @@ SET(BASE_HEADERS
     "include/arduinoconnector.h"
     "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
+    "include/geometry.h"
     "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
     "include/borderproviders/triplescreenborderprovider.h"
@@ -95,7 +96,7 @@ option(MAIN_CPP_EXECUTABLE "compile the main.cpp, and create an executable file"
 if(MAIN_CPP_EXECUTABLE)
 	add_executable(${PROJECT_NAME} "main.cpp" ${BASE_SOURCES} ${BASE_HEADERS})
 else(MAIN_CPP_EXECUTABLE)
-    option(DYNAMIC_LIB "compile to a dynamic library instead of a static one" ON)
+    option(DYNAMIC_LIB "compile to a dynamic library instead of a static one" OFF)
     if(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
         add_library(${PROJECT_NAME} SHARED ${BASE_SOURCES} ${BASE_HEADERS})
     else(DYNAMIC_LIB AND NOT MAIN_CPP_EXECUTABLE)
@@ -109,7 +110,7 @@ endif(MAIN_CPP_EXECUTABLE)
 # debug mode?
 ######################################################################################################################################################
 ######################################################################################################################################################
-option(DEBUG_MODE "use cmake debug build type" ON)
+option(DEBUG_MODE "use cmake debug build type" OFF)
 
 if(DEBUG_MODE)
 	set(CMAKE_BUILD_TYPE Debug)
@@ -122,7 +123,8 @@ endif(DEBUG_MODE)
 if(UNIX)
 
 	######################################################################################################################################################
-	# OPTIONS	######################################################################################################################################################
+	# OPTIONS	
+	######################################################################################################################################################
 	option(X11 "find and include x11 lib" ON)
 	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
 
@@ -138,22 +140,35 @@ if(UNIX)
     endif(X11)
 
 
-######################################################################################################################################################
-# SPECTROMETER OPTION - LINUX ONLY
-######################################################################################################################################################
+    ######################################################################################################################################################
+    # SPECTROMETER OPTION - LINUX ONLY
+    ######################################################################################################################################################
+    # find pulseaudio libs
+    find_library(PULSEAUDIO_LIBRARY
+                NAMES pulse
+                DOC "The PulseAudio library")
+                
+    find_library(PULSEAUDIO_SIMPLE_LIBRARY
+                NAMES pulse-simple
+                DOC "The PulseAudio library")
+                
+    # find fftw lib
+    find_path (FFTW_INCLUDE_DIR fftw3.h)
+    find_library (FFTW_LIBRARIES NAMES fftw3)
+    
+    # if all required libs are available, give option to enable spectrometer system
+    if(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
+        option(SPECTROMETER "find and include fftw3 and pulse libs" OFF)
+    endif(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
+                
+    # if spectrometer option enabled
     if(SPECTROMETER)
-        # add spectrometer files to target
-        target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
-        
-        # pulseaudio libs
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse")
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} "pulse-simple")
-        
-        # fftw lib
-        find_path (FFTW_INCLUDE_DIR fftw3.h)
-        find_library (FFTW_LIBRARIES NAMES fftw3)
+        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
         INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
         TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
+        
+        # add spectrometer files to target
+        target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
     endif(SPECTROMETER)
 
 endif(UNIX)

@@ -8,7 +8,12 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
     setLayout(new QVBoxLayout(this));
 
     // create & add checkbox for enabling the widget
+    #ifdef QT_CHARTS_FOUND
     mEnableCheckBox = new QCheckBox("Show FPS graph", this);
+    #else
+    mEnableCheckBox = new QCheckBox("Show current FPS", this);
+    #endif
+
     layout()->addWidget(mEnableCheckBox);
 
     // remove free space around checkbox
@@ -22,11 +27,11 @@ FpsMeter::FpsMeter(QWidget *parent) : QWidget(parent) {
     //layout()->setSizeConstraint(QLayout::SetFixedSize);
 }
 
+#ifdef QT_CHARTS_FOUND
 FpsMeter::~FpsMeter() {
     delete mFpsChartView;
 }
 
-#ifdef QT_CHARTS_FOUND
 void FpsMeter::setupChart() {
     // set up axes
     QValueAxis* xAxis = new QValueAxis();
@@ -104,9 +109,14 @@ void FpsMeter::toggled(bool checked){
     mFpsChartView->setVisible(checked);
 }
 #else
+FpsMeter::~FpsMeter() {
+}
+
 void FpsMeter::setupChart() {
     mFpsLabel = new QLabel(this);
     mFpsLabel->setText("-");
+    mFpsLabel->setVisible(mEnableCheckBox->isChecked());
+    layout()->addWidget(mFpsLabel);
 }
 
 // if we do not have the QtCharts, we dont need to do anything here
@@ -114,7 +124,7 @@ void FpsMeter::update(float fpsValue) {
     mFpsLabel->setText(QString::number(fpsValue));
 }
 
-void FpsMeter::on_fpsMeterCheckbox_clicked(bool checked) {
+void FpsMeter::toggled(bool checked) {
     mFpsLabel->setVisible(checked);
 }
 #endif //QT_CHARTS_FOUND

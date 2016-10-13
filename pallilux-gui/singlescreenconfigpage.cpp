@@ -20,6 +20,13 @@ SingleScreenConfigPage::SingleScreenConfigPage(QWidget *parent) :
     ui(new Ui::SingleScreenConfigPage) {
     ui->setupUi(this);
     ui->tabMainLayout->addWidget(getControlWidget(parent));
+
+    connect(ui->resolutionWidthSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
+    connect(ui->resolutionHeightSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
+    connect(ui->xOffsetSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
+    connect(ui->yOffsetSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
+    connect(ui->letterboxingWidthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
+    connect(ui->letterboxingHeightSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
 }
 
 SingleScreenConfigPage::~SingleScreenConfigPage() {
@@ -51,6 +58,22 @@ void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
         ui->letterboxingHeightSpinBox->setValue(static_cast<int>(dialog.getLetterboxHeight()));
         ui->letterboxingWidthSpinBox->setValue(static_cast<int>(dialog.getLetterboxWidth()));
     }
+}
+
+void SingleScreenConfigPage::updateBorderProvider() {
+    std::shared_ptr<AmbiColorDataProvider> ambiProvider = std::dynamic_pointer_cast<AmbiColorDataProvider>(
+                mCurrentControlWidget->getArduinoConnector()->getColorDataProvider());
+
+    // save the old screenshot provider
+    shared_ptr<ScreenshotProvider> sP = ambiProvider->getBorderProvider()->getScreenshotProvider();
+
+    // controlwidget not yet initialized
+    if(!sP || ! ambiProvider)
+        return;
+
+    // apply new borderprovider, and re-set the screenshot provider
+    ambiProvider->setBorderProvider(getSingleScreenBorderProvider());
+    ambiProvider->getBorderProvider()->setScreenshotProvider(sP);
 }
 
 ControlWidget* SingleScreenConfigPage::getControlWidget(QWidget* parent) {

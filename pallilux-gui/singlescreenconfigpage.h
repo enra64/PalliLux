@@ -31,6 +31,7 @@ private:
     ControlWidget* getControlWidget(QWidget* parent) override;
 private slots:
     void on_letterboxAutoConfigButton_clicked();
+    void updateBorderProvider();
 };
 
 
