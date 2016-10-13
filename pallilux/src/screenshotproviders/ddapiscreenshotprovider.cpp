@@ -74,14 +74,14 @@ void DdApiScreenshotProvider::takeScreenshot() {
 	for (unsigned int i = 0; i < mScreenVector.size(); i++) {
 		shared_ptr<Image> img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
 		
-		// check whether cimg is ok
-		assert(!img->is_empty());
-
 		// if the fallback system of DdApiScreen failed, we must force retaking the screenshot
 		if (!img) {
 			i--;
 			continue;
 		}
+
+        // check whether cimg is ok
+        assert(!img->is_empty());
 
 		mImage.append(*img.get());
 	}
