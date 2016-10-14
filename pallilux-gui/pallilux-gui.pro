@@ -74,8 +74,14 @@ win32 {
     # ignore unknown pragmas in stuff not written by me
     #QMAKE_CXXFLAGS += -Wnounknown-pragmas
 
+    # dx stuff
+    LIBS += "C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x64\d3d11.lib"
+    LIBS += "C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x64\dxgi.lib"
+
     # static pallilux lib
-    LIBS += $${PALLILUX_LIB_FOLDER}/build64/Debug/host.lib
+    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Default\pallilux.lib"
+    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\pallilux.lib"
+    LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\pallilux.lib"
 }
 
 unix {
