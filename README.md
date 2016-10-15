@@ -15,6 +15,10 @@ The host code in pallilux-host is powered by cmake. By default, the [CMakeLists.
 ## GUI
 There is a GUI available in [pallilux-gui](pallilux-gui/).
 
+Linux             |  Windows
+:-------------------------:|:-------------------------:
+![](gui-lin.jpg)  |  ![](gui-win.JPG)
+
 # Documentation
 Use the Doxyfile in [pallilux-host](pallilux-host/) to generate the full documentation. [Short info about the classes](class_info.md).
 

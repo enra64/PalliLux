@@ -112,3 +112,6 @@ INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \
     $${PALLILUX_LIB_FOLDER}/include/datafilters \
     $${PALLILUX_LIB_FOLDER}/include/serial \
     $${PALLILUX_LIB_FOLDER}/include/screenshotproviders
+
+RESOURCES += \
+    images.qrc

@@ -37,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    // set window icon
+    this->setWindowIcon(QIcon(":images/icon.png"));
+
     // disable stop button
     setRunState(false);
 
