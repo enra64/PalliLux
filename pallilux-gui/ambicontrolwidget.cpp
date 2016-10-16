@@ -27,6 +27,10 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
 
     // set up combobox for selecting the interpolation type
     setupInterpolationCombobox();
+
+    // add the filters we want
+    mArduinoConnector->addFilter("lowpass", std::unique_ptr<DataFilter>(new LowPassFilter(getColorDataProvider()->getRequiredBufferLength(), .6)));
+    mArduinoConnector->addFilter("brightness", std::unique_ptr<DataFilter>(new BrightnessFilter(.1)));
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {
