@@ -1,6 +1,7 @@
 #include "spectrometercolordataprovider.h"
 
 #include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -49,7 +50,7 @@ void SpectrometerColorDataProvider::calculateAmplitude(
     }
 }
 
-SpectrometerColorDataProvider::SpectrometerColorDataProvider(size_t xLeds, size_t yLeds, int fps, float gain) : ColorDataProvider(xLeds, yLeds), mFramesPerSecond(fps), mGain(gain)
+SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig, int fps, float gain) : ColorDataProvider(ledConfig), mFramesPerSecond(fps), mGain(gain)
 {
     // set sample specs
     mSampleSpecifications.channels = 2;
@@ -128,11 +129,15 @@ SpectrometerColorDataProvider::~SpectrometerColorDataProvider() {
     delete[] mPulseAudioBuffer;
     delete[] mWindow;
 
-    // clean up fftw
-    fftw_destroy_plan(mFftwPlan);
-    fftw_free(mFftwIn);
-    fftw_free(mFftwOut);
+    try {
+        // clean up fftw
+        fftw_destroy_plan(mFftwPlan);
+        fftw_free(mFftwIn);
+        fftw_free(mFftwOut);
 
-    // clean up pulseaudio
-    pa_simple_free(mPulseAudioDevice);
+        // clean up pulseaudio
+        pa_simple_free(mPulseAudioDevice);
+    } catch(std::exception){
+
+    }
 }

@@ -14,7 +14,7 @@
 class SpectrometerColorDataProvider : public ColorDataProvider
 {
 public:
-    SpectrometerColorDataProvider(size_t xLeds, size_t yLeds, int fps = 30, float gain = 1.f);
+    SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 30, float gain = 1.f);
 
     ~SpectrometerColorDataProvider();
 private:

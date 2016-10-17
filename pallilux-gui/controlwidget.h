@@ -11,8 +11,6 @@
 #include <borderprovider.h>
 #include <customexceptions.h>
 
-using namespace std;
-
 namespace Ui {
 class ControlWidget;
 }
