@@ -46,6 +46,12 @@ private:
 	/// \brief contains the DdApiHandler for each screen
 	std::vector<DdApiScreen*> mScreenVector;
 
+    // dx (de-)initialization
+private:
+    void initializeDx();
+    void deInitializeDx();
+    void reinitializeDx();
+
 	// dx stuff
 private:
 	ID3D11Device* mDxDevice = nullptr;

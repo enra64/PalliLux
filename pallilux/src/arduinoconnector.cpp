@@ -36,7 +36,7 @@
 
 using namespace std;
 
-ArduinoConnector::ArduinoConnector() {
+ArduinoConnector::ArduinoConnector(bool counterClockWiseLeds) : mCounterClockWiseLeds(counterClockWiseLeds){
     // initialise timekeeping
     mLastDraw = clock();
 
@@ -50,7 +50,7 @@ ArduinoConnector::ArduinoConnector() {
 #endif
 }
 
-ArduinoConnector::ArduinoConnector(const string& port) : ArduinoConnector() {
+ArduinoConnector::ArduinoConnector(const string& port, bool counterClockWiseLeds) : ArduinoConnector(counterClockWiseLeds) {
     mPort = port;
 }
 

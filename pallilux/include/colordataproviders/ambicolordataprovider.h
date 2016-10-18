@@ -117,7 +117,7 @@ private:
     void debugSaveBorders();
 
     //members
-    CImgInterpolationType mInterpolationType = CImgInterpolationType::GridInterpolation;///< the CImg interpolation type used for resizing the border images
+    CImgInterpolationType mInterpolationType = CImgInterpolationType::LanczosInterpolation;///< the CImg interpolation type used for resizing the border images
 
     /**  @name images
      *   Magick++-images used to store the borders while processing them

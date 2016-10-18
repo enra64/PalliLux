@@ -27,9 +27,7 @@ SOURCES += main.cpp\
     ambicontrolwidget.cpp \
     backlightcontrolwidget.cpp \
     ledconfigdialog.cpp \
-    serialconfigdialog.cpp \
-    spectrometerconfigpage.cpp \
-    spectrometercontrolwidget.cpp
+    serialconfigdialog.cpp
 
 HEADERS  += mainwindow.h \
     singlescreenconfigpage.h \
@@ -47,9 +45,7 @@ HEADERS  += mainwindow.h \
     ambicontrolwidget.h \
     backlightcontrolwidget.h \
     ledconfigdialog.h \
-    serialconfigdialog.h \
-    spectrometerconfigpage.h \
-    spectrometercontrolwidget.h
+    serialconfigdialog.h
 
 FORMS    += mainwindow.ui \
     singlescreenconfigpage.ui \
@@ -58,8 +54,7 @@ FORMS    += mainwindow.ui \
     backlightconfigpage.ui \
     controlwidget.ui \
     ledconfigdialog.ui \
-    serialconfigdialog.ui \
-    spectrometerconfigpage.ui
+    serialconfigdialog.ui
 
 # check whether we can use qt charts
 qtHaveModule(charts){
@@ -85,11 +80,20 @@ win32 {
 
     # static pallilux lib
     #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Default\pallilux.lib"
-    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\pallilux.lib"
-    LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\pallilux.lib"
+    LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\pallilux.lib"
+    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\pallilux.lib"
 }
 
 unix {
+    # spectrometer stuff
+    SOURCES +=  spectrometerconfigpage.cpp \
+                spectrometercontrolwidget.cpp
+
+    HEADERS +=  spectrometerconfigpage.h \
+                spectrometercontrolwidget.h
+
+    FORMS +=    spectrometerconfigpage.ui
+
     # X11 stuff
     CONFIG += link_pkgconfig
     PKGCONFIG += x11
@@ -103,7 +107,7 @@ unix {
     LIBS += -lpulse
 
     # static pallilux lib
-    LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Release/libpallilux.a"
+    LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Debug/libpallilux.a"
 
     # dynamic pallilux lib
     #LIBS += -L/home/arne/Documents/Development/PalliLux/build-pallilux-host-Desktop-Debug -lhost

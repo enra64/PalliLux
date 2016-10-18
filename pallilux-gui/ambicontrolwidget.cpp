@@ -25,12 +25,9 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
     // set up most control widgets
     setupControlBox();
 
-    // set up combobox for selecting the interpolation type
-    setupInterpolationCombobox();
-
     // add the filters we want
-    mArduinoConnector->addFilter("lowpass", std::unique_ptr<DataFilter>(new LowPassFilter(getColorDataProvider()->getRequiredBufferLength(), .6)));
-    mArduinoConnector->addFilter("brightness", std::unique_ptr<DataFilter>(new BrightnessFilter(.1)));
+    mArduinoConnector->addFilter("lowpass", std::unique_ptr<DataFilter>(new LowPassFilter(getColorDataProvider()->getRequiredBufferLength(), .6f)));
+    mArduinoConnector->addFilter("brightness", std::unique_ptr<DataFilter>(new BrightnessFilter(.1f)));
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {
@@ -120,38 +117,4 @@ void AmbiControlWidget::updateWidgets() {
 
     // update histogram chart
     mHistogramWidget->update(lastLine.get());
-}
-
-void AmbiControlWidget::setupInterpolationCombobox() {
-    // create combobox for interpolation types
-    mInterpolationComboBox = new QComboBox();
-
-    // add combobox to control layout
-    addControlWidget(mInterpolationComboBox);
-
-    // make a list of available interpolation types
-    QStringList interpolationTypes;
-    interpolationTypes <<
-                       "Raw memory resizing" <<
-                       "Fill-space-interpolation" <<
-                       "Nearest Neighbor interpolation" <<
-                       "Moving average interpolation" <<
-                       "Linear interpolation" <<
-                       "Grid interpolation" <<
-                       "Cubic interpolation" <<
-                       "Lanczos interpolation";
-
-    // insert interpolation types into selection box
-    mInterpolationComboBox->addItems(interpolationTypes);
-
-    // get the currently set interpolation mode
-    AmbiColorDataProvider::CImgInterpolationType i = getColorDataProvider()->getResizeInterpolationMode();
-
-    // enum range is -1 to 6, but our index here starts at 0 -> +1
-    mInterpolationComboBox->setCurrentIndex(
-        // convert enum to integer, offset by the difference in starting indices
-        static_cast<typename std::underlying_type<AmbiColorDataProvider::CImgInterpolationType>::type>(i) + 1);
-
-    // connect to currentIndexChanged after having it triggered programmatically
-    connect(mInterpolationComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onInterpolationChange(int)));
 }

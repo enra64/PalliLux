@@ -16,9 +16,15 @@
 class ArduinoConnector {
 public:
     /**
+     * @brief construct an ArduinoConnector, responsible for obtaining and updating the led data
+     * @param port tty port for comms
+     */
+    explicit ArduinoConnector(const std::string& port, bool counterClockWiseLeds = true);
+
+    /**
      * @brief Construct an ArduinoConnector. A ColorDataProvider has to be set using setColorDataProvider().
      */
-    ArduinoConnector();
+    ArduinoConnector(bool counterClockWiseLeds = true);
 
     /**
      * @brief Empty virtual destructor to ensure derived classes will be properly destructed.
@@ -57,12 +63,6 @@ public:
     inline float getCurrentFps() const {
         return mCurrentFps;
     }
-
-    /**
-     * @brief construct an ArduinoConnector, responsible for obtaining and updating the led data
-     * @param port tty port for comms
-     */
-    explicit ArduinoConnector(const std::string& port);
 
     /**
      * @brief Close the connection. Optionally, the leds may be shut down
@@ -154,6 +154,8 @@ private:
      * @brief update #mCurrentFps and #mLastDraw
      */
     void updateFps();
+
+    bool mCounterClockWiseLeds = true;///< if true, the connector assumes that the arduino pushes led data counterclockwise
 
     std::shared_ptr<ColorDataProvider> mColorDataProvider;///< the object that provides the RGB led data as a uint8_t array
 

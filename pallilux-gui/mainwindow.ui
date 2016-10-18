@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="configTabHost">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="SingleScreenConfigPage" name="tab">
        <attribute name="title">
@@ -36,11 +36,6 @@
       <widget class="TripleScreenConfigPage" name="tab_3">
        <attribute name="title">
         <string>Triple Screen</string>
-       </attribute>
-      </widget>
-      <widget class="SpectrometerConfigPage" name="Spectrometer">
-       <attribute name="title">
-        <string>Spectrometer</string>
        </attribute>
       </widget>
      </widget>
@@ -64,7 +59,7 @@
      <x>0</x>
      <y>0</y>
      <width>724</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOptions">
@@ -105,12 +100,6 @@
    <class>BacklightConfigPage</class>
    <extends>QWidget</extends>
    <header>backlightconfigpage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SpectrometerConfigPage</class>
-   <extends>QWidget</extends>
-   <header>spectrometerconfigpage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -119,8 +119,9 @@ void WindowsSerial::open(const std::string& port)
 
 void WindowsSerial::close()
 {
-	// Close the serial handler
+    // Close the serial handler
 	CloseHandle(mSerialHandle);
+    mSerialHandle = nullptr;
 }
 
 bool WindowsSerial::deviceExists(const std::string& port) const

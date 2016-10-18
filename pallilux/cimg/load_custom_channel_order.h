@@ -88,7 +88,7 @@ void read(const char *const source,
         uint8_t *redStart, *greenStart, *blueStart, *alphaStart;
 
         // for each row
-        for (size_t row = 0; row < _height; row++) {
+        for (unsigned int row = 0; row < _height; row++) {
                 // where does the data for this row start in the source buffer?
                 const unsigned char *rowStart = reinterpret_cast<const unsigned char*>(source + pitch * row);
 

@@ -8,58 +8,79 @@ using namespace cimg_library;
 using namespace std;
 
 DdApiScreenshotProvider::DdApiScreenshotProvider() {
-	// initialize direct x device and connection
-	
-	// resulting feature level nobody cares about
-	D3D_FEATURE_LEVEL tmpFeatureLvl;
-
-	// hresult for device creation
-	HRESULT deviceCreation;
-
-	// iterate over all sufficient driver types
-	for (int i = 0; i < D3D_DRIVER_TYPE_COUNT; i++) {
-		// we 
-		// need
-		// MORE
-		// PAARAAAAMETERS
-		deviceCreation = D3D11CreateDevice(
-			nullptr,
-			D3D_DRIVER_TYPES[i],
-			nullptr,
-			0,
-			D3D_VERSIONS,
-			D3D_VERSION_COUNT,
-			D3D11_SDK_VERSION,
-			&mDxDevice,
-			&tmpFeatureLvl,
-			&mDxDeviceContext);
-
-		// we have successfully gotten some device, abort mission
-		if (SUCCEEDED(deviceCreation))
-			break;
-	}
-
-	if (FAILED(deviceCreation))
-		throw std::runtime_error("could not create dx device");
+    initializeDx();
 }
 
 DdApiScreenshotProvider::~DdApiScreenshotProvider() {
-	if (mDxDevice) {
-		mDxDevice->Release();
-		mDxDevice = nullptr;
-	}
-		
-	if (mDxDeviceContext) {
-		mDxDeviceContext->Release();
-		mDxDeviceContext = nullptr;
-	}
+    deInitializeDx();
 
-	for (DdApiScreen* s : mScreenVector)
-		delete s;
+    for (DdApiScreen* s : mScreenVector)
+        delete s;
 }
 
 void DdApiScreenshotProvider::addScreenHandler(int screenNumber, Rotation rotation) {
-	mScreenVector.push_back(new DdApiScreen(mDxDevice, rotation, screenNumber));
+    mScreenVector.push_back(new DdApiScreen(mDxDevice, rotation, screenNumber));
+}
+
+void DdApiScreenshotProvider::initializeDx() {
+    // initialize direct x device and connection
+
+    // resulting feature level nobody cares about
+    D3D_FEATURE_LEVEL tmpFeatureLvl;
+
+    // hresult for device creation
+    HRESULT deviceCreation;
+
+    // iterate over all sufficient driver types
+    for (int i = 0; i < D3D_DRIVER_TYPE_COUNT; i++) {
+        // we
+        // need
+        // MORE
+        // PAARAAAAMETERS
+        deviceCreation = D3D11CreateDevice(
+            nullptr,
+            D3D_DRIVER_TYPES[i],
+            nullptr,
+            0,
+            D3D_VERSIONS,
+            D3D_VERSION_COUNT,
+            D3D11_SDK_VERSION,
+            &mDxDevice,
+            &tmpFeatureLvl,
+            &mDxDeviceContext);
+
+        // we have successfully gotten some device, abort mission
+        if (SUCCEEDED(deviceCreation))
+            break;
+    }
+
+    if (FAILED(deviceCreation))
+        throw std::runtime_error("could not create dx device");
+}
+
+void DdApiScreenshotProvider::deInitializeDx()
+{
+    if (mDxDevice) {
+        mDxDevice->Release();
+        mDxDevice = nullptr;
+    }
+
+    if (mDxDeviceContext) {
+        mDxDeviceContext->Release();
+        mDxDeviceContext = nullptr;
+    }
+}
+
+void DdApiScreenshotProvider::reinitializeDx(){
+    // release old pointers
+    deInitializeDx();
+
+    // re-create our dx device
+    initializeDx();
+
+    // force each DdApiScreen to reinitialize
+    for (DdApiScreen* s : mScreenVector)
+        s->reinitialize(mDxDevice);
 }
 
 void DdApiScreenshotProvider::takeScreenshot() {
@@ -71,13 +92,34 @@ void DdApiScreenshotProvider::takeScreenshot() {
 	// reset main image
 	mImage.clear();
 	
-	for (unsigned int i = 0; i < mScreenVector.size(); i++) {
+    int failureCount = 0;
+
+    for (unsigned int i = 0; i < mScreenVector.size(); i++) {
 		shared_ptr<Image> img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
 		
 		// if the fallback system of DdApiScreen failed, we must force retaking the screenshot
 		if (!img) {
 			i--;
-			continue;
+            // if we hit this too often, we will have to re-initialitze the whole system,
+            // as dx probably did some weird shit
+            failureCount++;
+            if(failureCount > 100){
+                // We wait 2s to let dx finish whatever fuckery it was doing
+                Sleep(2000);
+
+                // now we reinitialize the whole dx system
+                reinitializeDx();
+
+                // start taking this screenshot batch again
+                takeScreenshot();
+
+                // reset fail counter
+                failureCount = 0;
+
+                return;
+            }
+
+            continue;
 		}
 
         // check whether cimg is ok

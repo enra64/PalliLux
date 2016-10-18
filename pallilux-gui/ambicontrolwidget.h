@@ -27,8 +27,6 @@ protected:// ControlWidget interface
     void updateWidgets() override;
 
 private:// member functions
-    void setupInterpolationCombobox();
-
     /**
      * @brief Set up all widgets we want n the control box
      */
@@ -47,8 +45,6 @@ private:// info widgets
     HistogramWidget* mHistogramWidget;
     PixelLineWidget* mLastLineWidget;
     FpsMeter* mFpsMeter;
-
-    QComboBox* mInterpolationComboBox;
 };
 
 #endif // AMBICONTROLWIDGET_H

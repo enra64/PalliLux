@@ -36,8 +36,6 @@ private:
 	/// \brief age of the fallback image
 	char mFallbackImageAge = FALLBACK_IMAGE_INVALID;
 
-
-
 	// dx stuff
 private:
 	/// \brief the object enabling the desktop duplication
@@ -52,71 +50,87 @@ private:
 	/// \brief which screen does this ScreenHandler handle
 	const unsigned int mScreenNumber;
 
+    /// \brief initialize all dx variables
+    void initialize(){
+        // increase reference count
+        mDxDevice->AddRef();
+
+        // get dxgi device
+        IDXGIDevice* dxgiDevice = nullptr;
+        HRESULT dxgiDeviceQuery = mDxDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice));
+
+        // check success
+        if (FAILED(dxgiDeviceQuery))
+            throw std::runtime_error("could not get dxgi device");
+
+        // get dxgi adapter
+        IDXGIAdapter* dxgiAdapter = nullptr;
+        HRESULT dxgiAdapterQuery = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&dxgiAdapter));
+
+        // release dxgi device after getting the adapter
+        dxgiDevice->Release();
+        dxgiDevice = nullptr;
+
+        // check success
+        if (FAILED(dxgiAdapterQuery)) throw std::runtime_error("could not get parent dxgi adapter");
+
+        // Get output
+        IDXGIOutput* dxgiOutput = nullptr;
+        HRESULT dxgiOutputQuery = dxgiAdapter->EnumOutputs(mScreenNumber, &dxgiOutput);
+
+        // release dxgi adapter after getting the output
+        dxgiAdapter->Release();
+        dxgiAdapter = nullptr;
+
+        // check for success
+        if (FAILED(dxgiOutputQuery)) throw std::runtime_error("could not get specified output");
+
+        // save the output description
+        dxgiOutput->GetDesc(&mDxgiOutputDescription);
+
+        // QI for Output 1
+        IDXGIOutput1* DxgiOutput1 = nullptr;
+        dxgiOutputQuery = dxgiOutput->QueryInterface(__uuidof(DxgiOutput1), reinterpret_cast<void**>(&DxgiOutput1));
+
+        // release first dxgi output
+        dxgiOutput->Release();
+        dxgiOutput = nullptr;
+
+        // check for second dxgi output query success
+        if (FAILED(dxgiOutputQuery)) throw std::runtime_error("failed to get second dxgi output");
+
+        // Create desktop duplication object
+        HRESULT duplicationResult = DxgiOutput1->DuplicateOutput(mDxDevice, &mDesktopDuplication);
+        DxgiOutput1->Release();
+        DxgiOutput1 = nullptr;
+
+        if (FAILED(duplicationResult)) {
+            if (duplicationResult == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE)
+                throw std::runtime_error("maximum dd api connections reached, cannot connect");
+            throw std::runtime_error("failed to duplicate output");
+        }
+    }
+
 	// public interface
 public:
 	DdApiScreen(ID3D11Device* dxDevice, Rotation r, unsigned int screenNumber) : mDxDevice(dxDevice), mScreenRotation(r), mScreenNumber(screenNumber) {
-		// increase reference count
-		mDxDevice->AddRef();
-
-		// get dxgi device
-		IDXGIDevice* dxgiDevice = nullptr;
-		HRESULT dxgiDeviceQuery = mDxDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice));
-
-		// check success
-		if (FAILED(dxgiDeviceQuery)) 
-			throw std::runtime_error("could not get dxgi device");
-
-		// get dxgi adapter
-		IDXGIAdapter* dxgiAdapter = nullptr;
-		HRESULT dxgiAdapterQuery = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&dxgiAdapter));
-
-		// release dxgi device after getting the adapter
-		dxgiDevice->Release();
-		dxgiDevice = nullptr;
-
-		// check success
-		if (FAILED(dxgiAdapterQuery)) throw std::runtime_error("could not get parent dxgi adapter");
-
-		// Get output
-		IDXGIOutput* dxgiOutput = nullptr;
-		HRESULT dxgiOutputQuery = dxgiAdapter->EnumOutputs(mScreenNumber, &dxgiOutput);
-
-		// release dxgi adapter after getting the output
-		dxgiAdapter->Release();
-		dxgiAdapter = nullptr;
-
-		// check for success
-		if (FAILED(dxgiOutputQuery)) throw std::runtime_error("could not get specified output");
-
-		// save the output description
-		dxgiOutput->GetDesc(&mDxgiOutputDescription);
-
-		// QI for Output 1
-		IDXGIOutput1* DxgiOutput1 = nullptr;
-		dxgiOutputQuery = dxgiOutput->QueryInterface(__uuidof(DxgiOutput1), reinterpret_cast<void**>(&DxgiOutput1));
-
-		// release first dxgi output
-		dxgiOutput->Release();
-		dxgiOutput = nullptr;
-
-		// check for second dxgi output query success
-		if (FAILED(dxgiOutputQuery)) throw std::runtime_error("failed to get second dxgi output");
-
-		// Create desktop duplication object
-		HRESULT duplicationResult = DxgiOutput1->DuplicateOutput(mDxDevice, &mDesktopDuplication);
-		DxgiOutput1->Release();
-		DxgiOutput1 = nullptr;
-
-		if (FAILED(duplicationResult)) {
-			if (duplicationResult == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE)
-				throw std::runtime_error("maximum dd api connections reached, cannot connect");
-			throw std::runtime_error("failed to duplicate output");
-		}
+        initialize();
 	}
 
 	~DdApiScreen() {
 		mDxDevice->Release();
 	}
+
+    void reinitialize(ID3D11Device* dxDevice){
+        assert(dxDevice);
+
+        // first, we have to release the old dx device
+        mDxDevice->Release();
+
+        // after that, we may initialize again using the new device
+        mDxDevice = dxDevice;
+        initialize();
+    }
 
 	std::shared_ptr<Image> getScreenshot(ID3D11DeviceContext* dxDeviceContext) {
 		IDXGIResource* dxgiDesktopResource = nullptr;
@@ -129,10 +143,12 @@ public:
 			return nullptr;
 
 		// screenshot as a dx 11 texture
-		ID3D11Texture2D* screenshot;
+        ID3D11Texture2D* screenshot = nullptr;
 
 		// query for IDXGIResource
-		HRESULT desktopResult = dxgiDesktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&screenshot));
+        HRESULT desktopResult = dxgiDesktopResource->QueryInterface(
+                    __uuidof(ID3D11Texture2D),
+                    reinterpret_cast<void **>(&screenshot));
 		dxgiDesktopResource->Release();
 		dxgiDesktopResource = nullptr;
 		if (FAILED(desktopResult)) throw new std::runtime_error("failed to QueryInterface for screenshot");
@@ -142,8 +158,9 @@ public:
 		// release data
 		HRESULT desktopDuplicationFrameRelease = mDesktopDuplication->ReleaseFrame();
 		if (FAILED(desktopDuplicationFrameRelease)) throw std::runtime_error("could not release last frame");
-		if (screenshot)
-			screenshot->Release();
+
+        if(screenshot != nullptr)
+            screenshot->Release();
 
 		return result;
 	}
