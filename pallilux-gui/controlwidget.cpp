@@ -104,6 +104,10 @@ void ControlWidget::start(const QString& port) {
             onStatusUpdate(string("catastrophic failure: ") + e.what(), true);
             emit onStateChanged(false);
             break;
+        } catch (SerialException e){
+            onStatusUpdate(string("catastrophic failure: ") + e.what(), true);
+            emit onStateChanged(false);
+            break;
         }
     }
 }
