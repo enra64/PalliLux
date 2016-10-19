@@ -187,8 +187,8 @@ if(WIN32)
 		
 	SET(WIN_ONLY_SOURCES
 		"src/serial/windowsserial.cpp"
-		"src/screenshotproviders/ddapiscreenshotprovider.cpp")
-	
+                "src/screenshotproviders/ddapiscreenshotprovider.cpp")
+
 	# Look for the header file.
 		FIND_PATH( DX_INCLUDE_DIR 
 					NAMES 
@@ -199,12 +199,12 @@ if(WIN32)
 		# Look for the library.
 		FIND_LIBRARY( DXGI_LIBRARY 
 					NAMES dxgi.lib
-					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+                                        PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64"
 					DOC "Path to dxgi.lib" )
 					
 		FIND_LIBRARY( D3D11_LIBRARY 
 					NAMES d3d11.lib
-					PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
+                                        PATHS "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64"
 					DOC "Path to d3d11.lib" )
 					
 	if(NOT DX_INCLUDE_DIR OR NOT DXGI_LIBRARY OR NOT D3D11_LIBRARY)

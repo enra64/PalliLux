@@ -95,8 +95,14 @@ void DdApiScreenshotProvider::takeScreenshot() {
     int failureCount = 0;
 
     for (unsigned int i = 0; i < mScreenVector.size(); i++) {
-		shared_ptr<Image> img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
-		
+        // windows might throw some weird-ass errors
+        shared_ptr<Image> img;
+        try {
+             img = mScreenVector.at(i)->getScreenshot(mDxDeviceContext);
+        } catch (exception e){
+            cout << "ddapiscreen exception " << e.what() << endl;
+        }
+
 		// if the fallback system of DdApiScreen failed, we must force retaking the screenshot
 		if (!img) {
 			i--;
@@ -104,8 +110,9 @@ void DdApiScreenshotProvider::takeScreenshot() {
             // as dx probably did some weird shit
             failureCount++;
             if(failureCount > 100){
-                // We wait 2s to let dx finish whatever fuckery it was doing
-                Sleep(2000);
+                cout << "begin reinit" << endl;
+                // We wait 10s to let dx finish whatever fuckery it was doing
+                Sleep(10000);
 
                 // now we reinitialize the whole dx system
                 reinitializeDx();
@@ -115,6 +122,8 @@ void DdApiScreenshotProvider::takeScreenshot() {
 
                 // reset fail counter
                 failureCount = 0;
+
+				cout << "reinit complete" << endl;
 
                 return;
             }

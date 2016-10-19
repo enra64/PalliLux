@@ -17,7 +17,7 @@ using namespace std;
 
 // windows: GDI
 #include "ddapiscreenshotprovider.h"
-string mDefaultTtyDevice("COM3");
+string mDefaultTtyDevice("COM5");
 
 // linux or windows: file provider
 //#include "filescreenshotprovider.h"
