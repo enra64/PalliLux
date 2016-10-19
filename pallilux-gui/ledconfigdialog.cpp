@@ -2,6 +2,7 @@
 #include "ui_ledconfigdialog.h"
 
 #include <QSettings>
+#include <QCheckBox>
 #include <colordataprovider.h>
 
 LedConfigDialog::LedConfigDialog(QWidget *parent) :
@@ -17,6 +18,7 @@ LedConfigDialog::LedConfigDialog(QWidget *parent) :
     ui->rLedSpin->setValue(s.value("leds/right_count", LedConfig::INVALID).toInt());
     ui->tLedSpin->setValue(s.value("leds/top_count", LedConfig::INVALID).toInt());
     ui->lLedSpin->setValue(s.value("leds/left_count", LedConfig::INVALID).toInt());
+    ui->ccwCheckBox->setValue(s.value("leds/counter_clock_wise", true).toBool());
 
     // refresh led count
     refreshLedCount();
@@ -37,7 +39,8 @@ LedConfig LedConfigDialog::getLedConfig() {
     return LedConfig(s.value("leds/bottom_count", LedConfig::INVALID).toInt(),
                     s.value("leds/right_count", LedConfig::INVALID).toInt(),
                     s.value("leds/top_count", LedConfig::INVALID).toInt(),
-                    s.value("leds/left_count", LedConfig::INVALID).toInt());
+                    s.value("leds/left_count", LedConfig::INVALID).toInt(),
+                    s.value("leds/counter_clock_wise", true).toBool());
 }
 
 bool LedConfigDialog::isLedCountSet() {
@@ -59,6 +62,7 @@ void LedConfigDialog::accept() {
     s.setValue("leds/right_count", ui->rLedSpin->value());
     s.setValue("leds/top_count", ui->tLedSpin->value());
     s.setValue("leds/left_count", ui->lLedSpin->value());
+    s.setValue("leds/counter_clock_wise", ui->ccwCheckBox->isChecked());
 
     QDialog::accept();
 }

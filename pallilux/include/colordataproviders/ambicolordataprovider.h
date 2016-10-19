@@ -15,23 +15,9 @@ class AmbiColorDataProvider : public ColorDataProvider {
 public:
     /**
      * @brief create a new AmbiColorDataProvider
-     * @param verticalLedCount how many leds are on each vertical border
-     * @param horizontalLedCount how many leds are on each horizontal border
-     */
-    AmbiColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount);
-
-    /**
-     * @brief create a new AmbiColorDataProvider
      * @param d how many leds are on which border
      */
     AmbiColorDataProvider(LedConfig d);
-
-	/**
-	* @brief create a new AmbiColorDataProvider
-	* @param verticalLedCount how many leds are on both vertical borders
-	* @param horizontalLedCount how many leds are on both horizontal borders
-	*/
-	AmbiColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount);
 
     /**
      * @brief Retrieves border images and provides rgb output data
@@ -132,6 +118,8 @@ private:
 	Geometry mRightLedGeometry;///< right led row length, basically
 	Geometry mTopLedGeometry;///< top led row length, basically
 	Geometry mLeftLedGeometry;///< left led row length, basically
+
+    bool mCounterClockWise;///< whether the led data is pushed clock- or counterclockwise
 
     std::shared_ptr<BorderProvider> mBorderProvider; ///< class instance used to create the images of each border
 };
