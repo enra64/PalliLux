@@ -128,12 +128,12 @@ protected:
         }
     }
 
-	const size_t BOTTOM_LED_COUNT;///< amount of leds on bottom border
-	const size_t RIGHT_LED_COUNT;///< amount of leds on right border
-    const size_t TOP_LED_COUNT;///< amount of leds on top border
-    const size_t LEFT_LED_COUNT;///< amount of leds on left border
+    const int BOTTOM_LED_COUNT;///< amount of leds on bottom border
+    const int RIGHT_LED_COUNT;///< amount of leds on right border
+    const int TOP_LED_COUNT;///< amount of leds on top border
+    const int LEFT_LED_COUNT;///< amount of leds on left border
 
-    const size_t LED_COUNT = BOTTOM_LED_COUNT + RIGHT_LED_COUNT + TOP_LED_COUNT + LEFT_LED_COUNT;///< aggregated led count
+    const int LED_COUNT = BOTTOM_LED_COUNT + RIGHT_LED_COUNT + TOP_LED_COUNT + LEFT_LED_COUNT;///< aggregated led count
 
     std::unordered_map<std::string, std::unique_ptr<DataFilter>> mDataFilters;///< List of DataFilter objects that will be applied to the rgb data
 };

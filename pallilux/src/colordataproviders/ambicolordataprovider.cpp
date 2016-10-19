@@ -13,7 +13,7 @@ AmbiColorDataProvider::AmbiColorDataProvider(LedConfig d) : ColorDataProvider(d)
 {
     // set geometries
     mBottomLedGeometry = Geometry(d.bottom, 1);
-    mTopLedGeometry = Geometry(d.right, 1);
+    mTopLedGeometry = Geometry(d.top, 1);
 
     mLeftLedGeometry = Geometry(1, d.left);
     mRightLedGeometry = Geometry(1, d.right);
@@ -38,13 +38,13 @@ float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 	flattenBorders();
 
 	// save all borders
-	//debugSaveBorders();
+    //debugSaveBorders();
 	
 	// second, align the borders so they form a line
 	unique_ptr<Image> pixelLine = alignBorders();
 
 	// debug print
-	//pixelLine->save("flataligned.bmp");
+    //pixelLine->save("flataligned.bmp");
 
 	// last, convert the line to rgb data
 	imageToRgb(move(pixelLine), resultBuffer);
