@@ -29,6 +29,7 @@
 
 #include <lowpassfilter.h>
 #include <brightnessfilter.h>
+#include <QTimer>
 
 using namespace std;
 
@@ -40,11 +41,15 @@ MainWindow::MainWindow(QWidget *parent) :
     // set window icon
     this->setWindowIcon(QIcon(":images/icon.png"));
 
-    // disable stop button
-    setRunState(false);
+    // new timer for config checks
+    mConfigurationTimer = new QTimer(this);
+    connect(mConfigurationTimer, &QTimer::timeout, this, &MainWindow::checkConfiguration);
 
     // get user to set led and serial config
     checkConfiguration();
+
+    // disable stop button
+    setRunState(false);
 
     // add a qlabel to the menubar for displaying status
     mStatusLabel = new QLabel("not connected", this);
@@ -130,12 +135,19 @@ void MainWindow::checkConfiguration() {
         !SerialConfigDialog::deviceExists(SerialConfigDialog::getSerialDevice());
     ui->startStopButton->setEnabled(!problem);
 
+    // if a problem exists, check for it again in 750ms
+    if(problem)
+        mConfigurationTimer->start(750);
+    else
+        mConfigurationTimer->stop();
 
+    // check led configuration
     if(!LedConfigDialog::isLedCountSet())
         addWarningButton("Please enter your led configuration", mLedButton, SLOT(on_actionLED_Configuration_triggered()));
     else
         removeWarningButton(mLedButton, SLOT(on_actionLED_Configuration_triggered()));
 
+    // check serial configuration
     if(!SerialConfigDialog::isSerialDeviceSet())
         addWarningButton("Please enter your arduino serial connection", mSerialButton, SLOT(on_actionSerial_Configuration_triggered()));
     else if(!SerialConfigDialog::deviceExists(SerialConfigDialog::getSerialDevice()))

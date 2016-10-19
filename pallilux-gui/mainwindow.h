@@ -68,6 +68,9 @@ private:
     /// \brief button to show that the serial config is bad
     QPushButton* mSerialButton = nullptr;
 
+    /// \brief timer to periodically check for working configuration
+    QTimer* mConfigurationTimer = nullptr;
+
     // QWidget interface
 protected:
     void closeEvent(QCloseEvent *) override;
