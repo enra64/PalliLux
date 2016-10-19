@@ -9,25 +9,17 @@ using namespace cimg_library;
 #include <iostream>
 #include <assert.h>
 
-AmbiColorDataProvider::AmbiColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount)
-    : ColorDataProvider(bottomLedCount, rightLedCount, topLedCount, leftLedCount)
-{
-	// set geometries
-	mBottomLedGeometry = Geometry(bottomLedCount, 1);
-	mTopLedGeometry = Geometry(topLedCount, 1);
-
-	mLeftLedGeometry = Geometry(1, leftLedCount);
-	mRightLedGeometry = Geometry(1, rightLedCount);
-}
-
 AmbiColorDataProvider::AmbiColorDataProvider(LedConfig d)
     : AmbiColorDataProvider(d.bottom, d.right, d.top, d.left)
 {
-}
+    // set geometries
+    mBottomLedGeometry = Geometry(d.bottom, 1);
+    mTopLedGeometry = Geometry(d.right, 1);
 
-AmbiColorDataProvider::AmbiColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) : 
-	AmbiColorDataProvider(horizontalLedCount, verticalLedCount, horizontalLedCount, verticalLedCount)
-{
+    mLeftLedGeometry = Geometry(1, d.left);
+    mRightLedGeometry = Geometry(1, d.right);
+
+    mCounterClockWise = d.counterClockWise;
 }
 
 float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
@@ -66,16 +58,27 @@ float AmbiColorDataProvider::getData(uint8_t* resultBuffer)
 
 std::unique_ptr<Image> AmbiColorDataProvider::alignBorders()
 {
-	// rotate so the border ends align
-	mRightImage.rotate(90);
-	mTopImage.rotate(180);
-	mLeftImage.rotate(270);
+    // space for resulting image
+    Image* result = new Image();
 
-	// create result image space on heap
-	Image* result = new Image();
+    if(mCounterClockWise){
+        // rotate so the border ends align
+        mRightImage.rotate(90);
+        mTopImage.rotate(180);
+        mLeftImage.rotate(270);
 
-	// append the borders to a single image
-	result->append(mBottomImage).append(mRightImage).append(mTopImage).append(mLeftImage);
+        // append the borders to a single image
+        result->append(mBottomImage).append(mRightImage).append(mTopImage).append(mLeftImage);
+    } else {
+        // rotate so the border ends align
+        mLeftImage.rotate(90);
+        mBottomImage.rotate(180);
+        mRightImage.rotate(270);
+
+        // append the borders to a single image
+        result->append(mBottomImage).append(mLeftImage).append(mTopImage).append(mRightImage);
+    }
+
 
 	return std::unique_ptr<Image>(result);
 }

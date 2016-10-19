@@ -8,10 +8,11 @@
 #include "datafilter.h"
 
 struct LedConfig {
-    LedConfig() : bottom(INVALID), right(INVALID), top(INVALID), left(INVALID) {}
-    LedConfig(int b, int r, int t, int l) : bottom(b), right(r), top(t), left(l) {}
-    LedConfig(int horizontal, int vertical) : LedConfig(horizontal, vertical, horizontal, vertical) {}
+    LedConfig() : bottom(INVALID), right(INVALID), top(INVALID), left(INVALID), counterClockWise(true) {}
+    LedConfig(int b, int r, int t, int l, bool ccw = true) : bottom(b), right(r), top(t), left(l), counterClockWise(ccw) {}
+    LedConfig(int horizontal, int vertical, bool counterClockWise = true) : LedConfig(horizontal, vertical, horizontal, vertical, counterClockWise) {}
     int bottom, right, top, left;
+    bool counterClockWise;
 
     bool valid() {
         return bottom > 0 && right > 0 && top > 0 && left > 0;
