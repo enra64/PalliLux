@@ -101,9 +101,15 @@ void MainWindow::stop() {
 }
 
 void MainWindow::updateStatus(const QString &text, bool failure) {
+    int oldTextLength = mStatusLabel->text().length();
     mStatusLabel->setText(text);
     mStatusLabel->setStyleSheet(failure ? "color: red;" : "color: black;");
-    ui->menuBar->adjustSize();
+
+    // avoid updating the size if the length didn't change because of the flickering
+    if(oldTextLength != text.length())
+        ui->menuBar->adjustSize();
+
+    // if we just crashed, check whether the serial port still lives
     if(failure)
         checkConfiguration();
 }

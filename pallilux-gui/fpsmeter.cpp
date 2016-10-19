@@ -99,9 +99,6 @@ void FpsMeter::update(float fpsValue) {
 
     // set the title to the fps average
     mFpsChart->setTitle(QString("Current average: %1fps").arg((int) fpsAvg));
-
-    // refresh chart
-    mFpsChartView->repaint();
 }
 
 void FpsMeter::toggled(bool checked){
