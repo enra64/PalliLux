@@ -78,10 +78,15 @@ win32 {
     LIBS += "C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x64\d3d11.lib"
     LIBS += "C:\Program Files (x86)\Windows Kits\8.1\Lib\winv6.3\um\x64\dxgi.lib"
 
-    # static pallilux lib
-    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Default\pallilux.lib"
-    #LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\pallilux.lib"
-    LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\pallilux.lib"
+    # static pallilux lib, using debug or release build
+    CONFIG( debug, debug|release){
+    message("debug")
+        LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\pallilux.lib"
+    }
+    CONFIG(release, debug|release) {
+        message("release")
+        LIBS += "C:\Users\arne\Downloads\PalliLux\build-pallilux-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\pallilux.lib"
+    }
 }
 
 unix {
