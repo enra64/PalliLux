@@ -29,24 +29,6 @@ struct LedConfig {
  */
 class ColorDataProvider {
 public:
-	/**
-	* @brief Create a ColorDataProvider parametrized with the given led count
-	* @param horizontalLedCount
-	* @param verticalLedCount
-	*/
-	ColorDataProvider(size_t horizontalLedCount, size_t verticalLedCount) :
-		BOTTOM_LED_COUNT(horizontalLedCount), RIGHT_LED_COUNT(verticalLedCount), TOP_LED_COUNT(horizontalLedCount), LEFT_LED_COUNT(verticalLedCount) {
-	}
-
-	/**
-	* @brief Create a ColorDataProvider parametrized with the given led count
-	* @param horizontalLedCount
-	* @param verticalLedCount
-	*/
-	ColorDataProvider(size_t bottomLedCount, size_t rightLedCount, size_t topLedCount, size_t leftLedCount) :
-		BOTTOM_LED_COUNT(bottomLedCount), RIGHT_LED_COUNT(rightLedCount), TOP_LED_COUNT(topLedCount), LEFT_LED_COUNT(leftLedCount) {
-	}
-
     /**
     * @brief Create a ColorDataProvider parametrized with the given led count
     * @param horizontalLedCount

@@ -9,8 +9,7 @@ using namespace cimg_library;
 #include <iostream>
 #include <assert.h>
 
-AmbiColorDataProvider::AmbiColorDataProvider(LedConfig d)
-    : AmbiColorDataProvider(d.bottom, d.right, d.top, d.left)
+AmbiColorDataProvider::AmbiColorDataProvider(LedConfig d) : ColorDataProvider(d)
 {
     // set geometries
     mBottomLedGeometry = Geometry(d.bottom, 1);
