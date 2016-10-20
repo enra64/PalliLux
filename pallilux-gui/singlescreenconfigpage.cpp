@@ -21,6 +21,8 @@ SingleScreenConfigPage::SingleScreenConfigPage(QWidget *parent) :
     ui->setupUi(this);
     ui->tabMainLayout->addWidget(getControlWidget(parent));
 
+    loadConfigFromSettings();
+
     connect(ui->resolutionWidthSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
     connect(ui->resolutionHeightSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
     connect(ui->xOffsetSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
@@ -44,6 +46,27 @@ shared_ptr<BorderProvider> SingleScreenConfigPage::getSingleScreenBorderProvider
     return shared_ptr<BorderProvider>(new SingleScreenBorderProvider(w, h, xOff, yOff, xLetterbox, yLetterbox));
 }
 
+void SingleScreenConfigPage::loadConfigFromSettings() {
+    QSettings s;
+    ui->resolutionWidthSpinbox->setValue(s.value("singlescreenconfigpage/xRes", 1920).toInt());
+    ui->resolutionHeightSpinbox->setValue(s.value("singlescreenconfigpage/yRes", 1080).toInt());
+    ui->xOffsetSpinbox->setValue(s.value("singlescreenconfigpage/xOff", 0).toInt());
+    ui->yOffsetSpinbox->setValue(s.value("singlescreenconfigpage/yOff", 0).toInt());
+    ui->letterboxingWidthSpinBox->setValue(s.value("singlescreenconfigpage/lbWidth", 0).toInt());
+    ui->letterboxingHeightSpinBox->setValue(s.value("singlescreenconfigpage/lbHeight", 0).toInt());
+}
+
+void SingleScreenConfigPage::saveConfigToSettings()
+{
+    QSettings s;
+    s.setValue("singlescreenconfigpage/xRes", ui->resolutionWidthSpinbox->value());
+    s.setValue("singlescreenconfigpage/yRes", ui->resolutionHeightSpinbox->value());
+    s.setValue("singlescreenconfigpage/xOff", ui->xOffsetSpinbox->value());
+    s.setValue("singlescreenconfigpage/yOff", ui->yOffsetSpinbox->value());
+    s.setValue("singlescreenconfigpage/lbWidth", ui->letterboxingWidthSpinBox->value());
+    s.setValue("singlescreenconfigpage/lbHeight", ui->letterboxingHeightSpinBox->value());
+}
+
 void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
     // get relevant sizes
     int w = ui->resolutionWidthSpinbox->value();
@@ -61,6 +84,10 @@ void SingleScreenConfigPage::on_letterboxAutoConfigButton_clicked() {
 }
 
 void SingleScreenConfigPage::updateBorderProvider() {
+    // persist new settings
+    saveConfigToSettings();
+
+    // get AmbiColorDataProvider
     std::shared_ptr<AmbiColorDataProvider> ambiProvider = std::dynamic_pointer_cast<AmbiColorDataProvider>(
                 mCurrentControlWidget->getArduinoConnector()->getColorDataProvider());
 
