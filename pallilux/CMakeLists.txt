@@ -125,13 +125,12 @@ if(UNIX)
 	######################################################################################################################################################
 	# OPTIONS	
 	######################################################################################################################################################
-	option(X11 "find and include x11 lib" ON)
-	option(SPECTROMETER "find and include fftw3 and pulse libs" ON)
+        option(X11 "find and include x11 lib" ON)
 
 
-######################################################################################################################################################
-# X11 OPTION - needed for xlibscreenshot - LINUX ONLY
-######################################################################################################################################################
+    ######################################################################################################################################################
+    # X11 OPTION - needed for xlibscreenshot - LINUX ONLY
+    ######################################################################################################################################################
     if(X11)
         target_sources(${PROJECT_NAME} PUBLIC "src/screenshotproviders/xlibscreenshotprovider.cpp" "include/screenshotproviders/xlibscreenshotprovider.h")
         find_package(X11 REQUIRED)
@@ -159,17 +158,16 @@ if(UNIX)
     # if all required libs are available, give option to enable spectrometer system
     if(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
         option(SPECTROMETER "find and include fftw3 and pulse libs" OFF)
+
+        # if spectrometer option enabled
+        if(SPECTROMETER)
+            INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
+            TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
+
+            # add spectrometer files to target
+            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
+        endif(SPECTROMETER)
     endif(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
-                
-    # if spectrometer option enabled
-    if(SPECTROMETER)
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
-        INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
-        TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} )
-        
-        # add spectrometer files to target
-        target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
-    endif(SPECTROMETER)
 
 endif(UNIX)
 
