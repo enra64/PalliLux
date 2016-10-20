@@ -6,6 +6,7 @@ using namespace std;
 
 void WindowsSerial::waitForData() const
 {
+    /*
 	COMSTAT status;
 	do {
 		DWORD errors;
@@ -16,19 +17,27 @@ void WindowsSerial::waitForData() const
 	// Check if there is something to read
 	while (status.cbInQue <= 0);
 	// do busy-waiting as long as i cant fix WaitCommEvent never returning :/
-	return;
-	DWORD dwEventMask;
+    return;*/
+
+
+
+
+    //return;
+
+
+    DWORD dwEventMask;
 	
 	// set the comm mask to wait for data-set-ready state change
-	if (!SetCommMask(mSerialHandle, EV_RXCHAR))
+    if (FAILED(SetCommMask(mSerialHandle, EV_RXCHAR | EV_ERR)))
 		throw SerialException("SetCommMask failed: error code " + to_string(GetLastError()));
 
 	// wait for any character
-	if (!WaitCommEvent(mSerialHandle, &dwEventMask, nullptr)) {
+    if (FAILED(WaitCommEvent(mSerialHandle, &dwEventMask, 0))) {
 		DWORD lastError = GetLastError();
 		throw SerialException("error " + to_string(lastError) + " while waiting for serial event");
-	}
-		
+    } else if(dwEventMask & EV_ERR){
+        throw SerialException("got EV_ERR while waiting for serial event");
+    }
 }
 
 void WindowsSerial::send(const uint8_t* buf, size_t len) const
@@ -38,7 +47,7 @@ void WindowsSerial::send(const uint8_t* buf, size_t len) const
 	// Try to write the buffer on the Serial port
 	if (!WriteFile(mSerialHandle, buf, len, &bytesSent, nullptr))
 	{
-		// In case it don't work get comm error
+        // In case it doesn't work get comm error
 		//ClearCommError(mSerialHandle, &errors, &status);
 		throw SerialException("could not write");
 	}
@@ -56,14 +65,13 @@ size_t WindowsSerial::receive(uint8_t* buf, size_t len) const
 	ClearCommError(mSerialHandle, &errors, &status);
 
 	// Check if there is something to read
-	if (status.cbInQue <= 0)
-		return status.cbInQue;
+    //if (status.cbInQue <= 0) return status.cbInQue;
 
-	// read only as much as available, and dont read more than our buffer can handle
-	unsigned int bytesToRead = status.cbInQue < len ? status.cbInQue : len;
+    // read at least one, but not more than len
+    unsigned int bytesToRead = status.cbInQue > len ? len : status.cbInQue;
 
 	// Try to read the require number of chars, and return the number of read bytes on success
-	if (ReadFile(mSerialHandle, buf, bytesToRead, &bytesRead, nullptr) == 0)
+    if (FAILED(ReadFile(mSerialHandle, buf, bytesToRead, &bytesRead, nullptr)))
 		throw SerialException("no data read");
 
 	return bytesRead;
@@ -74,10 +82,10 @@ void WindowsSerial::open(const std::string& port)
 	// Try to connect to the given port throuh CreateFile
 	mSerialHandle = CreateFile(port.c_str(),
 	                           GENERIC_READ | GENERIC_WRITE,
-	                           0,
-	                           nullptr,
+                               0, // exclusive access
+                               nullptr, // default security attributes
 	                           OPEN_EXISTING,
-	                           FILE_ATTRIBUTE_NORMAL,
+                               0,// no overlapped comm pls
 	                           nullptr);
 
 	// Check if the connection was successfull

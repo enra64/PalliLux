@@ -97,11 +97,15 @@ void ArduinoConnector::draw() {
     // write data buffer
     mSerial->send(mRgbBuffer, mColorDataProvider->getRequiredBufferLength());
 
-    // wait for arduino acknowledgement
-    mSerial->waitForData();
+    // try to receive the ack char, but wait if it somehow isnt there yet
+    size_t rec = 0;
+    do {
+        // wait for arduino acknowledgement
+        mSerial->waitForData();
 
-    // read input
-    mSerial->receive(mCommBuffer, 128);
+        // read input
+        rec += mSerial->receive(mCommBuffer, 128);
+    } while(rec < 1);
 
     // check the acknowledgement char
     if (mCommBuffer[0] != 'k')
