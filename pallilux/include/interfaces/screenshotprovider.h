@@ -1,13 +1,13 @@
 #ifndef SCREENSHOT_H
 #define SCREENSHOT_H
 
-// the custom plugin needs stdexcept and stdint
+// channel order load plugin needs these
 #include <stdexcept>
 #include <stdint.h>
+#include <assert.h>
 
 // define our custom plugin to allow easier loading of interleaved BGR-or-BGRA-in-whatever-order images
 #define cimg_plugin1 "load_custom_channel_order.h"
-//#define cimg_plugin2 "twodimensionalhistogram.h"
 
 // display support is disabled in CImg under unix to avoid including X11 here, which would break building with Qt. (line 266)
 #ifndef cimg_version

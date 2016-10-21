@@ -96,7 +96,7 @@ void AmbiColorDataProvider::flattenBorders() {
 void AmbiColorDataProvider::imageToRgb(std::unique_ptr<Image> lineBorder, uint8_t* result)
 {
 	// for each led
-	for (unsigned int i = 0; i < LED_COUNT; i++)
+    for (int i = 0; i < LED_COUNT; i++)
 	{
 		// convert from 0-1 to 0-255
 		result[i * 3 + 0] = lineBorder->atXY(i, 0, CIMG_2D_Z_LEVEL, CIMG_RED_CHANNEL);
