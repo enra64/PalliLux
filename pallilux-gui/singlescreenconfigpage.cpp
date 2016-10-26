@@ -21,8 +21,11 @@ SingleScreenConfigPage::SingleScreenConfigPage(QWidget *parent) :
     ui->setupUi(this);
     ui->tabMainLayout->addWidget(getControlWidget(parent));
 
+    // load config from settings and apply
     loadConfigFromSettings();
+    updateBorderProvider();
 
+    // connect change signals
     connect(ui->resolutionWidthSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
     connect(ui->resolutionHeightSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
     connect(ui->xOffsetSpinbox, SIGNAL(valueChanged(int)), this, SLOT(updateBorderProvider()));
