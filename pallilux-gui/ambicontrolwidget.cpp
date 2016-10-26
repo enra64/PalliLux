@@ -3,6 +3,7 @@
 #include <QDoubleSpinBox>
 #include <brightnessfilter.h>
 #include <lowpassfilter.h>
+#include <saturationfilter.h>
 
 AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector, QWidget *parent) :
     ControlWidget(parent) {
@@ -28,6 +29,7 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
     // add the filters we want
     mArduinoConnector->addFilter("lowpass", std::unique_ptr<DataFilter>(new LowPassFilter(getColorDataProvider()->getRequiredBufferLength(), .6f)));
     mArduinoConnector->addFilter("brightness", std::unique_ptr<DataFilter>(new BrightnessFilter(1)));
+    mArduinoConnector->addFilter("saturation", std::unique_ptr<DataFilter>(new SaturationFilter(1)));
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {
@@ -42,6 +44,16 @@ void AmbiControlWidget::onNewDataFactorChanged(double newValue) {
 void AmbiControlWidget::onBrightnessFactorChanged(double newValue) {
     // sorry for this, too
     BrightnessFilter* filter = dynamic_cast<BrightnessFilter*>(mArduinoConnector->getFilter("brightness").get());
+    // check that cast & finding worked
+    assert(filter);
+    // apply change
+    filter->setFactor((float) newValue);
+}
+
+void AmbiControlWidget::onSaturationFactorChanged(double newValue)
+{
+    // sorry for this, too
+    SaturationFilter* filter = dynamic_cast<SaturationFilter*>(mArduinoConnector->getFilter("saturation").get());
     // check that cast & finding worked
     assert(filter);
     // apply change
@@ -74,7 +86,7 @@ void AmbiControlWidget::setupControlBox() {
 
 
 
-    // set up new data factor widgets
+    // set up brightness factor widgets
     QLabel* brightnessFactorLabel = new QLabel("Brightness factor", parentWidget());
     QDoubleSpinBox* brightnessFactorSpinbox = new QDoubleSpinBox(parentWidget());
 
@@ -88,6 +100,23 @@ void AmbiControlWidget::setupControlBox() {
 
     // add to control layout
     addControlWidget(brightnessFactorLabel, brightnessFactorSpinbox);
+
+
+
+    // set up saturation factor widgets
+    QDoubleSpinBox* saturationFactorSpinbox = new QDoubleSpinBox(parentWidget());
+
+    // set range
+    saturationFactorSpinbox->setRange(0, 3);
+    saturationFactorSpinbox->setValue(1);
+    saturationFactorSpinbox->setSingleStep(.1);
+
+    // connect to update signal
+    connect(saturationFactorSpinbox, SIGNAL(valueChanged(double)), this, SLOT(onSaturationFactorChanged(double)));
+
+    // add to control layout
+    addControlWidget(new QLabel("Saturation factor"), saturationFactorSpinbox);
+
 
 
     // set up border width widgets

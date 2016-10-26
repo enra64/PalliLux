@@ -90,6 +90,10 @@ win32 {
 }
 
 unix {
+if(0){
+    # fftw, pulseaudio stuff
+    LIBS += -L/usr/lib64 -lfftw3 -lpulse-simple -lpulse
+
     # spectrometer stuff
     SOURCES +=  spectrometerconfigpage.cpp \
                 spectrometercontrolwidget.cpp
@@ -98,24 +102,22 @@ unix {
                 spectrometercontrolwidget.h
 
     FORMS +=    spectrometerconfigpage.ui
+}
+
 
     # X11 stuff
     CONFIG += link_pkgconfig
     PKGCONFIG += x11
 
-    # fftw stuff
-    LIBS += -lfftw3
-
-    # pulseaudio
-    LIBS += -lpulse-simple
-    # pa_strerror is in here
-    LIBS += -lpulse
-
-    # static pallilux lib
-    LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Debug/libpallilux.a"
-
-    # dynamic pallilux lib
-    #LIBS += -L/home/arne/Documents/Development/PalliLux/build-pallilux-host-Desktop-Debug -lhost
+    # static pallilux lib, using debug or release build
+    CONFIG( debug, debug|release){
+        message("debug")
+        LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Debug/libpallilux.a"
+    }
+    CONFIG(release, debug|release) {
+        message("release")
+        LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Release/libpallilux.a"
+    }
 }
 
 INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \

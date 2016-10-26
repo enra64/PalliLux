@@ -21,32 +21,28 @@ unsigned char charPosition(const unsigned char searched, const char* order, cons
 //! if pitch is zero, it will default to the calculated amount of bytes per row (eg 3*width)
 void read(const char *const source,
           const char* channel_order,
-          const unsigned int source_channel_count,
+          const unsigned int source_channels,
           const unsigned int size_x,
           const unsigned int size_y=1,
-          const unsigned int size_c=1,
+          const unsigned int target_channels=1,
           unsigned char* const shared_buffer = nullptr,
           int pitch = 0){
 
-    // check channel count validity
-    if(size_c != 3 && size_c != 4 && source_channel_count != 3 && source_channel_count != 4)
-        throw std::invalid_argument("only channel counts of 3 or four are valid");
+    // only channel counts of 3 and 4 are valid
+    assert((target_channels == 3 || target_channels == 4) && (source_channels == 3 || source_channels == 4));
 
-    if(source_channel_count < size_c)
-        throw std::invalid_argument("the source must not have less channels than the target!");
-
-    // size_z must be 1, i dont wanna write code to handle that
-    const unsigned int size_z = 1;
+    // the source must not have less channels than the target
+    assert(source_channels >= target_channels);
 
     // calculate overage image size
-    const size_t siz = (size_t)size_x*size_y*size_z*size_c;
+    const size_t siz = (size_t)size_x*size_y*target_channels;
 
     if (source && siz) {
         // save member variables
         _width = size_x;
         _height = size_y;
-        _depth = size_z;
-        _spectrum = size_c;
+        _depth = 1;// depths other than 1 are not handled
+        _spectrum = target_channels;
         // if shared_buffer is nullptr, is_shared is false
         _is_shared = shared_buffer;
 
@@ -71,17 +67,17 @@ void read(const char *const source,
 
         // check whether we have to calculate our own pitch
         if(pitch == 0)
-            pitch = source_channel_count * _width;
+            pitch = source_channels * _width;
 
 
         // determine the relative offset of each channel
         unsigned char rOff, gOff, bOff, aOff;
-        rOff = charPosition('R', channel_order, size_c);
-        gOff = charPosition('G', channel_order, size_c);
-        bOff = charPosition('B', channel_order, size_c);
+        rOff = charPosition('R', channel_order, target_channels);
+        gOff = charPosition('G', channel_order, target_channels);
+        bOff = charPosition('B', channel_order, target_channels);
 
-        if(source_channel_count == 4)
-            aOff = charPosition('A', channel_order, size_c);
+        if(source_channels == 4)
+            aOff = charPosition('A', channel_order, target_channels);
 
         // now, _data is set (hopefully) to the correct buffer location, and we can start copying the data:
 
@@ -97,19 +93,20 @@ void read(const char *const source,
                 greenStart = this->data(0, row, 0, 1);
                 blueStart = this->data(0, row, 0, 2);
 
-                // this is only valid and relevant if the target channel count has an alpha
+                // this is only valid and relevant if the target has an alpha channel
+                // the source can not have less channels, that would have thrown an exception
                 if(_spectrum == 4)
                     alphaStart = this->data(0, row, 0, 3);
 
                 // copy R, then G, then B into the result images buffer
                 for (size_t pixelIndex = 0; pixelIndex < _width; pixelIndex++) {
-                        blueStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + bOff];
-                        greenStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + gOff];
-                        redStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + rOff];
+                        blueStart[pixelIndex] = rowStart[source_channels * pixelIndex + bOff];
+                        greenStart[pixelIndex] = rowStart[source_channels * pixelIndex + gOff];
+                        redStart[pixelIndex] = rowStart[source_channels * pixelIndex + rOff];
 
-                        // if an alpha channel exists, copy it
-                        if(source_channel_count == 4 && _spectrum == 4)
-                            alphaStart[pixelIndex] = rowStart[source_channel_count * pixelIndex + aOff];
+                        // if an alpha channel exists, copy it; alphaStart _is_ initialized here
+                        if(_spectrum == 4)
+                            alphaStart[pixelIndex] = rowStart[source_channels * pixelIndex + aOff];
                 }
         }
 

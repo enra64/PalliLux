@@ -24,7 +24,7 @@ float ConstantColorDataProvider::getData(uint8_t *data) {
     this_thread::sleep_for(chrono::milliseconds(9));
 
     // apply channel data for all pixels
-    for (unsigned int i = 0; i < LED_COUNT; i++) {
+    for (int i = 0; i < LED_COUNT; i++) {
         data[i * 3 + 0] = mRed;
         data[i * 3 + 1] = mGreen;
         data[i * 3 + 2] = mBlue;
