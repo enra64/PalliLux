@@ -38,6 +38,7 @@ BacklightControlWidget::BacklightControlWidget(LedConfig d, QWidget *parent) :
 
     // new amplitude qspinbox
     mAmplitudeSpinbox = new QDoubleSpinBox(parentWidget());
+    mAmplitudeSpinbox->setSingleStep(.1);
     addControlWidget(new QLabel("Amplitude"), mAmplitudeSpinbox);
     connect(mAmplitudeSpinbox, SIGNAL(valueChanged(double)), this, SLOT(onAmplitudeChanged(double)));
 

@@ -19,6 +19,7 @@ public:
 private slots:
     void onNewDataFactorChanged(double newValue);
     void onBrightnessFactorChanged(double newValue);
+    void onSaturationFactorChanged(double newValue);
     void onBorderWidthChanged(int newValue);
     void onInterpolationChange(int index);
 

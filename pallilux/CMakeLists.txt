@@ -34,6 +34,7 @@ SET(BASE_HEADERS
     "include/datafilters/linearfactorfilter.h"
     "include/datafilters/lowpassfilter.h"
     "include/datafilters/pulsingfilter.h"
+    "include/datafilters/saturationfilter.h"
     "include/colordataproviders/ambicolordataprovider.h"
     "include/colordataproviders/constantcolordataprovider.h"
     "include/interfaces/borderprovider.h"
@@ -54,6 +55,7 @@ SET(BASE_SOURCES
     "src/datafilters/linearfactorfilter.cpp"
     "src/datafilters/lowpassfilter.cpp"
     "src/datafilters/pulsingfilter.cpp"
+    "src/datafilters/saturationfilter.cpp"
     "src/colordataproviders/ambicolordataprovider.cpp"
     "src/colordataproviders/constantcolordataprovider.cpp")
 
