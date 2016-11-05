@@ -33,6 +33,11 @@
         <string>Backlight</string>
        </attribute>
       </widget>
+      <widget class="RotatingBacklightConfigPage" name="tab_4">
+       <attribute name="title">
+        <string>Rotating Backlight</string>
+       </attribute>
+      </widget>
       <widget class="TripleScreenConfigPage" name="tab_3">
        <attribute name="title">
         <string>Triple Screen</string>
@@ -59,7 +64,7 @@
      <x>0</x>
      <y>0</y>
      <width>724</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOptions">
@@ -100,6 +105,12 @@
    <class>BacklightConfigPage</class>
    <extends>QWidget</extends>
    <header>backlightconfigpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RotatingBacklightConfigPage</class>
+   <extends>QWidget</extends>
+   <header>rotatingbacklightconfigpage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

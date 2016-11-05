@@ -6,6 +6,7 @@ BacklightConfigPage::BacklightConfigPage(QWidget *parent) :
     QWidget(parent),
     IScreenConfigPage(),
     ui(new Ui::BacklightConfigPage) {
+
     ui->setupUi(this);
     ui->tabMainLayout->addWidget(getControlWidget(parent));
 }

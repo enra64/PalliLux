@@ -37,6 +37,7 @@ SET(BASE_HEADERS
     "include/datafilters/saturationfilter.h"
     "include/colordataproviders/ambicolordataprovider.h"
     "include/colordataproviders/constantcolordataprovider.h"
+    "include/colordataproviders/rotatingcolordataprovider.h"
     "include/interfaces/borderprovider.h"
     "include/interfaces/datafilter.h"
     "include/interfaces/colordataprovider.h"
@@ -57,7 +58,8 @@ SET(BASE_SOURCES
     "src/datafilters/pulsingfilter.cpp"
     "src/datafilters/saturationfilter.cpp"
     "src/colordataproviders/ambicolordataprovider.cpp"
-    "src/colordataproviders/constantcolordataprovider.cpp")
+    "src/colordataproviders/constantcolordataprovider.cpp"
+    "src/colordataproviders/rotatingcolordataprovider.cpp")
 
 
 #include subdirectories
