@@ -9,7 +9,7 @@ using namespace std;
 
 RotatingBacklightControlWidget::RotatingBacklightControlWidget(LedConfig d, QWidget *parent) :
     ControlWidget(parent) {
-    const double initialRotationSpeed = .2;
+    const double initialRotationSpeed = 1;
     // init & set ColorDataProvider
     mRotatingColorProvider = shared_ptr<RotatingColorDataProvider>(
                 new RotatingColorDataProvider(d, initialRotationSpeed));
@@ -27,8 +27,8 @@ RotatingBacklightControlWidget::RotatingBacklightControlWidget(LedConfig d, QWid
     mRotationFrequencySlider->setRange(0, 10);
     mRotationFrequencySlider->setValue(initialRotationSpeed);
     mRotationFrequencySlider->setOrientation(Qt::Horizontal);
-    connect(mRotationFrequencySlider, SIGNAL(valueChanged(int)), this, SLOT(onConfigChanged(int)));
-    addControlWidget(new QLabel("Speed"), mRotationFrequencySlider);
+    connect(mRotationFrequencySlider, SIGNAL(valueChanged(int)), this, SLOT(onConfigChanged()));
+    addControlWidget(new QLabel("Rotation Speed"), mRotationFrequencySlider);
 
     mMaximumSlider = new QSlider();
     mMaximumSlider->setRange(0, 360);
@@ -65,18 +65,18 @@ RotatingBacklightControlWidget::RotatingBacklightControlWidget(LedConfig d, QWid
      *
      */
     mPulseFrequencySlider = new QSlider(parentWidget());
-    mPulseFrequencySlider->setRange(0, 200);
-    mPulseFrequencySlider->setValue(100);
+    mPulseFrequencySlider->setRange(1, 200);
+    mPulseFrequencySlider->setValue(1);
     mPulseFrequencySlider->setOrientation(Qt::Horizontal);
-    addControlWidget(new QLabel("Period"), mPulseFrequencySlider);
+    addControlWidget(new QLabel("Pulse speed"), mPulseFrequencySlider);
     connect(mPulseFrequencySlider, SIGNAL(valueChanged(int)), this, SLOT(onPulseConfigChanged()));
 
     // new amplitude qspinbox
     mPulseAmplitudeSlider = new QSlider(parentWidget());
     mPulseAmplitudeSlider->setRange(0, 200);
-    mPulseAmplitudeSlider->setValue(100);
+    mPulseAmplitudeSlider->setValue(0);
     mPulseAmplitudeSlider->setOrientation(Qt::Horizontal);
-    addControlWidget(new QLabel("Amplitude"), mPulseAmplitudeSlider);
+    addControlWidget(new QLabel("Pulse Amplitude"), mPulseAmplitudeSlider);
     connect(mPulseAmplitudeSlider, SIGNAL(valueChanged(int)), this, SLOT(onPulseConfigChanged()));
 
     // add pulsing filter

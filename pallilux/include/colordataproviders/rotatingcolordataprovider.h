@@ -20,18 +20,32 @@ class RotatingColorDataProvider : public ColorDataProvider
 public:
     RotatingColorDataProvider(LedConfig d, double rotationSpeed);
 
+    /**
+     * @brief setSV set saturation and value parameters
+     * @param saturation saturation parameter; inbetween 0 and 100
+     * @param value value parameter; inbetween 0 and 100
+     */
     void setSV(int saturation, int value){
         mCurrentHsv.s = saturation;
         mCurrentHsv.v = value;
     }
 
+    /**
+     * @brief setRange set the hue range where the hsv values rotate in
+     * @param min minium hue
+     * @param max maximum hue
+     */
     void setRange(float min, float max){
         mMinimumHue = min;
         mMaximumHue = max;
     }
 
-    void setSpeed(int speed){
-                mRotationSpeed = speed;
+    /**
+     * @brief setSpeed set the delta of hue per rotation
+     * @param speed hue difference between iterations
+     */
+    void setSpeed(double speed){
+        mRotationSpeed = speed;
     }
 
 private:

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 using namespace std;
 
@@ -79,10 +80,10 @@ double RotatingColorDataProvider::overflow(double in){
     if(in > mMinimumHue && in <= mMaximumHue)
         return in;
 
-    // use integer division to reduce in beyond 360
+    // use integer division to reduce hue if it went beyond the maximum
     if(in >= mMaximumHue)
         in -= (int(in) / mMaximumHue) * mMaximumHue;
-    // use integer division to raise in above 0
+    // use integer division to raise the hue if it went below the maximum
     if(in < mMinimumHue)
         in += (abs(int(in)) / mMaximumHue + 1) * mMaximumHue;
     return in;
@@ -92,15 +93,28 @@ float RotatingColorDataProvider::getData(uint8_t *data) {
     // benchmarking
     clock_t start = clock();
 
+    // rotate around the hue wheel
     mCurrentHsv.h = overflow((mCurrentHsv.h + mRotationSpeed));
 
+    cout << "hsv: " << mCurrentHsv.h << endl;
+
+    // how distant should the leds be positioned in the hue wheel
+    const double hueDistancePerLed = (mMaximumHue - mMinimumHue) / static_cast<double>(LED_COUNT);
+
     for(int i = 0; i < LED_COUNT; i++){
+        // create a working copy of the current hsv base (eg the start hue)
         hsv currentHsvCopy = mCurrentHsv;
-        currentHsvCopy.h = overflow((currentHsvCopy.h + (LED_COUNT / mMaximumHue)));
+
+        // increase that hue according to the hue position
+        currentHsvCopy.h = overflow(currentHsvCopy.h + hueDistancePerLed * i);
+
+        // convert the modified hsv to rgb
         rgb currentRgb = hsv2rgb(currentHsvCopy);
-        data[i] = currentRgb.r;
-        data[i + 1] = currentRgb.g;
-        data[i + 2] = currentRgb.b;
+
+        // assign the led data
+        data[(i * 3) + 0] = currentRgb.r;
+        data[(i * 3) + 1] = currentRgb.g;
+        data[(i * 3) + 2] = currentRgb.b;
     }
 
     // return benchmarking value

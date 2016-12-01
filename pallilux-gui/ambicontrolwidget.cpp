@@ -30,6 +30,9 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
     mArduinoConnector->addFilter("lowpass", std::unique_ptr<DataFilter>(new LowPassFilter(getColorDataProvider()->getRequiredBufferLength(), .6f)));
     mArduinoConnector->addFilter("brightness", std::unique_ptr<DataFilter>(new BrightnessFilter(1)));
     mArduinoConnector->addFilter("saturation", std::unique_ptr<DataFilter>(new SaturationFilter(1)));
+
+    // lock to 60 fps
+    mArduinoConnector->setTargetFps(60);
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {

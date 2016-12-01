@@ -122,9 +122,14 @@ void ArduinoConnector::draw() {
         // only wait if our framerate is too high
         if (mCurrentFps > mTargetFps) {
             // calculate millisecond waiting time
-            uint64_t waitTime = static_cast<uint64_t>(1000.f / (mCurrentFps - mTargetFps));
+            int64_t waitTime = static_cast<uint64_t>(1000.f / (mCurrentFps - mTargetFps));
+
             // wait
-            this_thread::sleep_for(chrono::milliseconds(waitTime));
+            if(waitTime > 0)
+                this_thread::sleep_for(chrono::milliseconds(waitTime));
+
+            //
+            std::cout << waitTime << std::endl;
         }
     }
 }
