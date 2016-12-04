@@ -95,7 +95,7 @@ void RotatingBacklightControlWidget::onPulseConfigChanged(){
 
 void RotatingBacklightControlWidget::onConfigChanged(){
     mRotatingColorProvider->setRange(mMinimumSlider->value(), mMaximumSlider->value());
-    mRotatingColorProvider->setSV(mSaturationSlider->value(), mValueSlider->value());
+    mRotatingColorProvider->setSV(double(mSaturationSlider->value()) / 100.0, double(mValueSlider->value()) / 100.0);
     mRotatingColorProvider->setSpeed(mRotationFrequencySlider->value());
 }
 

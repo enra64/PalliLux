@@ -2,6 +2,7 @@
 #define CONSTANTCOLORDATAPROVIDER_H
 
 #include "colordataprovider.h"
+#include <assert.h>
 
 typedef struct {
     double r;       // percent
@@ -22,10 +23,11 @@ public:
 
     /**
      * @brief setSV set saturation and value parameters
-     * @param saturation saturation parameter; inbetween 0 and 100
-     * @param value value parameter; inbetween 0 and 100
+     * @param saturation saturation parameter; inbetween 0 and 1
+     * @param value value parameter; inbetween 0 and 1
      */
-    void setSV(int saturation, int value){
+    void setSV(double saturation, double value){
+        assert(saturation <= 1 && value <= 1);
         mCurrentHsv.s = saturation;
         mCurrentHsv.v = value;
     }
@@ -35,7 +37,7 @@ public:
      * @param min minium hue
      * @param max maximum hue
      */
-    void setRange(float min, float max){
+    void setRange(double min, double max){
         mMinimumHue = min;
         mMaximumHue = max;
     }
@@ -53,7 +55,7 @@ private:
     double mMaximumHue = 360;
     double mRotationSpeed;
 
-    hsv mCurrentHsv = {0, 100, 100};
+    hsv mCurrentHsv = {0, 1, 1};
 
     // ColorDataProvider interface
     double overflow(double in);
