@@ -95,7 +95,6 @@ win32 {
 }
 
 unix {
-if(0){
     # fftw, pulseaudio stuff
     LIBS += -L/usr/lib64 -lfftw3 -lpulse-simple -lpulse
 
@@ -107,7 +106,6 @@ if(0){
                 spectrometercontrolwidget.h
 
     FORMS +=    spectrometerconfigpage.ui
-}
 
 
     # X11 stuff

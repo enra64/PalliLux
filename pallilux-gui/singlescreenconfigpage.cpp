@@ -14,10 +14,7 @@
 
 using namespace std;
 
-SingleScreenConfigPage::SingleScreenConfigPage(QWidget *parent) :
-    QWidget(parent),
-    IScreenConfigPage(),
-    ui(new Ui::SingleScreenConfigPage) {
+SingleScreenConfigPage::SingleScreenConfigPage(QWidget *parent) : QWidget(parent), IScreenConfigPage(), ui(new Ui::SingleScreenConfigPage) {
     ui->setupUi(this);
     ui->tabMainLayout->addWidget(getControlWidget(parent));
 

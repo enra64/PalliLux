@@ -2,12 +2,9 @@
 #include "spectrometercontrolwidget.h"
 #include "ui_spectrometerconfigpage.h"
 
-SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SpectrometerConfigPage)
-{
+SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) : QWidget(parent), IScreenConfigPage(), ui(new Ui::SpectrometerConfigPage) {
     ui->setupUi(this);
-    ui->pageMainLayout->addRow(getControlWidget(parent));
+    ui->pageMainLayout->addWidget(getControlWidget(parent));
 }
 
 SpectrometerConfigPage::~SpectrometerConfigPage()

@@ -52,16 +52,21 @@ void SpectrometerColorDataProvider::calculateAmplitude(
 
 SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig, int fps, float gain) : ColorDataProvider(ledConfig), mFramesPerSecond(fps), mGain(gain)
 {
+
     // set sample specs
     mSampleSpecifications.channels = 2;
     mSampleSpecifications.format = PA_SAMPLE_FLOAT32LE;
     mSampleSpecifications.rate = 44100;
 
+    // we get a pa_write() failed while trying to wake up the mainloop: Broken pipe
+    // when trying to connect with the arduino after the following code executed.
+    // maybe put into other thread?
+
     // open record device
     int error;
     mPulseAudioDevice = pa_simple_new(
                 NULL,                                   // default server
-                "AmbiSpectrometer",                     // application name
+                "Pallilux",                             // application name
                 PA_STREAM_RECORD,
                 NULL,                                   // default device
                 "Data source for the AmbiSpectrometer", // description

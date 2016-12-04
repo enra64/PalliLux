@@ -16,6 +16,11 @@
 #include <singlescreenborderprovider.h>
 #include <triplescreenborderprovider.h>
 
+#define _SPECTROMETER_INCLUDED
+
+#ifdef _SPECTROMETER_INCLUDED
+#include "spectrometerconfigpage.h"
+#endif
 
 #ifdef __linux__
 #include <xlibscreenshotprovider.h>
@@ -54,6 +59,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // add a qlabel to the menubar for displaying status
     mStatusLabel = new QLabel("not connected", this);
     ui->menuBar->setCornerWidget(mStatusLabel);
+
+    // if the spectrometer is to be included, add it to the window
+    #ifdef _SPECTROMETER_INCLUDED
+        ui->configTabHost->addTab(new SpectrometerConfigPage(), "Spectrogram");
+    #endif
 }
 
 MainWindow::~MainWindow() {
