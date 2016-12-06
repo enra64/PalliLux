@@ -1,10 +1,4 @@
-#include "spectrometercolordataprovider.h"
-
-#include <string>
-#include <math.h>
-
-using namespace std;
-
+#include "spectrometer/spectrometerhelper.h"
 
 // hanning window. // i have no idea
 float windowFunction(int n, int N)
@@ -12,47 +6,13 @@ float windowFunction(int n, int N)
     return 0.5f * (1.0f - cosf(2.0f * M_PI * n / (N - 1.0f)));
 }
 
-void SpectrometerColorDataProvider::calculateAmplitude(
-        fftw_complex *fft,
-        int fftSize,
-        double *amplitudes,
-        int numLeds)
+SpectrometerHelper::SpectrometerHelper(LedConfig ledConfig, int fps, float gain) : ColorDataProvider(ledConfig), mFramesPerSecond(fps), mGain(gain)
 {
-    // for more explanation see https://groups.google.com/d/msg/comp.dsp/cZsS1ftN5oI/rEjHXKTxgv8J
 
-    // calculate bar width using black magic
-    double ledWidth = UPPER_FREQUENCY / (mFramesPerSecond*numLeds);
 
-    // assert minimum bar width
-    assert(ledWidth > 0);
-
-    // index of the fft values
-    int fftIndex = 0;
-
-    // interpolate led values by calculating an average over the bin magnitudes
-    for(int ledIndex = 0; ledIndex < numLeds; ledIndex++)
-    {
-        double magnitudeSum = 0.0;
-        // sum all bin magnitudes for this led
-        for(int i = 0; i < ledWidth && fftIndex < fftSize; fftIndex++, i++) {
-            // calculate squares of real and imaginary fft result parts
-            double real = pow(fft[fftIndex][0], 2);
-            double imaginary = pow(fft[fftIndex][1], 2);
-            // normalized bin magnitude
-            magnitudeSum += 2.0 * sqrt(real + imaginary) / fftSize;
-        }
-
-        // calculate average from the sum of normalized bin magnitudes
-        double avg = magnitudeSum / ledWidth;
-
-        // compute decibels.
-        amplitudes[ledIndex] = (int)(20.0 * log10(avg));
-    }
 }
 
-SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig, int fps, float gain) : ColorDataProvider(ledConfig), mFramesPerSecond(fps), mGain(gain)
-{
-
+void start() {
     // set sample specs
     mSampleSpecifications.channels = 2;
     mSampleSpecifications.format = PA_SAMPLE_FLOAT32LE;
@@ -94,7 +54,7 @@ SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig
     mFftwPlan = fftw_plan_dft_r2c_1d(mSize, mFftwIn, mFftwOut, FFTW_MEASURE);
 }
 
-float SpectrometerColorDataProvider::getData(uint8_t *data) {
+float SpectrometerHelper::getData(uint8_t *data) {
     // benchmarking
     clock_t start = clock();
 
@@ -129,7 +89,7 @@ float SpectrometerColorDataProvider::getData(uint8_t *data) {
     return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }
 
-SpectrometerColorDataProvider::~SpectrometerColorDataProvider() {
+SpectrometerHelper::~SpectrometerHelper() {
     // free buffers
     delete[] mPulseAudioBuffer;
     delete[] mWindow;
@@ -144,5 +104,43 @@ SpectrometerColorDataProvider::~SpectrometerColorDataProvider() {
         pa_simple_free(mPulseAudioDevice);
     } catch(std::exception){
 
+    }
+}
+
+void SpectrometerHelper::calculateAmplitude(
+        fftw_complex *fft,
+        int fftSize,
+        double *amplitudes,
+        int numLeds)
+{
+    // for more explanation see https://groups.google.com/d/msg/comp.dsp/cZsS1ftN5oI/rEjHXKTxgv8J
+
+    // calculate bar width using black magic
+    double ledWidth = UPPER_FREQUENCY / (mFramesPerSecond*numLeds);
+
+    // assert minimum bar width
+    assert(ledWidth > 0);
+
+    // index of the fft values
+    int fftIndex = 0;
+
+    // interpolate led values by calculating an average over the bin magnitudes
+    for(int ledIndex = 0; ledIndex < numLeds; ledIndex++)
+    {
+        double magnitudeSum = 0.0;
+        // sum all bin magnitudes for this led
+        for(int i = 0; i < ledWidth && fftIndex < fftSize; fftIndex++, i++) {
+            // calculate squares of real and imaginary fft result parts
+            double real = pow(fft[fftIndex][0], 2);
+            double imaginary = pow(fft[fftIndex][1], 2);
+            // normalized bin magnitude
+            magnitudeSum += 2.0 * sqrt(real + imaginary) / fftSize;
+        }
+
+        // calculate average from the sum of normalized bin magnitudes
+        double avg = magnitudeSum / ledWidth;
+
+        // compute decibels.
+        amplitudes[ledIndex] = (int)(20.0 * log10(avg));
     }
 }

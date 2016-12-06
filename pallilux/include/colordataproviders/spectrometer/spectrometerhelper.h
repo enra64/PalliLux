@@ -1,7 +1,5 @@
-#ifndef SPECTROMETERCOLORDATAPROVIDER_H
-#define SPECTROMETERCOLORDATAPROVIDER_H
-
-#include "colordataprovider.h"
+#ifndef SPECTROMETERHELPER_H
+#define SPECTROMETERHELPER_H
 
 #include "fftw3.h"
 
@@ -11,12 +9,12 @@
 
 #include <cmath>
 
-class SpectrometerColorDataProvider : public ColorDataProvider
+class SpectrometerHelper
 {
 public:
-    SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 30, float gain = 1.f);
+    SpectrometerHelper(LedConfig ledConfig, int fps = 30, float gain = 1.f);
 
-    ~SpectrometerColorDataProvider();
+    ~SpectrometerHelper();
 private:
     const int mFramesPerSecond;///< FPS of the spectrogram.
     const double UPPER_FREQUENCY = 3520;///< highest displayed frequency

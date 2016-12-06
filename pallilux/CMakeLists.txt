@@ -169,7 +169,8 @@ if(UNIX)
             TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
 
             # add spectrometer files to target
-            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometercolordataprovider.h" "src/colordataproviders/spectrometercolordataprovider.cpp")
+            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometercolordataprovider.h" "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
+            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometerhelper.h" "src/colordataproviders/spectrometer/spectrometerhelper.cpp")
 
             add_definitions(-DSPECTROMETER_INCLUDED)
         endif(SPECTROMETER)
