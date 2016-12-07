@@ -3,9 +3,7 @@
 
 #include "controlwidget.h"
 
-#include <spectrometercolordataprovider.h>
-
-
+#include <spectrometer/spectrometercolordataprovider.h>
 
 class SpectrometerControlWidget : public ControlWidget
 {
@@ -18,6 +16,10 @@ protected:
 
 private:
     std::shared_ptr<SpectrometerColorDataProvider> mSpectrometer;
+
+    // ControlWidget interface
+public slots:
+    void start(const QString &port);
 };
 
 #endif // SPECTROMETERCONTROLWIDGET_H

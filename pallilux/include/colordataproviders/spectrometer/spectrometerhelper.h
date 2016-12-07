@@ -8,6 +8,7 @@
 #include <pulse/pulseaudio.h>
 
 #include <cmath>
+#include <colordataprovider.h>
 
 class SpectrometerHelper
 {
@@ -16,6 +17,7 @@ public:
 
     ~SpectrometerHelper();
 private:
+    LedConfig mLedConfig;
     const int mFramesPerSecond;///< FPS of the spectrogram.
     const double UPPER_FREQUENCY = 3520;///< highest displayed frequency
     pa_sample_spec mSampleSpecifications; ///< pulseaudio sampling specifcations
@@ -34,9 +36,14 @@ private:
 
     void calculateAmplitude(fftw_complex* fft, int fftSize, double *bars, int numLeds);
 
+
+
+    int LED_COUNT;
+
     // ColorDataProvider interface
 public:
     float getData(uint8_t *data);
+    void start();
 };
 
 #endif // SPECTROMETERCOLORDATAPROVIDER_H

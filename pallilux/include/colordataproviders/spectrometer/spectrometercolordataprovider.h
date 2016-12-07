@@ -18,10 +18,11 @@ public:
     SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 30, float gain = 1.f);
     ~SpectrometerColorDataProvider();
 private:
-    SpectrometerHelper mHelper;
+    SpectrometerHelper* mHelper;
 
     // ColorDataProvider interface
 public:
+    void start();
     float getData(uint8_t *data);
 };
 

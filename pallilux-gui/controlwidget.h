@@ -28,7 +28,7 @@ public:
     }
 
 public slots:
-    void start(const QString &port);
+    virtual void start(const QString &port);
     void stop();
 
 signals:

@@ -128,6 +128,7 @@ INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \
     $${PALLILUX_LIB_FOLDER}/include/borderproviders \
     $${PALLILUX_LIB_FOLDER}/include/interfaces \
     $${PALLILUX_LIB_FOLDER}/include/colordataproviders \
+    $${PALLILUX_LIB_FOLDER}/include/colordataproviders/spectrometer \
     $${PALLILUX_LIB_FOLDER}/include/datafilters \
     $${PALLILUX_LIB_FOLDER}/include/serial \
     $${PALLILUX_LIB_FOLDER}/include/screenshotproviders
