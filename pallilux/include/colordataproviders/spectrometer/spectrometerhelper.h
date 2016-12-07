@@ -34,9 +34,11 @@ private:
     // pulse audio
     pa_simple* mPulseAudioDevice;
 
+    volatile bool mKeepRunning = true;
+
     void calculateAmplitude(fftw_complex* fft, int fftSize, double *bars, int numLeds);
 
-
+    uint8_t* mBuffer;
 
     int LED_COUNT;
 

@@ -10,6 +10,7 @@
 #include <pulse/error.h>
 #include <pulse/pulseaudio.h>
 
+#include <thread>
 #include <cmath>
 
 class SpectrometerColorDataProvider : public ColorDataProvider
@@ -19,6 +20,7 @@ public:
     ~SpectrometerColorDataProvider();
 private:
     SpectrometerHelper* mHelper;
+    std::thread mHelperThread;
 
     // ColorDataProvider interface
 public:
