@@ -21,24 +21,18 @@ private:
     const int mFramesPerSecond;///< FPS of the spectrogram.
     const double UPPER_FREQUENCY = 3520;///< highest displayed frequency
     pa_sample_spec mSampleSpecifications; ///< pulseaudio sampling specifcations
-    float* mPulseAudioBuffer = nullptr; ///< pulseaudio output buffer
-    float* mWindow = nullptr;
     int mSize;
     float mGain;
-
-    // fft
-    double *mFftwIn;
-    fftw_complex *mFftwOut;
-    fftw_plan mFftwPlan;
 
     // pulse audio
     pa_simple* mPulseAudioDevice;
 
+    uint8_t* mDataBuffer;
+
+
     volatile bool mKeepRunning = true;
 
-    void calculateAmplitude(fftw_complex* fft, int fftSize, double *bars, int numLeds);
-
-    uint8_t* mBuffer;
+    void calculateAmplitude(fftw_complex* fft, int fftSize, uint8_t *bars, int numLeds);
 
     int LED_COUNT;
 

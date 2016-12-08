@@ -2,7 +2,10 @@
 
 #include <string>
 #include <cstring>
+#include <chrono>
+#include <thread>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -24,21 +27,8 @@ SpectrometerHelper::SpectrometerHelper(LedConfig ledConfig, int fps, float gain)
     // ???
     mSize = mSampleSpecifications.rate / fps;
 
-    mWindow = new float[mSize];
-    mPulseAudioBuffer = new float[mSampleSpecifications.channels * mSize];
-
-    // compute window // ???
-    for(int n = 0; n < mSize; n++)
-        mWindow[n] = windowFunction(n, mSize);
-
-    // fftw setup
-    mFftwIn = (double*) fftw_malloc(sizeof(double) * mSize);
-    mFftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * mSize);
-    mFftwPlan = fftw_plan_dft_r2c_1d(mSize, mFftwIn, mFftwOut, FFTW_MEASURE);
-
-    // allocate new buffer filled with zeros
-    mBuffer = new uint8_t[LED_COUNT * 3];
-    memset(mBuffer, 0, LED_COUNT * 3);
+    mDataBuffer = new uint8_t[LED_COUNT * 3];
+    memset(mDataBuffer, 0, LED_COUNT * 3);
 }
 
 void SpectrometerHelper::start() {
@@ -59,51 +49,60 @@ void SpectrometerHelper::start() {
     if(!mPulseAudioDevice)
         throw runtime_error("pa_simple_new() failed:" + string(pa_strerror(error)));
 
-    while(mKeepRunning) {
-        // reserve space for amplitudes
-        double amplitudes[mLedConfig.getLedCount()];
+    // allocate buffers
+    float mPulseAudioBuffer[mSampleSpecifications.channels * mSize];
+    float mWindow[mSize];
+    uint8_t amplitudes[LED_COUNT];
+    uint8_t* barsL = amplitudes;
+    uint8_t* barsR = amplitudes + LED_COUNT / 2;
 
-        // left and right amplitudes have different windows in the array
-        double* leftAmplitudes = amplitudes;
-        double* rightAmplitudes = amplitudes + LED_COUNT / 2;
+    uint8_t maxval = 0, minval = 255;
+
+    for(int n = 0; n < mSize; n++)
+        mWindow[n] = windowFunction(n, mSize);
+
+    // fftw setup - use fftw_malloc to conform to fftw algorithm alignment requirements
+    double* mFftwIn = (double*) fftw_malloc(sizeof(double) * mSize);
+    fftw_complex* fftwOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * mSize);
+    fftw_plan fftwPlan = fftw_plan_dft_r2c_1d(mSize, mFftwIn, fftwOut, FFTW_MEASURE);
+
+    while(mKeepRunning) {
+        //this_thread::sleep_for(chrono::milliseconds(1000 / mFramesPerSecond));
 
         // try to read from the audio device
         int err = 0;
-        if(pa_simple_read(mPulseAudioDevice, mPulseAudioBuffer, sizeof(mPulseAudioBuffer), nullptr) < 0) {
+        if(pa_simple_read(mPulseAudioDevice, mPulseAudioBuffer, sizeof(mPulseAudioBuffer), &err) < 0) {
             pa_simple_free(mPulseAudioDevice);
             throw std::runtime_error("pa_simple_read() failed: " + string(pa_strerror(err)));
         }
 
-        cout << "ran" << endl;
-
         // calculate amplitudes of left input.
         for(int i = 0; i < mSize; i++)
             mFftwIn[i] = (double) (mWindow[i] * mPulseAudioBuffer[i * 2]);
-        fftw_execute(mFftwPlan);
-        calculateAmplitude(mFftwOut, mSize, leftAmplitudes, LED_COUNT / 2);
+        fftw_execute(fftwPlan);
+        calculateAmplitude(fftwOut, mSize, barsL, LED_COUNT / 2);
 
         // calculate amplitudes of right input.
         for(int i = 0; i < mSize; i++)
             mFftwIn[i] = (double) (mWindow[i] * mPulseAudioBuffer[i * 2 + 1]);
-        fftw_execute(mFftwPlan);
-        calculateAmplitude(mFftwOut, mSize, rightAmplitudes, LED_COUNT / 2);
+        fftw_execute(fftwPlan);
+        calculateAmplitude(fftwOut, mSize, barsR, LED_COUNT / 2);
 
         // make more red the higher the amplitude
-        for(size_t i = 0; i < LED_COUNT; i++){
-            mBuffer[i * 3] = 255.0 / amplitudes[i];
+        for(int i = 0; i < LED_COUNT; i++){
+            mDataBuffer[i * 3] = amplitudes[i];
+            //cout << unsigned(mDataBuffer[i * 3]) << ",";
+            maxval = max(mDataBuffer[i * 3], maxval);
+            minval = min(mDataBuffer[i * 3], minval);
         }
+        cout << "max: " << unsigned(maxval) << ", min: " << unsigned(minval) << endl;
     }
-
-    // free buffers
-    delete[] mPulseAudioBuffer;
-    delete[] mWindow;
-    delete[] mBuffer;
 
     try {
         // clean up fftw
-        fftw_destroy_plan(mFftwPlan);
+        fftw_destroy_plan(fftwPlan);
         fftw_free(mFftwIn);
-        fftw_free(mFftwOut);
+        fftw_free(fftwOut);
 
         // clean up pulseaudio
         pa_simple_free(mPulseAudioDevice);
@@ -116,7 +115,9 @@ float SpectrometerHelper::getData(uint8_t *data) {
     clock_t start = clock();
 
     // copy over the led data
-    memcpy(data, mBuffer, LED_COUNT * 3);
+    memcpy(data, mDataBuffer, LED_COUNT * 3);
+
+    this_thread::sleep_for(chrono::milliseconds(9));
 
     // return benchmarking value
     return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
@@ -130,7 +131,7 @@ SpectrometerHelper::~SpectrometerHelper() {
 void SpectrometerHelper::calculateAmplitude(
         fftw_complex *fft,
         int fftSize,
-        double *amplitudes,
+        uint8_t *amplitudes,
         int numLeds)
 {
     // for more explanation see https://groups.google.com/d/msg/comp.dsp/cZsS1ftN5oI/rEjHXKTxgv8J
@@ -161,7 +162,13 @@ void SpectrometerHelper::calculateAmplitude(
         // calculate average from the sum of normalized bin magnitudes
         double avg = magnitudeSum / ledWidth;
 
+
+
         // compute decibels.
-        amplitudes[ledIndex] = (int)(20.0 * log10(avg));
+        amplitudes[ledIndex] = abs((uint8_t)((255.0 / 150.0) * 20.0 * log10(avg) - 10));
     }
+
+    for(int i = 20; i < 20+10; i++)
+        cout << unsigned(amplitudes[i]);
+    cout << endl;
 }
