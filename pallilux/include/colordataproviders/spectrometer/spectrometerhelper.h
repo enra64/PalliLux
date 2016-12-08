@@ -7,6 +7,7 @@
 #include <pulse/error.h>
 #include <pulse/pulseaudio.h>
 
+#include <cstring>
 #include <cmath>
 #include <colordataprovider.h>
 
@@ -29,15 +30,25 @@ private:
 
     uint8_t* mDataBuffer;
 
-
     volatile bool mKeepRunning = true;
 
     void calculateAmplitude(fftw_complex* fft, int fftSize, uint8_t *bars, int numLeds);
 
-    int LED_COUNT;
+    int mLedOffset;
+    int mLedsPerChannel;
+    int mSelectedLedCount;
+    int OVERALL_LED_COUNT;
 
     // ColorDataProvider interface
 public:
+    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel){
+        memset(mDataBuffer, 0, OVERALL_LED_COUNT * 3);
+        mLedOffset = (OVERALL_LED_COUNT - 2 * numberOfLedsPerStereoChannel) / 2;
+        mSelectedLedCount = 2 * numberOfLedsPerStereoChannel;
+        mLedsPerChannel = numberOfLedsPerStereoChannel;
+        mLedOffset = ledOffset;
+    }
+
     float getData(uint8_t *data);
     void start();
 };

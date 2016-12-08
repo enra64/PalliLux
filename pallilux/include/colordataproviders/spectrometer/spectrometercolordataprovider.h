@@ -20,10 +20,14 @@ public:
     ~SpectrometerColorDataProvider();
 private:
     SpectrometerHelper* mHelper;
-    std::thread mHelperThread;
+    std::thread* mHelperThread = nullptr;
 
     // ColorDataProvider interface
 public:
+    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel){
+        mHelper->setParameters(ledOffset, numberOfLedsPerStereoChannel);
+    }
+
     void start();
     float getData(uint8_t *data);
 };

@@ -17,6 +17,9 @@ public:
     explicit SpectrometerConfigPage(QWidget *parent = 0);
     ~SpectrometerConfigPage();
 
+private slots:
+    void parametersUpdated();
+
 private:
     Ui::SpectrometerConfigPage *ui;
 

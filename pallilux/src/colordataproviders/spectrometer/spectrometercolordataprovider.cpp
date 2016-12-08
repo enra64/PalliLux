@@ -9,12 +9,13 @@ SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig
 
 SpectrometerColorDataProvider::~SpectrometerColorDataProvider(){
     delete mHelper;
-    mHelperThread.join();
+    if(mHelperThread != nullptr)
+        mHelperThread->join();
 }
 
 void SpectrometerColorDataProvider::start(){
     // start helper in separate thread
-    mHelperThread = thread(&SpectrometerHelper::start, mHelper);
+    mHelperThread = new thread(&SpectrometerHelper::start, mHelper);
 }
 
 float SpectrometerColorDataProvider::getData(uint8_t *data){

@@ -19,6 +19,10 @@ private:
 
     // ControlWidget interface
 public slots:
+    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel){
+        mSpectrometer->setParameters(ledOffset, numberOfLedsPerStereoChannel);
+    }
+
     void start(const QString &port);
 };
 
