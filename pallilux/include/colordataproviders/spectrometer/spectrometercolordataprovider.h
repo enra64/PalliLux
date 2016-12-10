@@ -24,8 +24,8 @@ private:
 
     // ColorDataProvider interface
 public:
-    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel){
-        mHelper->setParameters(ledOffset, numberOfLedsPerStereoChannel);
+    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel, double gain){
+        mHelper->setParameters(ledOffset, numberOfLedsPerStereoChannel, gain);
     }
 
     void start();

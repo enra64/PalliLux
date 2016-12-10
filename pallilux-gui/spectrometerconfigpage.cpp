@@ -12,9 +12,11 @@ SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) : QWidget(parent
 
     connect(ui->lengthSpin, SIGNAL(valueChanged(int)), this, SLOT(parametersUpdated()));
     connect(ui->offsetSpin, SIGNAL(valueChanged(int)), this, SLOT(parametersUpdated()));
+    connect(ui->gainSpin, SIGNAL(valueChanged(double)), this, SLOT(parametersUpdated()));
 
-    ui->lengthSpin->setValue(40);
-    ui->offsetSpin->setValue(0);
+    ui->lengthSpin->setValue(10);
+    ui->offsetSpin->setValue(100);
+    ui->gainSpin->setValue(10);
 }
 
 SpectrometerConfigPage::~SpectrometerConfigPage()
@@ -24,7 +26,7 @@ SpectrometerConfigPage::~SpectrometerConfigPage()
 
 void SpectrometerConfigPage::parametersUpdated() {
     SpectrometerControlWidget* controlWidget = dynamic_cast<SpectrometerControlWidget*>(mCurrentControlWidget);
-    controlWidget->setParameters(ui->offsetSpin->value(), ui->lengthSpin->value());
+    controlWidget->setParameters(ui->offsetSpin->value(), ui->lengthSpin->value(), ui->gainSpin->value());
 }
 
 ControlWidget *SpectrometerConfigPage::getControlWidget(QWidget *) {

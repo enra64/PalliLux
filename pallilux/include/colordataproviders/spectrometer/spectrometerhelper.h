@@ -14,7 +14,7 @@
 class SpectrometerHelper
 {
 public:
-    SpectrometerHelper(LedConfig ledConfig, int fps = 30, float gain = 1.f);
+    SpectrometerHelper(LedConfig ledConfig, int fps = 60, float gain = 1.f);
 
     ~SpectrometerHelper();
 private:
@@ -23,7 +23,7 @@ private:
     const double UPPER_FREQUENCY = 3520;///< highest displayed frequency
     pa_sample_spec mSampleSpecifications; ///< pulseaudio sampling specifcations
     int mSize;
-    float mGain;
+    float mGain = 1.f;
 
     // pulse audio
     pa_simple* mPulseAudioDevice;
@@ -41,12 +41,13 @@ private:
 
     // ColorDataProvider interface
 public:
-    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel){
+    void setParameters(int ledOffset, int numberOfLedsPerStereoChannel, double gain){
         memset(mDataBuffer, 0, OVERALL_LED_COUNT * 3);
         mLedOffset = (OVERALL_LED_COUNT - 2 * numberOfLedsPerStereoChannel) / 2;
         mSelectedLedCount = 2 * numberOfLedsPerStereoChannel;
         mLedsPerChannel = numberOfLedsPerStereoChannel;
         mLedOffset = ledOffset;
+        mGain = gain;
     }
 
     float getData(uint8_t *data);

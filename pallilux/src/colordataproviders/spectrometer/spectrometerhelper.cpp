@@ -50,9 +50,6 @@ void SpectrometerHelper::start() {
     float mPulseAudioBuffer[mSampleSpecifications.channels * mSize];
     float mWindow[mSize];
 
-
-    uint8_t maxval = 0, minval = 255;
-
     for(int n = 0; n < mSize; n++)
         mWindow[n] = windowFunction(n, mSize);
 
@@ -62,9 +59,8 @@ void SpectrometerHelper::start() {
     fftw_plan fftwPlan = fftw_plan_dft_r2c_1d(mSize, mFftwIn, fftwOut, FFTW_MEASURE);
 
     while(mKeepRunning) {
-        uint8_t amplitudes[mSelectedLedCount];
-        uint8_t* barsL = amplitudes;
-        uint8_t* barsR = amplitudes + mSelectedLedCount / 2;
+        uint8_t barsL[mLedsPerChannel];
+        uint8_t barsR[mLedsPerChannel];
 
         // try to read from the audio device
         int err = 0;
@@ -86,16 +82,10 @@ void SpectrometerHelper::start() {
         calculateAmplitude(fftwOut, mSize, barsR, mLedsPerChannel);
 
         // make more red the higher the amplitude
-        for(int i = mLedOffset; i < mLedOffset + mSelectedLedCount; i++){
-            mDataBuffer[i * 3] = amplitudes[i - mLedOffset];
-            cout << unsigned(mDataBuffer[i * 3]) << " ";
-
-            //cout << unsigned(mDataBuffer[i * 3]) << ",";
-            maxval = max(mDataBuffer[i * 3], maxval);
-            minval = min(mDataBuffer[i * 3], minval);
+        for(int i = 0; i < mLedsPerChannel; i++){
+            mDataBuffer[(mLedOffset + i) * 3] = barsR[i];
+            mDataBuffer[(mLedsPerChannel + mLedOffset + i) * 3] = barsL[mLedsPerChannel - 1 - i];
         }
-        cout << endl;
-        //cout << "max: " << unsigned(maxval) << ", min: " << unsigned(minval) << endl;
     }
 
     try {
@@ -140,6 +130,8 @@ void SpectrometerHelper::calculateAmplitude(
     // calculate bar width using black magic
     double ledWidth = UPPER_FREQUENCY / (mFramesPerSecond * numLeds);
 
+    double scale = 200.0 / fftSize * mGain;
+
     // assert minimum bar width
     assert(ledWidth > 0);
 
@@ -153,22 +145,26 @@ void SpectrometerHelper::calculateAmplitude(
         // sum all bin magnitudes for this led
         for(int i = 0; i < ledWidth && fftIndex < fftSize; fftIndex++, i++) {
             // calculate squares of real and imaginary fft result parts
-            double real = pow(fft[fftIndex][0], 2);
-            double imaginary = pow(fft[fftIndex][1], 2);
+            double real = pow(fft[fftIndex][0] * scale, 2);
+            double imaginary = pow(fft[fftIndex][1] * scale, 2);
             // normalized bin magnitude
-            magnitudeSum += 2.0 * sqrt(real + imaginary) / fftSize;
+            magnitudeSum += real + imaginary;
         }
 
+        // calculate average (divzero safe)
+        magnitudeSum *= (1.0 / ledWidth);
+
+        // prevent overflows
+        if(magnitudeSum < 1e-15) magnitudeSum = 1e-15;
+
         // calculate average from the sum of normalized bin magnitudes
-        double avg = magnitudeSum / ledWidth;
+        int dB = (int) 100.0 * log10(magnitudeSum);
+
+        // clamp to uint8 range
+        if(dB > 255) dB = 255;
+        if(dB < 0) dB = 0;
 
         // compute decibels.
-        amplitudes[ledIndex] = abs((uint8_t)((255.0 / 150.0) * 20.0 * log10(avg) - 10));
-        if(amplitudes[ledIndex] < 20)
-            amplitudes[ledIndex] = 0;
+        amplitudes[ledIndex] = dB;
     }
-
-    //for(int i = 0; i < numLeds; i++)
-     //   cout << unsigned(amplitudes[i]) << " ";
-    //cout << endl;
 }
