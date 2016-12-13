@@ -71,7 +71,8 @@ include_directories(
     "include/borderproviders"
     "include/screenshotproviders"
     "include/datafilters"
-    "include/colordataproviders")
+    "include/colordataproviders"
+    "include/colordataproviders/spectrometer")
     
 
 
@@ -171,6 +172,7 @@ if(UNIX)
             # add spectrometer files to target
             target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometercolordataprovider.h" "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
             target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometerhelper.h" "src/colordataproviders/spectrometer/spectrometerhelper.cpp")
+            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h")
 
             add_definitions(-DSPECTROMETER_INCLUDED)
         endif(SPECTROMETER)
