@@ -17,7 +17,7 @@
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Control</string>
+      <string>Config</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">

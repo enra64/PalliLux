@@ -1,17 +1,23 @@
 #ifndef PALLILUX_ABSTRACTCOLORMAPPER_H
 #define PALLILUX_ABSTRACTCOLORMAPPER_H
 
+#include <cstdint>
+
 class AbstractColorMapper {
-private:
-
-    int mLedCount;
 public:
-    AbstractColorMapper(int ledCount) {
-        mLedCount = ledCount;
-    }
+    AbstractColorMapper() {}
 
+    virtual ~AbstractColorMapper() {}
 
-    virtual void map(uint8_t amplitude, int position, uint8_t* r, uint8_t* g, uint8_t* b);
+    /**
+     * @brief translate the given amplitudes into led colors
+     * @param amplitudes pointer to a buffer where the amplitudes are stored. They are expected to
+     *                   be stored with ascending frequency buckets.
+     * @param amplitudeCount how many amplitudes are available
+     * @param data buffer where the led data should be written. 3*amplitudeCount required
+     * @param flip true if the smallest led index should reflect the highest frequency intensity
+     */
+    virtual void map(uint8_t* amplitudes, int amplitudeCount, uint8_t* data, bool flip) = 0;
 };
 
 #endif //PALLILUX_ABSTRACTCOLORMAPPER_H

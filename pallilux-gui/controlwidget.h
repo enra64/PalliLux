@@ -85,6 +85,8 @@ protected:
 
     std::shared_ptr<ArduinoConnector> mArduinoConnector;///< this connector instance is used to communicate with the arduino
 
+    /// \brief remove all widgets from the control area
+    void clearMiscWidgets();
 private:
     Ui::ControlWidget *ui;
 };

@@ -27,6 +27,7 @@ SET(BASE_HEADERS
     "include/ambiconnectorbuilder.h"
     "include/customexceptions.h"
     "include/geometry.h"
+    "include/hsvutils.h"
     "include/letterboxometer.h"
     "include/borderproviders/singlescreenborderprovider.h"
     "include/borderproviders/triplescreenborderprovider.h"
@@ -50,6 +51,7 @@ SET(BASE_SOURCES
     "src/arduinoconnector.cpp"
     "src/ambiconnectorbuilder.cpp"
     "src/letterboxometer.cpp"
+    "src/hsvutils.cpp"
     "src/borderproviders/singlescreenborderprovider.cpp"
     "src/borderproviders/triplescreenborderprovider.cpp"
     "src/datafilters/brightnessfilter.cpp"
@@ -171,14 +173,18 @@ if(UNIX)
 
             # add spectrometer files to target
             target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometercolordataprovider.h" "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
-            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometerhelper.h" "src/colordataproviders/spectrometer/spectrometerhelper.cpp")
-            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h")
+            target_sources(${PROJECT_NAME} PUBLIC
+                "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h"
+                "include/colordataproviders/spectrometer/colormappers/singlecolormapper.h"
+                "include/colordataproviders/spectrometer/colormappers/amplitudemapper.h")
 
             add_definitions(-DSPECTROMETER_INCLUDED)
         endif(SPECTROMETER)
     endif(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
-
 endif(UNIX)
+
+## hacky stuff
+file(REMOVE "../build-pallilux-gui-Desktop-Debug/pallilux-gui")
 
 ######################################################################################################################################################
 # DX - WIN ONLY

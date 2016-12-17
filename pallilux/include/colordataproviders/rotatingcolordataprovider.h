@@ -3,18 +3,8 @@
 
 #include "colordataprovider.h"
 #include <assert.h>
+#include "hsvutils.h"
 
-typedef struct {
-    double r;       // percent
-    double g;       // percent
-    double b;       // percent
-} rgb;
-
-typedef struct {
-    double h;       // angle in degrees
-    double s;       // percent
-    double v;       // percent
-} hsv;
 
 class RotatingColorDataProvider : public ColorDataProvider
 {
@@ -59,7 +49,6 @@ private:
 
     // ColorDataProvider interface
     double overflow(double in);
-    rgb hsv2rgb(hsv in);
 public:
     float getData(uint8_t *data);
 };

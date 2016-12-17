@@ -3,7 +3,9 @@
 
 #include "controlwidget.h"
 
-#include <spectrometer/spectrometercolordataprovider.h>
+#include "spectrometer/spectrometercolordataprovider.h"
+#include "amplitudemapper.h"
+#include "singlecolormapper.h"
 
 class SpectrometerControlWidget : public ControlWidget
 {
@@ -16,7 +18,11 @@ protected:
 
 private:
     std::shared_ptr<SpectrometerColorDataProvider> mSpectrometer;
+    SingleColorMapper *mSingleColorMapper = nullptr;
+    AmplitudeMapper* mAmplitudeMapper = nullptr;
 
+private slots:
+    void mappingSelected(const QString& text);
     // ControlWidget interface
 public slots:
     void setParameters(int ledOffset, int numberOfLedsPerStereoChannel, double gain){

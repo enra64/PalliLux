@@ -130,6 +130,20 @@ void ControlWidget::addControlWidget(QWidget* row) {
     addControlWidget(row, nullptr);
 }
 
+void ControlWidget::clearMiscWidgets(){
+    QVBoxLayout* miscBox = static_cast<QVBoxLayout*>(ui->miscGroupBOx->layout());
+
+    // http://stackoverflow.com/a/5924726
+    // Delete all existing widgets, if any.
+    if (miscBox != nullptr) {
+        QLayoutItem* item;
+        while ((item = miscBox->takeAt(0)) != NULL) {
+            delete item->widget();
+            delete item;
+        }
+    }
+}
+
 void ControlWidget::addControlWidget(QWidget *left, QWidget* right) {
     // initialise layout if none is there yet
     if(ui->controlGroupBox->layout() == nullptr)
