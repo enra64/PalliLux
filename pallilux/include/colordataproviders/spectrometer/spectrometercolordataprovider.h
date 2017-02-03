@@ -22,7 +22,7 @@
 class SpectrometerColorDataProvider : public ColorDataProvider
 {
 public:
-    SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 30, float gain = 1.f);
+    SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 60, float gain = 1.f);
     ~SpectrometerColorDataProvider();
 private:
     std::thread* mHelperThread = nullptr;///< our worker thread, reading audio data and applying the fft
