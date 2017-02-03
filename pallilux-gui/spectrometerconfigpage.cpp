@@ -29,6 +29,8 @@ SpectrometerConfigPage::~SpectrometerConfigPage()
 
 void SpectrometerConfigPage::parametersUpdated() {
     SpectrometerControlWidget* controlWidget = dynamic_cast<SpectrometerControlWidget*>(mCurrentControlWidget);
+
+    // read values from UI
     int offset = ui->offsetSpin->value();
     int ledPerChannel = ui->lengthSpin->value();
     const int leds = mLedConfiguration.getLedCount();

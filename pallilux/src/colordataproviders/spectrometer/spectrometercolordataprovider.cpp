@@ -40,15 +40,18 @@ float SpectrometerColorDataProvider::getData(uint8_t *data){
 }
 
 void SpectrometerColorDataProvider::setParameters(int ledOffset, int numberOfLedsPerStereoChannel, double gain){
-    memset(mLedBuffer, 0, OVERALL_LED_COUNT * 3);
-
-    // how many leds are currently activated
-    mSelectedLedCount = 2 * numberOfLedsPerStereoChannel;
-
-    // directly store the three variables
+    // store updated parameters
     mLedsPerChannel = numberOfLedsPerStereoChannel;
     mLedOffset = ledOffset;
     mGain = gain;
+
+    // erase unused leds
+    memset(mLedBuffer, 0, ledOffset * 3);// before used leds
+    uint8_t* afterPointer = mLedBuffer + 3 * (ledOffset + mLedsPerChannel * 2), *endPointer = mLedBuffer + OVERALL_LED_COUNT * 3;
+    memset(afterPointer, 0, endPointer - afterPointer);
+
+    // how many leds are currently activated
+    mSelectedLedCount = 2 * numberOfLedsPerStereoChannel;   
 }
 
 void SpectrometerColorDataProvider::start_() {
