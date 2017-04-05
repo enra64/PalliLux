@@ -47,6 +47,10 @@ public:
             // get a rgb version
             rgbColor = hsv2rgb(color);
 
+            // do not display a color for very small amplitudes
+            if(amplitudes[amplitudeIndex] < 4)
+                rgbColor = {0, 0, 0};
+
             // apply to led
             data[i * 3 + 0] = 255.0 * rgbColor.r;
             data[i * 3 + 1] = 255.0 * rgbColor.g;

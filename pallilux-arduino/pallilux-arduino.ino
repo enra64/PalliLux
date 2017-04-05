@@ -1,7 +1,7 @@
 #include <FastLED.h>
 
-#define NUM_LEDS_CURRENT 144//160
-#define DATA_PIN 3
+#define NUM_LEDS_CURRENT 156//160
+#define DATA_PIN 11
 
 CRGBArray<NUM_LEDS_CURRENT> leds;
 

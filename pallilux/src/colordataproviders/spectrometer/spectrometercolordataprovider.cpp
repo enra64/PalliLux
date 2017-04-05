@@ -79,6 +79,9 @@ void SpectrometerColorDataProvider::start_() {
         throw runtime_error("pa_simple_new() failed:" + string(pa_strerror(error)));
 
     // calculate the hanning window we use for scaling or normalizing or whatever the data from pulseaudio
+    // apparently, hanning window is a window function: a function zero outside of some desired range, and
+    // having whatever fucking form we want inside because we can.
+    // we calculate it here, so we only need to do it once, and can later just multiply it
     float window[SIZE];
     for(int n = 0; n < SIZE; n++)
         window[n] = windowFunction(n, SIZE);
