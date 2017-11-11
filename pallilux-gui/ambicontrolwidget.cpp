@@ -32,7 +32,7 @@ AmbiControlWidget::AmbiControlWidget(std::shared_ptr<ArduinoConnector> connector
     mArduinoConnector->addFilter("saturation", std::unique_ptr<DataFilter>(new SaturationFilter(1)));
 
     // lock to 60 fps
-    mArduinoConnector->setTargetFps(60);
+    //mArduinoConnector->setTargetFps(60);
 }
 
 void AmbiControlWidget::onNewDataFactorChanged(double newValue) {

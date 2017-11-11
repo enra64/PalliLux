@@ -81,7 +81,7 @@ void read(const char *const source,
 
         // now, _data is set (hopefully) to the correct buffer location, and we can start copying the data:
 
-        uint8_t *redStart, *greenStart, *blueStart, *alphaStart;
+        uint8_t *redStart, *greenStart, *blueStart, *alphaStart = nullptr;
 
         // for each row
         for (unsigned int row = 0; row < _height; row++) {

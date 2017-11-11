@@ -129,7 +129,7 @@ void ArduinoConnector::draw() {
                 this_thread::sleep_for(chrono::milliseconds(waitTime));
 
             //
-            std::cout << waitTime << std::endl;
+            std::cout << "targeting " << mTargetFps << " waiting " << waitTime  << "ms" << std::endl;
         }
     }
 }
