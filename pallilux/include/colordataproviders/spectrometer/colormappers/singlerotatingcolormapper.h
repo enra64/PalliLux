@@ -9,23 +9,23 @@
 class SingleRotatingColorMapper : public AbstractColorMapper {
 private:
     hsv mBaseColor;///< base color
-    double mSpeed;///< the color rotation speed
+    double mSpeed = 0.00006;///< the color rotation speed
 public:
     /**
      * @brief SingleRotatingColorMapper initialize the colormapper with red at full saturation
      */
-    SingleRotatingColorMapper() : AbstractColorMapper() {
+    SingleRotatingColorMapper(double speed) : AbstractColorMapper() {
         mBaseColor = rgb2hsv(255, 0, 0);
         mBaseColor.s = 1;
+        setSpeed(speed);
     }
 
     /**
      * @brief setSpeed set the color rotation speed
-     * @param speed a double measuring the speed of color rotation. assuming the default FPS of 60,
-     *              a single full rotation of color (360 degrees) is done once per second for a speed of 1.
+     * @param speed a double measuring the speed of color rotation.
      */
     void setSpeed(double speed) {
-        mSpeed = speed * 6;
+        mSpeed = speed * 0.00006;
     }
 
     /**

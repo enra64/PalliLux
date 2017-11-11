@@ -6,6 +6,7 @@
 #include "spectrometer/spectrometercolordataprovider.h"
 #include "amplitudemapper.h"
 #include "singlecolormapper.h"
+#include "singlerotatingcolormapper.h"
 
 class SpectrometerControlWidget : public ControlWidget
 {
@@ -19,7 +20,10 @@ protected:
 private:
     std::shared_ptr<SpectrometerColorDataProvider> mSpectrometer;
     SingleColorMapper *mSingleColorMapper = nullptr;
+    SingleRotatingColorMapper *mRotatingSingleColorMapper = nullptr;
     AmplitudeMapper* mAmplitudeMapper = nullptr;
+
+    void addLabel(const QString& text);
 
 private slots:
     void mappingSelected(const QString& text);

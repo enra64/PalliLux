@@ -19,7 +19,7 @@ SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) : QWidget(parent
 
     ui->lengthSpin->setValue(18);
     ui->offsetSpin->setValue(90);
-    ui->gainSpin->setValue(10);
+    ui->gainSpin->setValue(100);
 }
 
 SpectrometerConfigPage::~SpectrometerConfigPage()
