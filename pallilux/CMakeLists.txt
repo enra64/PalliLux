@@ -181,6 +181,7 @@ if(UNIX)
             target_sources(${PROJECT_NAME} PUBLIC
                 "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h"
                 "include/colordataproviders/spectrometer/colormappers/singlecolormapper.h"
+                "include/colordataproviders/spectrometer/colormappers/singlerotatingcolormapper.h"
                 "include/colordataproviders/spectrometer/colormappers/amplitudemapper.h")
 
             add_definitions(-DSPECTROMETER_INCLUDED)
