@@ -95,9 +95,6 @@ win32 {
 }
 
 unix {
-    # fftw, pulseaudio stuff
-    LIBS += -L/usr/lib64 -lfftw3 -lpulse-simple -lpulse
-
     # spectrometer stuff
     SOURCES +=  spectrometerconfigpage.cpp \
                 spectrometercontrolwidget.cpp
@@ -112,6 +109,14 @@ unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += x11
 
+    # remove possible other optimization flags
+    QMAKE_CXXFLAGS_RELEASE -= -O
+    QMAKE_CXXFLAGS_RELEASE -= -O1
+    QMAKE_CXXFLAGS_RELEASE -= -O2
+
+    # add the desired -O3 if not present
+    QMAKE_CXXFLAGS_RELEASE *= -O3
+
     # static pallilux lib, using debug or release build
     CONFIG( debug, debug|release){
         message("debug")
@@ -119,8 +124,15 @@ unix {
     }
     CONFIG(release, debug|release) {
         message("release")
+        QMAKE_LFLAGS -= as-needed
         LIBS += "/home/arne/Documents/Development/PalliLux/build-pallilux-Desktop-Release/libpallilux.a"
     }
+
+    # fftw, pulseaudio stuff
+    LIBS += -L/usr/lib64 -lfftw3 -lfftw3f -lm -lpulse-simple -lpulse
+
+    TEST = $${LIBS}
+    message(libs content is $$TEST)
 }
 
 INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \

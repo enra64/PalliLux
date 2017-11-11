@@ -166,13 +166,18 @@ if(UNIX)
     if(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
         option(SPECTROMETER "find and include fftw3 and pulse libs" OFF)
 
+
         # if spectrometer option enabled
         if(SPECTROMETER)
+            message("All required libraries (fftw, pulse, pulse-simple) have been found, spectrometer is in build.")
+            message(${FFTW_LIBRARIES})
             INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
             TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
 
             # add spectrometer files to target
-            target_sources(${PROJECT_NAME} PUBLIC "include/colordataproviders/spectrometer/spectrometercolordataprovider.h" "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
+            target_sources(${PROJECT_NAME} PUBLIC
+                "include/colordataproviders/spectrometer/spectrometercolordataprovider.h"
+                "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
             target_sources(${PROJECT_NAME} PUBLIC
                 "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h"
                 "include/colordataproviders/spectrometer/colormappers/singlecolormapper.h"
@@ -183,8 +188,9 @@ if(UNIX)
     endif(FFTW_LIBRARIES AND FFTW_INCLUDE_DIR AND PULSEAUDIO_LIBRARY AND PULSEAUDIO_SIMPLE_LIBRARY)
 endif(UNIX)
 
-## hacky stuff
+## hacky stuff - should force qt creator to rebuild the gui with the new lib
 file(REMOVE "../build-pallilux-gui-Desktop-Debug/pallilux-gui")
+file(REMOVE "../build-pallilux-gui-Desktop-Release/pallilux-gui")
 
 ######################################################################################################################################################
 # DX - WIN ONLY
