@@ -17,8 +17,8 @@ SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) : QWidget(parent
     // limit the offset to acceptable values
     ui->offsetSpin->setMaximum(mLedConfiguration.getLedCount() - 2);
 
-    ui->lengthSpin->setValue(18);
-    ui->offsetSpin->setValue(90);
+    ui->lengthSpin->setValue(20);
+    ui->offsetSpin->setValue(86);
     ui->gainSpin->setValue(100);
 }
 
