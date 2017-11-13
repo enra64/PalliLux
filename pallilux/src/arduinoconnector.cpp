@@ -150,9 +150,16 @@ void ArduinoConnector::connect() {
     mSerial->send("hello", 6);
 
     // read arduino response until we have accumulated 3 magic characters ("SAM")
+    // or timeout occurred
+    int32_t cumulativeWaitTime = 0, maxWaitTime = 10000, waitTime = 2000;
     size_t receiveCount = 0;
     while(receiveCount < 3){
-        mSerial->waitForData();
+        bool receivedData = mSerial->waitForData(waitTime);
+
+        cumulativeWaitTime += waitTime;
+        if(!receivedData && cumulativeWaitTime >= maxWaitTime)
+            throw ArduinoConnectorProtocolException("arduino did not respond within time limit. is another instance running?");
+
         receiveCount += mSerial->receive(mCommBuffer, 128);
     }
 
