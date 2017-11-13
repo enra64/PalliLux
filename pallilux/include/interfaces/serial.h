@@ -27,8 +27,10 @@ public:
 
     /**
      * @brief Block until data arrives
+     * @param timeout timeout in seconds until the function returns even without data. 0 disables timeout
+     * @return true if data has arrived, false if timeout has occurred
      */
-    virtual void waitForData() const = 0;
+    virtual bool waitForData(long timeout=0) const = 0;
 
     /**
      * @brief Transmit the data to the serial device
@@ -70,10 +72,21 @@ public:
     virtual bool good() const = 0;
 
 public:// send and receive overloads because c++ likes to whine
+    /**
+     * @brief Receive incoming serial data
+     * @param buf buffer for incoming data
+     * @param len maximum read length
+     * @return amount of bytes read
+     */
     virtual size_t receive(char* buf, size_t len) const {
         return this->receive(reinterpret_cast<uint8_t*>(buf), len);
     }
 
+    /**
+     * @brief Transmit the data to the serial device
+     * @param buf data to send
+     * @param len length of the data
+     */
     virtual void send(const char* buf, size_t len) const {
         this->send(reinterpret_cast<const uint8_t*>(buf), len);
     }
