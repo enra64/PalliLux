@@ -12,7 +12,7 @@
  */
 class LinuxSerial : public Serial{
 public:
-    void waitForData() const override;
+    bool waitForData(long timeout=0) const override;
     void send(const uint8_t *buf, size_t len) const override;
     size_t receive(uint8_t *buf, size_t len) const override;
     void open(const std::string &port) override;
@@ -20,6 +20,7 @@ public:
     bool deviceExists(const std::string& port) const override;
     bool good() const override;
 private:
+    void setTimeout(long seconds, long microSeconds);
     int mFd;///< serial file descriptor
 };
 

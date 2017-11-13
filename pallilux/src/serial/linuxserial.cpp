@@ -15,16 +15,34 @@
 
 #include <string>
 
-void LinuxSerial::waitForData() const {
+
+/**
+ * @brief Block until data arrives
+ * @param timeout timeout in seconds until the function returns even without data. 0 disables timeout
+ * @return true if data has arrived, false if timeout has occurred
+ */
+bool LinuxSerial::waitForData(long timeout) const {
     // create poll struct, watching our serial file descriptor for input events
     struct pollfd pollStruct[1];
     pollStruct[0].fd = mFd;
     pollStruct[0].events = POLLIN ;
 
-    // poll, checking for failure
-    if (poll(pollStruct, 1, 1000) < 0)
-        throw SerialException(std::string("polling timeout: ") + strerror(errno));
+    int pollReturnValue = 0;
+    long pollingInterval = 1000;
+    long elapsedTime = 0;
+    do {
+        pollReturnValue = poll(pollStruct, 1, pollingInterval);
+    } while (pollReturnValue == 0 && (timeout == 0 || (elapsedTime += pollingInterval) < timeout) > 0);
+
+    // catch errors occurred during polling
+    if (pollReturnValue < 0)
+        throw SerialException(std::string("polling error: ") + strerror(errno));
+
+    // retval > 0 indicates that at least one file descriptor had an event,
+    // so this returns true if data was received and false for timeout
+    return pollReturnValue > 0;
 }
+
 
 void LinuxSerial::send(const uint8_t *buf, size_t len) const {
     // check whether our fd is ok
@@ -37,6 +55,19 @@ void LinuxSerial::send(const uint8_t *buf, size_t len) const {
 
 bool LinuxSerial::good() const {
     return mFd >= 0;
+}
+
+void LinuxSerial::setTimeout(long seconds, long microSeconds) {
+    // set timeout
+    struct timeval tv;
+    tv.tv_sec = seconds;
+    tv.tv_usec = microSeconds;
+
+    // create empty config struct
+    fd_set rset;
+
+    FD_ZERO(&rset);
+    FD_SET(mFd, &rset);
 }
 
 size_t LinuxSerial::receive(uint8_t *buf, size_t len) const {
