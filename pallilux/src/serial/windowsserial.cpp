@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void WindowsSerial::waitForData() const
+bool WindowsSerial::waitForData(long timeout) const
 {
     /*
 	COMSTAT status;
@@ -38,6 +38,7 @@ void WindowsSerial::waitForData() const
     } else if(dwEventMask & EV_ERR){
         throw SerialException("got EV_ERR while waiting for serial event");
     }
+    return true;
 }
 
 void WindowsSerial::send(const uint8_t* buf, size_t len) const
