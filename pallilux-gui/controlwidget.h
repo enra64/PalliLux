@@ -71,6 +71,13 @@ protected:
     void addControlWidget(QWidget* left, QWidget *right);
 
     /**
+     * @brief Add a QWidget right next to a QLabel with the label given
+     * @param labelText text of the label to be displayed
+     * @param widget widget to display with the label
+     */
+    void addControlWidget(const QString& labelText, QWidget *widget);
+
+    /**
      * @brief Add widget spanning both columns
      */
     void addControlWidget(QWidget *row);

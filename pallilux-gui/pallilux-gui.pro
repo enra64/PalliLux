@@ -130,9 +130,6 @@ unix {
 
     # fftw, pulseaudio stuff
     LIBS += -L/usr/lib64 -lfftw3 -lfftw3f -lm -lpulse-simple -lpulse
-
-    TEST = $${LIBS}
-    message(libs content is $$TEST)
 }
 
 INCLUDEPATH += $${PALLILUX_LIB_FOLDER}/cimg \

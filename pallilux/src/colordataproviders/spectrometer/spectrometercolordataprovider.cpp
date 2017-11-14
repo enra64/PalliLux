@@ -35,6 +35,8 @@ float SpectrometerColorDataProvider::getData(uint8_t *data){
 
     this_thread::sleep_for(chrono::milliseconds(9));
 
+    applyFilters(data);
+
     // return benchmarking value
     return static_cast<float>(clock() - start) / CLOCKS_PER_SEC;
 }

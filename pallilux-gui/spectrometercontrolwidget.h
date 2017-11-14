@@ -10,6 +10,7 @@
 
 class SpectrometerControlWidget : public ControlWidget
 {
+    Q_OBJECT
 public:
     SpectrometerControlWidget(LedConfig ledConfig);
 
@@ -24,8 +25,13 @@ private:
     AmplitudeMapper* mAmplitudeMapper = nullptr;
 
     void addLabel(const QString& text);
+    void setupControlBox();
+
 
 private slots:
+    void onNewDataFactorChanged(double newValue);
+    void onBrightnessFactorChanged(double newValue);
+
     void mappingSelected(const QString& text);
     // ControlWidget interface
 public slots:

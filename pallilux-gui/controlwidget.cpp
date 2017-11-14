@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QTime>
 #include <QFormLayout>
+#include <QLabel>
 
 using namespace std;
 
@@ -156,6 +157,12 @@ void ControlWidget::addControlWidget(QWidget *left, QWidget* right) {
         controlBox->addRow(left, right);
     else
         controlBox->addRow(left);
+}
+
+void ControlWidget::addControlWidget(const QString &labelText, QWidget *widget)
+{
+    QLabel* label = new QLabel(labelText, parentWidget());
+    addControlWidget(label, widget);
 }
 
 void ControlWidget::addMiscWidget(QWidget *widget) {
