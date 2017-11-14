@@ -55,7 +55,7 @@ void AmbiControlWidget::onBrightnessFactorChanged(double newValue) {
 
 void AmbiControlWidget::onSaturationFactorChanged(double newValue)
 {
-    // sorry for this, too
+    // also, sorry for this
     SaturationFilter* filter = dynamic_cast<SaturationFilter*>(mArduinoConnector->getFilter("saturation").get());
     // check that cast & finding worked
     assert(filter);
