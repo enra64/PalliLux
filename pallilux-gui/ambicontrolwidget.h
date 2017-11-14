@@ -21,7 +21,6 @@ private slots:
     void onBrightnessFactorChanged(double newValue);
     void onSaturationFactorChanged(double newValue);
     void onBorderWidthChanged(int newValue);
-    void onInterpolationChange(int index);
 
 
 protected:// ControlWidget interface

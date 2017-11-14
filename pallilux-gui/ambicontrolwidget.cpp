@@ -67,10 +67,6 @@ void AmbiControlWidget::onBorderWidthChanged(int newValue) {
     getBorderProvider()->setBorderWidth(newValue);
 }
 
-void AmbiControlWidget::onInterpolationChange(int index) {
-    getColorDataProvider()->setResizeInterpolationMode(static_cast<AmbiColorDataProvider::CImgInterpolationType>(index - 1));
-}
-
 void AmbiControlWidget::setupControlBox() {
     // set up new data factor widgets
     QLabel* newDataFactorLabel = new QLabel("New data factor", parentWidget());
