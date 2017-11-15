@@ -57,19 +57,6 @@ bool LinuxSerial::good() const {
     return mFd >= 0;
 }
 
-void LinuxSerial::setTimeout(long seconds, long microSeconds) {
-    // set timeout
-    struct timeval tv;
-    tv.tv_sec = seconds;
-    tv.tv_usec = microSeconds;
-
-    // create empty config struct
-    fd_set rset;
-
-    FD_ZERO(&rset);
-    FD_SET(mFd, &rset);
-}
-
 size_t LinuxSerial::receive(uint8_t *buf, size_t len) const {
     // read from fd
     return read(mFd, buf, len);

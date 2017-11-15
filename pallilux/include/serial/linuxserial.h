@@ -20,7 +20,6 @@ public:
     bool deviceExists(const std::string& port) const override;
     bool good() const override;
 private:
-    void setTimeout(long seconds, long microSeconds);
     int mFd;///< serial file descriptor
 };
 
