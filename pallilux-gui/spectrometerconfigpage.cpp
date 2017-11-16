@@ -10,6 +10,7 @@ SpectrometerConfigPage::SpectrometerConfigPage(QWidget *parent) : QWidget(parent
     ui->setupUi(this);
     ui->pageMainLayout->addWidget(getControlWidget(parent));
 
+    connect(mCurrentControlWidget, SIGNAL(gainChanged(double)), ui->gainSpin, SLOT(setValue(double)));
     connect(ui->lengthSpin, SIGNAL(valueChanged(int)), this, SLOT(parametersUpdated()));
     connect(ui->offsetSpin, SIGNAL(valueChanged(int)), this, SLOT(parametersUpdated()));
     connect(ui->gainSpin, SIGNAL(valueChanged(double)), this, SLOT(parametersUpdated()));

@@ -12,6 +12,9 @@ SpectrometerColorDataProvider::SpectrometerColorDataProvider(LedConfig ledConfig
     // allocate and zero out internal led data buffer
     mLedBuffer = new uint8_t[OVERALL_LED_COUNT * 3];
     memset(mLedBuffer, 0, OVERALL_LED_COUNT * 3);
+
+    // initialize automatic gain control
+    mAutoGainController = new AutomaticGainControl(OVERALL_LED_COUNT);
 }
 
 SpectrometerColorDataProvider::~SpectrometerColorDataProvider(){
@@ -19,6 +22,9 @@ SpectrometerColorDataProvider::~SpectrometerColorDataProvider(){
 
     if(mHelperThread != nullptr)
         mHelperThread->join();
+
+    if(mAutoGainController != nullptr)
+        delete mAutoGainController;
 }
 
 void SpectrometerColorDataProvider::start(){
@@ -119,8 +125,12 @@ void SpectrometerColorDataProvider::start_() {
         fftw_execute(fftwPlan);
         calculateAmplitude(fftwOut, barsR);
 
+        // do AGC if enabled
+        if (mAutoGain)
+            mGain = mAutoGainController->getGain(barsL, mLedsPerChannel, barsR, mLedsPerChannel);
+
         // save the amplitudes to the led buffer
-        applyAmplitudes(barsL, barsR);
+        mapAmplitudes(barsL, barsR);
     }
 
     try {
@@ -136,11 +146,16 @@ void SpectrometerColorDataProvider::start_() {
     }
 }
 
-void SpectrometerColorDataProvider::applyAmplitudes(uint8_t* barsL, uint8_t* barsR) {
+void SpectrometerColorDataProvider::setAgcEnabled(bool enabled)
+{
+    mAutoGain = enabled;
+}
+
+void SpectrometerColorDataProvider::mapAmplitudes(uint8_t* barsL, uint8_t* barsR) {
     // copy over the amplitude data to our led buffer
     for(int i = 0; i < mLedsPerChannel; i++){
         mColorMapper->map(barsL, mLedsPerChannel, mLedBuffer + 3 * mLedsPerChannel + 3 * mLedOffset, true);
-        mColorMapper->map(barsL, mLedsPerChannel, mLedBuffer + 3 * mLedOffset, false);
+        mColorMapper->map(barsR, mLedsPerChannel, mLedBuffer + 3 * mLedOffset, false);
     }
 }
 

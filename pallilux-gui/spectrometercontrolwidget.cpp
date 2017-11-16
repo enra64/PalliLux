@@ -29,6 +29,9 @@ SpectrometerControlWidget::SpectrometerControlWidget(LedConfig ledConfig)
 
     // set up control box (mapping selector, new data factor, brightness factor)
     setupControlBox();
+
+    // engage agc by default
+    mSpectrometer->setAgcEnabled(true);
 }
 
 void SpectrometerControlWidget::setupControlBox() {
@@ -72,6 +75,16 @@ void SpectrometerControlWidget::setupControlBox() {
 
     // add to control layout
     addControlWidget("Brightness factor", brightnessFactorSpinbox);
+
+    // create checkbox to dis/enable AGC
+    QCheckBox* autoGainControlCheckBox = new QCheckBox(parentWidget());
+    autoGainControlCheckBox->setChecked(true);
+
+    // connect to update signal
+    connect(autoGainControlCheckBox, SIGNAL(clicked(bool)), this, SLOT(onAutomaticGainControlClicked(bool)));
+
+    // add to control layout
+    addControlWidget("Automatic Gain Control", autoGainControlCheckBox);
 }
 
 void SpectrometerControlWidget::onNewDataFactorChanged(double newValue) {
@@ -92,8 +105,15 @@ void SpectrometerControlWidget::onBrightnessFactorChanged(double newValue) {
     filter->setFactor((float) newValue);
 }
 
+void SpectrometerControlWidget::onAutomaticGainControlClicked(bool newValue)
+{
+    mSpectrometer->setAgcEnabled(newValue);
+}
+
 void SpectrometerControlWidget::updateWidgets()
 {
+    if(mSpectrometer->hasGainChanged())
+        emit gainChanged(mSpectrometer->getGain());
 }
 
 void SpectrometerControlWidget::addLabel(const QString &text)

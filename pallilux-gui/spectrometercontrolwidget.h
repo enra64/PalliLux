@@ -8,11 +8,17 @@
 #include "singlecolormapper.h"
 #include "singlerotatingcolormapper.h"
 
+#include <QDoubleSpinBox>
+
 class SpectrometerControlWidget : public ControlWidget
 {
     Q_OBJECT
 public:
     SpectrometerControlWidget(LedConfig ledConfig);
+
+    double getGain() {
+        return mSpectrometer->getGain();
+    }
 
     // ControlWidget interface
 protected:
@@ -24,14 +30,18 @@ private:
     SingleRotatingColorMapper *mRotatingSingleColorMapper = nullptr;
     AmplitudeMapper* mAmplitudeMapper = nullptr;
 
+    QDoubleSpinBox* mGainSpinBox = nullptr;
+
     void addLabel(const QString& text);
     void setupControlBox();
 
+signals:
+    void gainChanged(double newGain);
 
 private slots:
     void onNewDataFactorChanged(double newValue);
     void onBrightnessFactorChanged(double newValue);
-
+    void onAutomaticGainControlClicked(bool newValue);
     void mappingSelected(const QString& text);
     // ControlWidget interface
 public slots:

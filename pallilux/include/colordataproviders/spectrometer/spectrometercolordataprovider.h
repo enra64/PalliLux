@@ -15,6 +15,8 @@
 
 #include <colordataprovider.h>
 
+#include <automaticgaincontrol.h>
+
 #include <colormappers/abstractcolormapper.h>
 #include <colormappers/amplitudemapper.h>
 #include <colormappers/singlecolormapper.h>
@@ -24,6 +26,14 @@ class SpectrometerColorDataProvider : public ColorDataProvider
 public:
     SpectrometerColorDataProvider(LedConfig ledConfig, int fps = 60, float gain = 1.f);
     ~SpectrometerColorDataProvider();
+
+    double getGain() {
+        return mAutoGainController->getGain();
+    }
+
+    bool hasGainChanged() {
+        return mAutoGainController->hasGainChanged();
+    }
 private:
     std::thread* mHelperThread = nullptr;///< our worker thread, reading audio data and applying the fft
 
@@ -33,7 +43,9 @@ private:
     int mLedOffset;///< how far off the start the spectrum should begin
     int mLedsPerChannel;///< how many leds are in each of the 2 channels
     int mSelectedLedCount;///< how many leds are in the spectrum
+    bool mAutoGain;///< whether to try and automatically adjust gain
     AbstractColorMapper* mColorMapper = new AmplitudeMapper();///< used for mapping amplitudes to colors
+    AutomaticGainControl* mAutoGainController;
 
     // variables const for an instance
     const int FRAMES_PER_SECOND;///< FPS of the spectrogram.
@@ -57,7 +69,7 @@ private:
      * @param barsL the amplitudes of the left channel
      * @param barsR the amplitudes of the right channel
      */
-    void applyAmplitudes(uint8_t *barsL, uint8_t *barsR);
+    void mapAmplitudes(uint8_t *barsL, uint8_t *barsR);
 
     /**
      * @brief Calculate the hanning window.
@@ -82,6 +94,12 @@ public:
      * @param gain a gain factor. applied before a logarithm, so the effect is limited
      */
     void setParameters(int ledOffset, int numberOfLedsPerStereoChannel, double gain);
+
+    /**
+     * @brief Enable or disable automatic gain control
+     * @param autoGain if true, the gain will be automatically adjusted
+     */
+    void setAgcEnabled(bool enabled);
 
     /**
      * @brief Get the led data from an internal buffer

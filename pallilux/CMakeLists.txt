@@ -170,15 +170,19 @@ if(UNIX)
         # if spectrometer option enabled
         if(SPECTROMETER)
             message("All required libraries (fftw, pulse, pulse-simple) have been found, spectrometer is in build.")
-            message(${FFTW_LIBRARIES})
+
             INCLUDE_DIRECTORIES ( ${FFTW_INCLUDE_DIR} )
             TARGET_LINK_LIBRARIES (${PROJECT_NAME} ${FFTW_LIBRARIES} ${PULSEAUDIO_LIBRARY} ${PULSEAUDIO_LIBRARY})
 
             # add spectrometer files to target
             target_sources(${PROJECT_NAME} PUBLIC
-                "include/colordataproviders/spectrometer/spectrometercolordataprovider.h"
-                "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp")
+
+                )
             target_sources(${PROJECT_NAME} PUBLIC
+                "src/colordataproviders/spectrometer/spectrometercolordataprovider.cpp"
+                "src/colordataproviders/spectrometer/automaticgaincontrol.cpp"
+                "include/colordataproviders/spectrometer/automaticgaincontrol.h"
+                "include/colordataproviders/spectrometer/spectrometercolordataprovider.h"
                 "include/colordataproviders/spectrometer/colormappers/abstractcolormapper.h"
                 "include/colordataproviders/spectrometer/colormappers/singlecolormapper.h"
                 "include/colordataproviders/spectrometer/colormappers/singlerotatingcolormapper.h"
