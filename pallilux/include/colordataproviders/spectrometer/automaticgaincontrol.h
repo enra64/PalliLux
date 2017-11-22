@@ -13,6 +13,7 @@ class AutomaticGainControl
     const double NEW_DATA_FACTOR = 0.8;///< how fast the low pass filter acts
     const double ACTION_SPEED = 1.0;///< how fast the agent should act. does integer mult, so should be >= 1
     const double MAX_GAIN_VALUE = 2500;///< maximum allowed gain value
+    const double MIN_GAIN_VALUE = 1;///< minimum allowed gain value
     const uint8_t MINIMUM_ACTION_AMPLITUDE = 10;///< below this threshold, no action is taken to change the gain
     const uint8_t TARGET_AMPLITUDE = 240;///< where should the max amplitude typically be
     double mGain = 100;///< current gain

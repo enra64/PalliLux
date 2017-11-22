@@ -34,13 +34,19 @@ double AutomaticGainControl::getGain(uint8_t *barsL, size_t barLsize, uint8_t* b
     double adjustValue = (ACTION_SPEED * targetDifference);
 
     // if gain is smaller than max allowed value, change it
-    if(mGain + adjustValue < MAX_GAIN_VALUE){
-        mGain += adjustValue;
+    // also, must be larger than zero
+    double adjustedGain = mGain + adjustValue;
+    if(MIN_GAIN_VALUE < adjustedGain && adjustedGain < MAX_GAIN_VALUE){
+        mGain = adjustedGain;
 
         // set hasChanged flag for significant changes
         if(abs(adjustValue) > .05)
             mGainHasChanged = true;
     }
+
+    // ensure gain is always at least 1
+    if (mGain < MIN_GAIN_VALUE)
+        mGain = MIN_GAIN_VALUE;
 
     // return latest value
     return mGain;
