@@ -5,6 +5,10 @@ It is, however, also possible to supply any other RGB data.
 # Download
 Download the gui here: [latest release](https://github.com/enra64/PalliLux/releases/latest). After that, you only need to flash the sketch contained in pallilux-arduino to an arduino after adjusting the number of LEDs.
 
+# Example
+Pallilux running on my computer:
+<img src="readme.gif" width="250">
+
 # Currently available modes
 ## "Ambilight"
 This default mode mirrors the colors displayed on the borders of your screen to the leds behind your screen. The single screen mode can be used by users having a simple rectangle as display space. If you have three monitors, any display space can be configured using the triple screen mode.
