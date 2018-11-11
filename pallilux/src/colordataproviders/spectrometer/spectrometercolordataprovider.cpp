@@ -103,6 +103,10 @@ void SpectrometerColorDataProvider::start_() {
     uint8_t barsL[mLedsPerChannel];
     uint8_t barsR[mLedsPerChannel];
 
+    // result buffer for bin amplitudes with constant gain (for beat detection)
+    int constantGainBarsL[mLedsPerChannel];
+    int constantGainBarsR[mLedsPerChannel];
+
     // pulseaudio read buffer
     float pulseAudioBuffer[mSampleSpecifications.channels * SIZE];
 
@@ -118,12 +122,12 @@ void SpectrometerColorDataProvider::start_() {
         // calculate amplitudes of left input.
         for(int i = 0; i < SIZE; i++) mFftwIn[i] = (double) (window[i] * pulseAudioBuffer[i * 2]);
         fftw_execute(fftwPlan);
-        calculateAmplitude(fftwOut, barsL);
+        calculateAmplitude(fftwOut, barsL, mGain);
 
         // calculate amplitudes of right input.
         for(int i = 0; i < SIZE; i++) mFftwIn[i] = (double) (window[i] * pulseAudioBuffer[i * 2 + 1]);
         fftw_execute(fftwPlan);
-        calculateAmplitude(fftwOut, barsR);
+        calculateAmplitude(fftwOut, barsR, mGain);
 
         // do AGC if enabled
         if (mAutoGain)
@@ -159,12 +163,12 @@ void SpectrometerColorDataProvider::mapAmplitudes(uint8_t* barsL, uint8_t* barsR
     }
 }
 
-void SpectrometerColorDataProvider::calculateAmplitude(fftw_complex *fft, uint8_t *amplitudes) {
+void SpectrometerColorDataProvider::calculateAmplitude(fftw_complex *fft, uint8_t *amplitudes, double gain) {
     // calculate bar width using black magic
     double ledWidth = UPPER_FREQUENCY / (FRAMES_PER_SECOND * mLedsPerChannel);
 
     // scale variable. determined through gain, a magic number, and sprinkled with a bit of dark magic
-    double scale = 200.0 / SIZE * mGain;
+    double scale = (gain * 200.0) / SIZE;
 
     // assert minimum bar width
     assert(ledWidth > 0);

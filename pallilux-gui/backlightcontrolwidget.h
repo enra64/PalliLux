@@ -21,17 +21,17 @@ private slots:
      * @brief Change red intensity
      */
     void onRedChanged(int val) {
-        assert(val > 0 && val < 256);
+        assert(val >= 0 && val < 256);
         mConstantColorProvider->setRed(static_cast<uint8_t>(val));
     }
 
     void onGreenChanged(int val){
-        assert(val > 0 && val < 256);
+        assert(val >= 0 && val < 256);
         mConstantColorProvider->setGreen(static_cast<uint8_t>(val));
     }
 
     void onBlueChanged(int val){
-        assert(val > 0 && val < 256);
+        assert(val >= 0 && val < 256);
         mConstantColorProvider->setBlue(static_cast<uint8_t>(val));
     }
 

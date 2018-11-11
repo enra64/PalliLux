@@ -61,8 +61,10 @@ private:
      *
      * @param fft the fft result to work with
      * @param bars our result buffer. length is determined through mLedsPerChannel
+     * @param gain the gain value. usually in a range from 1 to around 200.
+     *             added to allow for constant gain value despite AGC for beat detection
      */
-    void calculateAmplitude(fftw_complex* fft, uint8_t *bars);
+    void calculateAmplitude(fftw_complex* fft, uint8_t *bars, double gain);
 
     /**
      * @brief Apply the calculated amplitudes to the led buffer
